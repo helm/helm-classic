@@ -16,6 +16,8 @@ const ManifestsPath = "manifests"
 
 const ChartPath = "cache/charts"
 
+const DefaultNS = "default"
+
 var helmpaths = []string{CachePath, ManifestsPath}
 
 // Update fetches the remote repo into the home directory.

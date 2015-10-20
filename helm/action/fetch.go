@@ -6,18 +6,27 @@ import (
 	"path/filepath"
 )
 
-func Fetch(chart, lname, homedir string) {
+// Fetch gets a chart from the source repo and copies to the workdir.
+//
+// - chart is the source
+// - lname is the local name for that chart (chart-name); if blank, it is set to the chart.
+// - homedir is the home directory for the user
+// - ns is the namespace for this package. If blank, it is set to the DefaultNS.
+func Fetch(chart, lname, homedir, ns string) {
 
 	if lname == "" {
 		lname = chart
 	}
+	if ns == "" {
+		ns = DefaultNS
+	}
 
 	src := filepath.Join(homedir, ChartPath, chart)
-	dest := filepath.Join(homedir, ManifestsPath, lname)
+	dest := filepath.Join(homedir, ManifestsPath, ns, lname)
 
 	if fi, err := os.Stat(src); err != nil {
-		Die("Could not find %s: %s", chart, err)
 	} else if !fi.IsDir() {
+		Die("Could not find %s: %s", chart, err)
 		Die("Malformed chart %s: Chart must be in a directory.", chart)
 	}
 

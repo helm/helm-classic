@@ -45,6 +45,13 @@ func main() {
 			Usage:     "Fetch a Chart to your working directory.",
 			ArgsUsage: "[chart] [chart-name]",
 			Action:    fetch,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "namespace, n",
+					Value: "default",
+					Usage: "The Kubernetes destination namespace.",
+				},
+			},
 		},
 		{
 			Name:      "build",
@@ -57,12 +64,26 @@ func main() {
 			Usage:     "Install a named package into Kubernetes.",
 			ArgsUsage: "[chart-name...]",
 			Action:    install,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "namespace, n",
+					Value: "default",
+					Usage: "The Kubernetes destination namespace.",
+				},
+			},
 		},
 		{
 			Name:      "list",
 			Usage:     "List all fetched packages",
 			ArgsUsage: "",
 			Action:    list,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "namespace, n",
+					Value: "default",
+					Usage: "The Kubernetes destination namespace.",
+				},
+			},
 		},
 		{
 			Name:      "search",
@@ -88,8 +109,7 @@ func update(c *cli.Context) {
 }
 
 func list(c *cli.Context) {
-	//h := NewClient(c.GlobalString("repo"))
-	action.Info("Not implemented yet")
+	action.List(home(c), c.String("namespace"))
 }
 
 func fetch(c *cli.Context) {
@@ -108,7 +128,7 @@ func fetch(c *cli.Context) {
 		lname = a[1]
 	}
 
-	action.Fetch(chart, lname, home)
+	action.Fetch(chart, lname, home, c.String("namespace"))
 }
 
 func build(c *cli.Context) {
@@ -121,7 +141,7 @@ func build(c *cli.Context) {
 
 func install(c *cli.Context) {
 	for _, chart := range c.Args() {
-		action.Install(chart, home(c))
+		action.Install(chart, home(c), c.String("namespace"))
 	}
 }
 
