@@ -8,7 +8,13 @@ import (
 	"github.com/Masterminds/vcs"
 )
 
-var helmpaths = []string{"cache", "manifests"}
+// CachePath is the suffix for the cache.
+const CachePath = "cache"
+
+// ManifestsPath is the suffix for the manifests.
+const ManifestsPath = "manifests"
+
+var helmpaths = []string{CachePath, ManifestsPath}
 
 // Update fetches the remote repo into the home directory.
 func Update(repo, home string) {
@@ -16,10 +22,27 @@ func Update(repo, home string) {
 	if err != nil {
 		Die("Could not generate absolute path for %q: %s", home, err)
 	}
-	Info(home)
+
+	// Basically, install if this is the first run.
 	ensurePrereqs()
 	ensureHome(home)
-	ensureRepo(repo, filepath.Join(home, "cache"))
+	gitrepo := filepath.Join(home, CachePath)
+	git := ensureRepo(repo, gitrepo)
+
+	if err := gitUpdate(git); err != nil {
+		Die("Failed to update from Git: %s", err)
+	}
+}
+
+// gitUpdate updates a Git repo.
+func gitUpdate(git *vcs.GitRepo) error {
+	if err := git.Update(); err != nil {
+		return err
+	}
+
+	// TODO: We should make this pretty.
+	Info("Updated")
+	return nil
 }
 
 // ensurePrereqs verifies that Git and Kubectl are both available.
@@ -33,7 +56,7 @@ func ensurePrereqs() {
 }
 
 // ensureRepo ensures that the repo exists and is checked out.
-func ensureRepo(repo, home string) {
+func ensureRepo(repo, home string) *vcs.GitRepo {
 	if err := os.Chdir(home); err != nil {
 		Die("Could not change to directory %q: %s", home, err)
 	}
@@ -49,9 +72,10 @@ func ensureRepo(repo, home string) {
 		}
 	}
 
-	Info("If I could, I would check out a repo right now")
+	return git
 }
 
+// ensureHome ensures that a HELM_HOME exists.
 func ensureHome(home string) {
 	if fi, err := os.Stat(home); err != nil {
 		Info("Creating %s", home)

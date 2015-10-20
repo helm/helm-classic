@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/codegangsta/cli"
+	"github.com/deis/helm/helm/action"
 	pretty "github.com/deis/pkg/prettyprint"
 	//"github.com/technosophos/k8splace/model"
 )
@@ -25,7 +26,7 @@ func main() {
 			EnvVar: "HELM_REPO_URL",
 		},
 		cli.StringFlag{
-			Name:   "homedir",
+			Name:   "home",
 			Value:  "$HOME/.helm",
 			Usage:  "The location of your Helm files",
 			EnvVar: "HELM_HOME",
@@ -56,24 +57,46 @@ func main() {
 		{
 			Name:   "search",
 			Usage:  "Search for a package",
-			Action: list,
+			Action: search,
 		},
 	}
 
 	app.Run(os.Args)
 }
 
+func home(c *cli.Context) string {
+	return os.ExpandEnv(c.GlobalString("home"))
+}
+
+func repo(c *cli.Context) string {
+	return os.ExpandEnv(c.GlobalString("repo"))
+}
+
 func update(c *cli.Context) {
+	action.Update(repo(c), home(c))
 }
 
 func list(c *cli.Context) {
 	//h := NewClient(c.GlobalString("repo"))
+	action.Info("Not implemented yet")
 }
 
 func fetch(c *cli.Context) {
+	home := home(c)
+
+	for _, chart := range c.Args() {
+		action.Fetch(chart, home)
+	}
 }
 
 func install(c *cli.Context) {
+	for _, chart := range c.Args() {
+		action.Install(chart, home(c))
+	}
+}
+
+func search(c *cli.Context) {
+	action.Info("Not implemented yet")
 }
 
 func info(msg string, args ...interface{}) {
@@ -86,19 +109,6 @@ func ftw(msg string, args ...interface{}) {
 	t := fmt.Sprintf(msg, args...)
 	m := "{{.Green}}[YAY!]{{.Default}} " + t
 	fmt.Println(pretty.Colorize(m))
-}
-
-func ensureHome(c *cli.Context) string {
-	wd := c.GlobalString("homedir")
-	wd = os.ExpandEnv(wd)
-	if _, err := os.Stat(wd); err != nil {
-		info("Attempting to create dir %q", wd)
-		if err := os.MkdirAll(wd, 0755); err != nil {
-			die(err)
-		}
-		ftw("Created")
-	}
-	return wd
 }
 
 func die(err error) {
