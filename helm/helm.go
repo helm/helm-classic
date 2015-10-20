@@ -35,34 +35,40 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:   "update",
-			Usage:  "Get the latest version of all Charts from GitHub.",
-			Action: update,
+			Name:      "update",
+			Usage:     "Get the latest version of all Charts from GitHub.",
+			ArgsUsage: "",
+			Action:    update,
 		},
 		{
-			Name:   "fetch",
-			Usage:  "Fetch a named package.",
-			Action: fetch,
+			Name:      "fetch",
+			Usage:     "Fetch a Chart to your working directory.",
+			ArgsUsage: "[chart] [chart-name]",
+			Action:    fetch,
 		},
 		{
-			Name:   "build",
-			Usage:  "(Re-)build a manifest from templates.",
-			Action: build,
+			Name:      "build",
+			Usage:     "(Re-)build a manifest from templates.",
+			ArgsUsage: "[chart-name...]",
+			Action:    build,
 		},
 		{
-			Name:   "install",
-			Usage:  "Install a named package into Kubernetes.",
-			Action: install,
+			Name:      "install",
+			Usage:     "Install a named package into Kubernetes.",
+			ArgsUsage: "[chart-name...]",
+			Action:    install,
 		},
 		{
-			Name:   "list",
-			Usage:  "List all fetched packages",
-			Action: list,
+			Name:      "list",
+			Usage:     "List all fetched packages",
+			ArgsUsage: "",
+			Action:    list,
 		},
 		{
-			Name:   "search",
-			Usage:  "Search for a package",
-			Action: search,
+			Name:      "search",
+			Usage:     "Search for a package",
+			ArgsUsage: "[string]",
+			Action:    search,
 		},
 	}
 

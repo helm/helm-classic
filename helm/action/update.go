@@ -14,6 +14,8 @@ const CachePath = "cache"
 // ManifestsPath is the suffix for the manifests.
 const ManifestsPath = "manifests"
 
+const ChartPath = "cache/charts"
+
 var helmpaths = []string{CachePath, ManifestsPath}
 
 // Update fetches the remote repo into the home directory.
