@@ -1,3 +1,5 @@
 package: github.com/deis/helm
 import:
   - package: github.com/Masterminds/vcs
+  - package: github.com/Masterminds/semver
+  - package: gopkg.in/yaml.v2

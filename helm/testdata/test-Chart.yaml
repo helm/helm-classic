@@ -3,10 +3,16 @@ home: http://github.com/deis/helm
 version: 0.0.1
 description: Simple pod running Alpine Linux.
 maintainers:
-  - Matt Butcher <mbutcher@deis.com>
+  - Somebody
+  - Nobody
 details:
   This package provides a basic Alpine Linux image that can be used for basic
   debugging and troubleshooting. By default, it starts up, sleeps for a long
   time, and then eventually stops.
+dependencies:
+  - name: foo
+    version: "> 1.2.3"
+  - name: bar
+    version: "1.1.1-3.0.0"
 preinstall:
   - generate-keypair foo
