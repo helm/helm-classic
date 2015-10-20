@@ -1,0 +1,3 @@
+package: github.com/deis/helm
+import:
+  - package: github.com/Masterminds/vcs
