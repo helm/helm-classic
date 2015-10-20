@@ -22,3 +22,7 @@ func Info(msg string, v ...interface{}) {
 	fmt.Fprintf(os.Stderr, msg, v...)
 	fmt.Fprintln(os.Stderr)
 }
+
+func Warn(msg string, v ...interface{}) {
+	Info(msg, v...)
+}

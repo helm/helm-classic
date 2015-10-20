@@ -9,14 +9,14 @@ import (
 
 // Chart describes a Helm Chart (e.g. Chart.yaml)
 type Chart struct {
-	Name         string        `yaml:"name"`
-	Home         string        `yaml:"home"`
-	Version      string        `yaml:"version"`
-	Description  string        `yaml:"description"`
-	Maintainers  []string      `yaml:"maintainers,omitempty"`
-	Details      string        `yaml:"details,omitempty"`
-	Dependencies []*Dependency `yaml:"dependencies,omitempty"`
-	PreInstall   []string      `yaml:"preinstall,omitempty"`
+	Name         string            `yaml:"name"`
+	Home         string            `yaml:"home"`
+	Version      string            `yaml:"version"`
+	Description  string            `yaml:"description"`
+	Maintainers  []string          `yaml:"maintainers,omitempty"`
+	Details      string            `yaml:"details,omitempty"`
+	Dependencies []*Dependency     `yaml:"dependencies,omitempty"`
+	PreInstall   map[string]string `yaml:"preinstall,omitempty"`
 }
 
 // Dependency describes a specific dependency.

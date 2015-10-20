@@ -9,4 +9,6 @@ details:
   debugging and troubleshooting. By default, it starts up, sleeps for a long
   time, and then eventually stops.
 preinstall:
-  - generate-keypair foo
+  # Command on the right will be executed, and output stored in var on
+  # the left. So in a template, `preinstall.mykeys` will have a value.
+  mykeys: generate-keypair foo

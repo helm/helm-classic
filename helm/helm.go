@@ -45,6 +45,11 @@ func main() {
 			Action: fetch,
 		},
 		{
+			Name:   "build",
+			Usage:  "(Re-)build a manifest from templates.",
+			Action: build,
+		},
+		{
 			Name:   "install",
 			Usage:  "Install a named package into Kubernetes.",
 			Action: install,
@@ -84,8 +89,27 @@ func list(c *cli.Context) {
 func fetch(c *cli.Context) {
 	home := home(c)
 
+	a := c.Args()
+
+	if len(a) == 0 {
+		action.Die("Fetch requires at least a Chart name")
+	}
+
+	chart := a[0]
+
+	var lname string
+	if len(a) == 2 {
+		lname = a[1]
+	}
+
+	action.Fetch(chart, lname, home)
+}
+
+func build(c *cli.Context) {
+	home := home(c)
+
 	for _, chart := range c.Args() {
-		action.Fetch(chart, home)
+		action.Build(chart, home)
 	}
 }
 

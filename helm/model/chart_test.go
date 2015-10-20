@@ -27,6 +27,10 @@ func TestLoad(t *testing.T) {
 	if f.Dependencies[1].Name != "bar" {
 		t.Errorf("Expected second dependency to be bar: %q", f.Dependencies[1].Name)
 	}
+
+	if f.PreInstall["mykeys"] != "generate-keypair foo" {
+		t.Errorf("Expected map value for mykeys.")
+	}
 }
 
 func TestVersionOK(t *testing.T) {
