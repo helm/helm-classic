@@ -1,5 +1,7 @@
 # Helm - The Kubernetes Package Manager
 
+[![Build Status](https://travis-ci.org/deis/helm.svg?branch=master)](https://travis-ci.org/deis/helm)
+
 Helm helps you bootstrap your Kubernetes cluster with **Charts** that provide ready-to-use workloads like:
 
 - A Postgres database
