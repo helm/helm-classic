@@ -5,6 +5,14 @@ import (
 	"os"
 )
 
+// Msg passes through the formatter, but otherwise prints exactly as-is.
+//
+// No prettification.
+func Msg(msg string, v ...interface{}) {
+	fmt.Fprintf(os.Stdout, msg, v...)
+	fmt.Fprintln(os.Stdout)
+}
+
 // Die prints an error and then call os.Exit(1).
 func Die(msg string, v ...interface{}) {
 	Err(msg, v...)

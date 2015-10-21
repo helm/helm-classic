@@ -12,17 +12,13 @@ import (
 // - lname is the local name for that chart (chart-name); if blank, it is set to the chart.
 // - homedir is the home directory for the user
 // - ns is the namespace for this package. If blank, it is set to the DefaultNS.
-func Fetch(chart, lname, homedir, ns string) {
+func Fetch(chart, lname, homedir string) {
 
 	if lname == "" {
 		lname = chart
 	}
-	if ns == "" {
-		ns = DefaultNS
-	}
-
-	src := filepath.Join(homedir, ChartPath, chart)
-	dest := filepath.Join(homedir, ManifestsPath, ns, lname)
+	src := filepath.Join(homedir, CacheChartPath, chart)
+	dest := filepath.Join(homedir, WorkdirChartPath, lname)
 
 	if fi, err := os.Stat(src); err != nil {
 	} else if !fi.IsDir() {
@@ -37,9 +33,6 @@ func Fetch(chart, lname, homedir, ns string) {
 	Info("Fetching %s to %s", src, dest)
 	if err := copyDir(src, dest); err != nil {
 	}
-	Info("Executing pre-install")
-	Info("Templating manifests")
-	Info("Copying manifests to %s", dest)
 }
 
 // Copy a directory and its subdirectories.
