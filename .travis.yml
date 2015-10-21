@@ -1,1 +1,16 @@
-script: make test-charts
+language: go
+
+branches:
+  only:
+    - master
+
+go:
+  - 1.5.1
+
+install:
+  - wget https://github.com/Masterminds/glide/releases/download/0.6.1/glide-linux-amd64.zip -O /tmp/glide.zip
+  - unzip /tmp/glide.zip linux-amd64/glide -d /tmp
+  - chmod +x /tmp/linux-amd64/glide
+  - export PATH=$PATH:/tmp/linux-amd64
+
+script: make bootstrap build test-charts
