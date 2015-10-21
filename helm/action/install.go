@@ -1,6 +1,10 @@
 package action
 
+import (
+	"github.com/deis/helm/helm/log"
+)
+
 func Install(chart, home, namespace string) {
 	Fetch(chart, chart, home)
-	Info("kubectl --namespace %q create -f %s.yaml", namespace, chart)
+	log.Info("kubectl --namespace %q create -f %s.yaml", namespace, chart)
 }

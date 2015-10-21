@@ -1,4 +1,4 @@
-package action
+package log
 
 import (
 	"fmt"

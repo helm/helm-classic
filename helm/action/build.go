@@ -1,5 +1,9 @@
 package action
 
+import (
+	"github.com/deis/helm/helm/log"
+)
+
 func Build(chart, homedir string) {
-	Info("Rebuilding %s", chart)
+	log.Info("Rebuilding %s", chart)
 }
