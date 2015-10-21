@@ -1,6 +1,6 @@
-VERSION := $(shell git describe --tags)
+VERSION := $(shell git describe --tags 2>/dev/null)
 DIST_DIRS := find * -type d -exec
-GO15VENDOREXPERIMENT=1
+export GO15VENDOREXPERIMENT=1
 
 build:
 	go build -o helm.bin -ldflags "-X main.version=${VERSION}" helm/helm.go
