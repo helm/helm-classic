@@ -5,32 +5,36 @@ import (
 	"os"
 )
 
+var Stdout = os.Stdout
+var Stderr = os.Stderr
+
 // Msg passes through the formatter, but otherwise prints exactly as-is.
 //
 // No prettification.
-func Msg(msg string, v ...interface{}) {
-	fmt.Fprintf(os.Stdout, msg, v...)
-	fmt.Fprintln(os.Stdout)
+func Msg(format string, v ...interface{}) {
+	fmt.Fprintf(Stdout, appendNewLine(format), v...)
 }
 
 // Die prints an error and then call os.Exit(1).
-func Die(msg string, v ...interface{}) {
-	Err(msg, v...)
+func Die(format string, v ...interface{}) {
+	Err(format, v...)
 	os.Exit(1)
 }
 
 // Err prints an error message. It does not cause an exit.
-func Err(msg string, v ...interface{}) {
-	fmt.Fprintf(os.Stderr, msg, v...)
-	fmt.Fprintln(os.Stderr)
+func Err(format string, v ...interface{}) {
+	fmt.Fprintf(Stderr, appendNewLine(format), v...)
 }
 
 // Info prints a message.
-func Info(msg string, v ...interface{}) {
-	fmt.Fprintf(os.Stderr, msg, v...)
-	fmt.Fprintln(os.Stderr)
+func Info(format string, v ...interface{}) {
+	fmt.Fprintf(Stderr, appendNewLine(format), v...)
 }
 
-func Warn(msg string, v ...interface{}) {
-	Info(msg, v...)
+func Warn(format string, v ...interface{}) {
+	Info(format, v...)
+}
+
+func appendNewLine(format string) string {
+	return format + "\n"
 }
