@@ -99,6 +99,12 @@ func main() {
 			Action:    search,
 		},
 		{
+			Name:      "info",
+			Usage:     "Print information about a Chart",
+			ArgsUsage: "[string]",
+			Action:    info,
+		},
+		{
 			Name:      "target",
 			Usage:     "Displays information about cluster",
 			ArgsUsage: "",
@@ -170,6 +176,16 @@ func search(c *cli.Context) {
 	action.Search(c.Args()[0], home(c))
 }
 
+func info(c *cli.Context) {
+	a := c.Args()
+
+	if len(a) == 0 {
+		log.Die("Info requires at least a Chart name")
+	}
+
+	action.Info(c.Args()[0], home(c))
+}
+
 func target(c *cli.Context) {
-  action.Target()
+	action.Target()
 }
