@@ -7,7 +7,6 @@ import (
 	"github.com/codegangsta/cli"
 	"github.com/deis/helm/helm/action"
 	pretty "github.com/deis/pkg/prettyprint"
-	//"github.com/technosophos/k8splace/model"
 )
 
 const version = "0.0.1"
@@ -83,6 +82,10 @@ func main() {
 					Value: "default",
 					Usage: "The Kubernetes destination namespace.",
 				},
+				cli.BoolFlag{
+					Name:  "all-namespaces",
+					Usage: "List all namespaces. Equivalent to -n '*'",
+				},
 			},
 		},
 		{
@@ -109,6 +112,10 @@ func update(c *cli.Context) {
 }
 
 func list(c *cli.Context) {
+	if c.Bool("all-namespaces") {
+		action.List(home(c), "*")
+		return
+	}
 	action.List(home(c), c.String("namespace"))
 }
 
@@ -146,7 +153,7 @@ func install(c *cli.Context) {
 }
 
 func search(c *cli.Context) {
-	action.Info("Not implemented yet")
+	action.Search(c.Args()[0], home(c))
 }
 
 func info(msg string, args ...interface{}) {
