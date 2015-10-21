@@ -36,5 +36,7 @@ dist: build-all
 	$(DIST_DIRS) zip -r helm-{}.zip {} \; && \
 	cd ..
 
+test-charts:
+	@./test/test-charts $(TEST_CHARTS)
 
-.PHONY: build test install clean bootstrap bootstrap-dist build-all dist
+.PHONY: build test install clean bootstrap bootstrap-dist build-all dist test-charts
