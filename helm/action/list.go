@@ -15,6 +15,7 @@ func List(homedir, ns string) {
 		Warn("Could not find any charts in %q: %s", md, err)
 	}
 	for _, c := range charts {
+		c := filepath.Base(c)
 		Info("\t%s", c)
 	}
 }
