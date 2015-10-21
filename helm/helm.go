@@ -5,6 +5,7 @@ import (
 
 	"github.com/codegangsta/cli"
 	"github.com/deis/helm/helm/action"
+	"github.com/deis/helm/helm/log"
 )
 
 const version = "0.0.1"
@@ -108,7 +109,7 @@ func fetch(c *cli.Context) {
 	a := c.Args()
 
 	if len(a) == 0 {
-		action.Die("Fetch requires at least a Chart name")
+		log.Die("Fetch requires at least a Chart name")
 	}
 
 	chart := a[0]
