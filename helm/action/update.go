@@ -10,15 +10,14 @@ import (
 
 // CachePath is the suffix for the cache.
 const CachePath = "cache"
+const CacheChartPath = "cache/charts"
 
-// ManifestsPath is the suffix for the manifests.
-const ManifestsPath = "manifests"
-
-const ChartPath = "cache/charts"
+const WorkdirPath = "workspace"
+const WorkdirChartPath = "workspace/charts"
 
 const DefaultNS = "default"
 
-var helmpaths = []string{CachePath, ManifestsPath}
+var helmpaths = []string{CachePath, WorkdirPath}
 
 // Update fetches the remote repo into the home directory.
 func Update(repo, home string) {

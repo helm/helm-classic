@@ -9,7 +9,7 @@ import (
 // Search looks for packages with 'term' in their name.
 func Search(term, homedir string) {
 	term = sanitizeTerm(term)
-	sp := filepath.Join(homedir, ChartPath, "*"+term+"*")
+	sp := filepath.Join(homedir, CacheChartPath, "*"+term+"*")
 	dirs, err := filepath.Glob(sp)
 	if err != nil {
 		Die("No results found. %s", err)

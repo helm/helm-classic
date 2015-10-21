@@ -1,12 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/codegangsta/cli"
 	"github.com/deis/helm/helm/action"
-	pretty "github.com/deis/pkg/prettyprint"
 )
 
 const version = "0.0.1"
@@ -76,17 +74,6 @@ func main() {
 			Usage:     "List all fetched packages",
 			ArgsUsage: "",
 			Action:    list,
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "namespace, n",
-					Value: "default",
-					Usage: "The Kubernetes destination namespace.",
-				},
-				cli.BoolFlag{
-					Name:  "all-namespaces",
-					Usage: "List all namespaces. Equivalent to -n '*'",
-				},
-			},
 		},
 		{
 			Name:      "search",
@@ -112,11 +99,7 @@ func update(c *cli.Context) {
 }
 
 func list(c *cli.Context) {
-	if c.Bool("all-namespaces") {
-		action.List(home(c), "*")
-		return
-	}
-	action.List(home(c), c.String("namespace"))
+	action.List(home(c))
 }
 
 func fetch(c *cli.Context) {
@@ -135,7 +118,7 @@ func fetch(c *cli.Context) {
 		lname = a[1]
 	}
 
-	action.Fetch(chart, lname, home, c.String("namespace"))
+	action.Fetch(chart, lname, home)
 }
 
 func build(c *cli.Context) {
@@ -154,22 +137,4 @@ func install(c *cli.Context) {
 
 func search(c *cli.Context) {
 	action.Search(c.Args()[0], home(c))
-}
-
-func info(msg string, args ...interface{}) {
-	t := fmt.Sprintf(msg, args...)
-	m := "{{.Yellow}}[INFO]{{.Default}} " + t
-	fmt.Println(pretty.Colorize(m))
-}
-
-func ftw(msg string, args ...interface{}) {
-	t := fmt.Sprintf(msg, args...)
-	m := "{{.Green}}[YAY!]{{.Default}} " + t
-	fmt.Println(pretty.Colorize(m))
-}
-
-func die(err error) {
-	m := "{{.Red}}[BOO!]{{.Default}} " + err.Error()
-	fmt.Println(pretty.Colorize(m))
-	os.Exit(1)
 }

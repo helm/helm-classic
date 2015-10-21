@@ -7,30 +7,8 @@ import (
 )
 
 // List lists all of the local charts.
-func List(homedir, ns string) {
-	if ns == "" {
-		ns = DefaultNS
-	}
-
-	// List all namespaces
-	if ns == "*" {
-		md := filepath.Join(homedir, ManifestsPath, ns)
-		nss, err := filepath.Glob(md)
-		if err != nil {
-			Warn("Could not find any namespaces in %q: %s", md, err)
-		}
-		for _, n := range nss {
-			dir := filepath.Base(n)
-			Info("%s:", dir)
-			listNS(homedir, dir)
-		}
-		return
-	}
-	listNS(homedir, ns)
-}
-
-func listNS(homedir, ns string) {
-	md := filepath.Join(homedir, ManifestsPath, ns, "*")
+func List(homedir string) {
+	md := filepath.Join(homedir, WorkdirChartPath, "*")
 	charts, err := filepath.Glob(md)
 	if err != nil {
 		Warn("Could not find any charts in %q: %s", md, err)
