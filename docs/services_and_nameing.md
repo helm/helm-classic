@@ -7,7 +7,7 @@ A may require Package B. This case is accomodated with the
 But a possibly more common scenario would be a service-level dependency:
 Package A requires _a Postgres service_. It doesn't matter to Package A
 whether that's an HA clustered Postgres managed by Governor, or just a
-stand-along Postgres server.
+stand-alone Postgres server.
 
 Kubernetes provides a huge part of the solution: A `service` can be
 declared independent of the actual containers that implement that
