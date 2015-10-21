@@ -29,6 +29,10 @@ func main() {
 			Usage:  "The location of your Helm files",
 			EnvVar: "HELM_HOME",
 		},
+		cli.BoolFlag{
+			Name:  "debug",
+			Usage: "Enable verbose debugging output",
+		},
 	}
 
 	app.Commands = []cli.Command{
