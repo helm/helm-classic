@@ -13,7 +13,7 @@ import (
 
 func Install(chart, home, namespace string) {
 	Fetch(chart, chart, home)
-	log.Info("kubectl --namespace %q create -f %s.yaml", namespace, chart)
+	log.Info("kubectl --namespace=%q create -f %s.yaml", namespace, chart)
 	if !chartInstalled(chart, home) {
 		log.Info("No installed chart named %q. Installing now.", chart)
 		Fetch(chart, chart, home)
@@ -51,7 +51,7 @@ func kubectlCreate(chart, ns string) error {
 	if ns != "" {
 		a = append([]string{fmt.Sprintf("--namespace=%q", ns)}, a...)
 	}
-	//Info("kubectl --namespace %q create -f %s", ns, chart)
+	//Info("kubectl --namespace=%q create -f %s", ns, chart)
 	c := exec.Command("kubectl", a...)
 
 	// The default error message is not helpful, so we grab the output
