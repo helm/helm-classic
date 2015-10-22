@@ -10,7 +10,7 @@ install: build
 	install -m 755 ./helm.bin ${DESTDIR}/usr/local/bin/helm
 
 test:
-	go test ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model
+	go test -v ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model
 
 clean:
 	rm -f ./helm/helm.test

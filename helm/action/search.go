@@ -21,7 +21,7 @@ func Search(term, homedir string) {
 	log.Info("=================\n")
 
 	for _, d := range dirs {
-		y, err := model.Load(filepath.Join(d, "Chart.yaml"))
+		y, err := model.LoadChartfile(filepath.Join(d, "Chart.yaml"))
 		if err != nil {
 			log.Info("\t%s - UNKNOWN", filepath.Base(d))
 			continue
