@@ -48,9 +48,10 @@ func chartInstalled(chart, home string) bool {
 
 func kubectlCreate(chart, ns string) error {
 	a := []string{"create", "-f", chart}
-	if ns != "" {
+	if ns != "default" {
 		a = append([]string{fmt.Sprintf("--namespace=%q", ns)}, a...)
 	}
+
 	//Info("kubectl --namespace=%q create -f %s", ns, chart)
 	c := exec.Command("kubectl", a...)
 
