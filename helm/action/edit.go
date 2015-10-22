@@ -152,7 +152,7 @@ func saveChart(chartDir string, filename string) error {
 		chartData[string(m[1])] = m[2]
 	}
 
-	// save edited chart data to the workdir
+	// save edited chart data to the workspace
 	for k, v := range chartData {
 		fp := path.Join(chartDir, k)
 		if err := ioutil.WriteFile(fp, v, 0644); err != nil {

@@ -10,17 +10,6 @@ import (
 	"github.com/deis/helm/helm/log"
 )
 
-// CachePath is the suffix for the cache.
-const CachePath = "cache"
-const CacheChartPath = "cache/charts"
-
-const WorkdirPath = "workspace"
-const WorkdirChartPath = "workspace/charts"
-
-const DefaultNS = "default"
-
-var helmpaths = []string{CachePath, WorkdirPath}
-
 // Update fetches the remote repo into the home directory.
 func Update(repo, home string) {
 	home, err := filepath.Abs(home)

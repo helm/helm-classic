@@ -19,7 +19,7 @@ func Install(chart, home, namespace string) {
 		Fetch(chart, chart, home)
 	}
 
-	d := filepath.Join(home, WorkdirChartPath, chart, "manifests")
+	d := filepath.Join(home, WorkspaceChartPath, chart, "manifests")
 	log.Debug("Looking for manifests in %q", d)
 	files, err := manifestFiles(d)
 	if err != nil {
@@ -37,7 +37,7 @@ func Install(chart, home, namespace string) {
 //
 // This does NOT check the Chart.yaml file.
 func chartInstalled(chart, home string) bool {
-	p := filepath.Join(home, WorkdirChartPath, chart, "Chart.yaml")
+	p := filepath.Join(home, WorkspaceChartPath, chart, "Chart.yaml")
 	log.Debug("Looking for %q", p)
 	if fi, err := os.Stat(p); err != nil || fi.IsDir() {
 		log.Debug("No chart: %s", err)
