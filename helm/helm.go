@@ -75,6 +75,18 @@ func main() {
 			},
 		},
 		{
+			Name:      "create",
+			Usage:     "Create a chart in the local workspace",
+			ArgsUsage: "[chart-name]",
+			Action:    create,
+		},
+		{
+			Name:      "edit",
+			Usage:     "Edit a named chart in the local workspace",
+			ArgsUsage: "[chart-name]",
+			Action:    edit,
+		},
+		{
 			Name:      "list",
 			Usage:     "List all fetched packages",
 			ArgsUsage: "",
@@ -138,6 +150,14 @@ func install(c *cli.Context) {
 	for _, chart := range c.Args() {
 		action.Install(chart, home(c), c.String("namespace"))
 	}
+}
+
+func create(c *cli.Context) {
+	action.Create(c.Args()[0], home(c))
+}
+
+func edit(c *cli.Context) {
+	action.Edit(c.Args()[0], home(c))
 }
 
 func search(c *cli.Context) {
