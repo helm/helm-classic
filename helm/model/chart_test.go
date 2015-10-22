@@ -5,9 +5,48 @@ import (
 )
 
 const testfile = "../testdata/test-Chart.yaml"
+const testchart = "../testdata/charts/kitchensink"
 
 func TestLoad(t *testing.T) {
-	f, err := Load(testfile)
+	c, err := Load(testchart)
+	if err != nil {
+		t.Errorf("Failed to load chart: %s", err)
+	}
+
+	if c.Chartfile.Name != "kitchensink" {
+		t.Errorf("Expected chart name to be 'kitchensink'. Got '%s'.", c.Chartfile.Name)
+	}
+	if c.Chartfile.Dependencies[0].Version != "~10.21" {
+		d := c.Chartfile.Dependencies[0].Version
+		t.Errorf("Expected dependency 0 to have version '~10.21'. Got '%s'.", d)
+	}
+
+	if len(c.Pods) != 3 {
+		t.Errorf("Expected 3 pods, got %d", len(c.Pods))
+	}
+	if len(c.ReplicationControllers) == 0 {
+		t.Error("No RCs found")
+	}
+
+	if len(c.Namespaces) == 0 {
+		t.Errorf("No namespaces found")
+	}
+
+	if len(c.Secrets) == 0 {
+		t.Error("Is it secret? Is it safe? NO!")
+	}
+
+	if len(c.PersistentVolumes) == 0 {
+		t.Errorf("No volumes.")
+	}
+
+	if len(c.Services) == 0 {
+		t.Error("No service. Just like [insert mobile provider name here]")
+	}
+}
+
+func TestLoadChart(t *testing.T) {
+	f, err := LoadChartfile(testfile)
 	if err != nil {
 		t.Errorf("Error loading %s: %s", testfile, err)
 	}
@@ -34,7 +73,7 @@ func TestLoad(t *testing.T) {
 }
 
 func TestVersionOK(t *testing.T) {
-	f, err := Load(testfile)
+	f, err := LoadChartfile(testfile)
 	if err != nil {
 		t.Errorf("Error loading %s: %s", testfile, err)
 	}
