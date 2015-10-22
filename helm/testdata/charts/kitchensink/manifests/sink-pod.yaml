@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: deis-empty-pod
+  env: devel
+spec:
+  containers:
+  - name: deis-empty-pod
+    image: alpine:3.2
+    command:
+      - "sleep"
+      - "90000"
