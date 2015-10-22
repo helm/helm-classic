@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var testchart = "../../charts/alpine"
+var testchart = "../testdata/charts/kitchensink"
 
 func TestFiles(t *testing.T) {
 	fs, err := Files(testchart)
