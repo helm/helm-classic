@@ -98,6 +98,12 @@ func main() {
 			ArgsUsage: "[string]",
 			Action:    search,
 		},
+		{
+			Name:      "target",
+			Usage:     "Displays information about cluster",
+			ArgsUsage: "",
+			Action:    target,
+		},
 	}
 
 	app.Run(os.Args)
@@ -162,4 +168,8 @@ func edit(c *cli.Context) {
 
 func search(c *cli.Context) {
 	action.Search(c.Args()[0], home(c))
+}
+
+func target(c *cli.Context) {
+  action.Target()
 }
