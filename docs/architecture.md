@@ -124,6 +124,8 @@ The command line will support (at least) the following commands:
 - `install CHART`: Fetch the Chart (if necessary) and then install it into Kubernetes, attaching to the k8s server configured for the current user via `kubectl`.
 - `test CHART`: Verifies that the chart can successfully enter the "Running" state (e.g. passes initial health checks)
 - `uninstall CHART`: Uninstall the chart via the k8s server configured for the current user via `kubectl`.
+- `create CHART`: Create a new chart for local editing.
+- `edit CHART`: Edit a local chart with your interactive editor.
 - `info CHART`: Print information about a Chart
 - `update`: Refresh local metadata about available Charts. This will re-pull the repo.
 - `help`: Print help.
