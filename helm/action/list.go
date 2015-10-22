@@ -9,7 +9,7 @@ import (
 
 // List lists all of the local charts.
 func List(homedir string) {
-	md := filepath.Join(homedir, WorkdirChartPath, "*")
+	md := filepath.Join(homedir, WorkspaceChartPath, "*")
 	charts, err := filepath.Glob(md)
 	if err != nil {
 		log.Warn("Could not find any charts in %q: %s", md, err)

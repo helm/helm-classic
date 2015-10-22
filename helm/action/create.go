@@ -23,7 +23,7 @@ func Create(chartName, homeDir string) {
 		log.Die("Malformed skeleton: %s: Must be a directory.", skeletonDir)
 	}
 
-	chartDir := path.Join(homeDir, "workspace", "charts", chartName)
+	chartDir := path.Join(homeDir, WorkspaceChartPath, chartName)
 
 	// copy skeleton to chart directory
 	if err := copyDir(skeletonDir, chartDir); err != nil {

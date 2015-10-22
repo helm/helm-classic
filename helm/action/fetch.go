@@ -20,7 +20,7 @@ func Fetch(chart, lname, homedir string) {
 		lname = chart
 	}
 	src := filepath.Join(homedir, CacheChartPath, chart)
-	dest := filepath.Join(homedir, WorkdirChartPath, lname)
+	dest := filepath.Join(homedir, WorkspaceChartPath, lname)
 
 	if fi, err := os.Stat(src); err != nil {
 	} else if !fi.IsDir() {
