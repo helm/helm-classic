@@ -24,24 +24,44 @@ func TestLoad(t *testing.T) {
 	if len(c.Pods) != 3 {
 		t.Errorf("Expected 3 pods, got %d", len(c.Pods))
 	}
+
+	if _, ok := c.Pods[0].Annotations[OriginFile]; !ok {
+		t.Error("Failed to get origin file from pod 0")
+	}
+
 	if len(c.ReplicationControllers) == 0 {
 		t.Error("No RCs found")
+	}
+	if _, ok := c.ReplicationControllers[0].Annotations[OriginFile]; !ok {
+		t.Error("Failed to get origin file from pod 0")
 	}
 
 	if len(c.Namespaces) == 0 {
 		t.Errorf("No namespaces found")
 	}
+	if _, ok := c.Namespaces[0].Annotations[OriginFile]; !ok {
+		t.Error("Failed to get origin file from pod 0")
+	}
 
 	if len(c.Secrets) == 0 {
 		t.Error("Is it secret? Is it safe? NO!")
+	}
+	if _, ok := c.Secrets[0].Annotations[OriginFile]; !ok {
+		t.Error("Failed to get origin file from pod 0")
 	}
 
 	if len(c.PersistentVolumes) == 0 {
 		t.Errorf("No volumes.")
 	}
+	if _, ok := c.PersistentVolumes[0].Annotations[OriginFile]; !ok {
+		t.Error("Failed to get origin file from pod 0")
+	}
 
 	if len(c.Services) == 0 {
 		t.Error("No service. Just like [insert mobile provider name here]")
+	}
+	if _, ok := c.Services[0].Annotations[OriginFile]; !ok {
+		t.Error("Failed to get origin file from pod 0")
 	}
 }
 

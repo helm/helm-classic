@@ -64,6 +64,8 @@ func Load(chart string) (*Chart, error) {
 	return c, nil
 }
 
+const OriginFile = "HelmOriginFile"
+
 // sortManifests sorts manifests into their respective categories, adding to the Chart.
 func sortManifests(chart *Chart, manifests []*manifest.Manifest) {
 	for _, m := range manifests {
@@ -78,17 +80,37 @@ func sortManifests(chart *Chart, manifests []*manifest.Manifest) {
 		default:
 			log.Warn("No support for kind %s. Ignoring.", m.Kind)
 		case "Pod":
-			chart.Pods = append(chart.Pods, vo.(*v1.Pod))
+			o := vo.(*v1.Pod)
+			o.Annotations = setOriginFile(o.Annotations, m.Source)
+			chart.Pods = append(chart.Pods, o)
 		case "ReplicationController":
-			chart.ReplicationControllers = append(chart.ReplicationControllers, vo.(*v1.ReplicationController))
+			o := vo.(*v1.ReplicationController)
+			o.Annotations = setOriginFile(o.Annotations, m.Source)
+			chart.ReplicationControllers = append(chart.ReplicationControllers, o)
 		case "Service":
-			chart.Services = append(chart.Services, vo.(*v1.Service))
+			o := vo.(*v1.Service)
+			o.Annotations = setOriginFile(o.Annotations, m.Source)
+			chart.Services = append(chart.Services, o)
 		case "Secret":
-			chart.Secrets = append(chart.Secrets, vo.(*v1.Secret))
+			o := vo.(*v1.Secret)
+			o.Annotations = setOriginFile(o.Annotations, m.Source)
+			chart.Secrets = append(chart.Secrets, o)
 		case "PersistentVolume":
-			chart.PersistentVolumes = append(chart.PersistentVolumes, vo.(*v1.PersistentVolume))
+			o := vo.(*v1.PersistentVolume)
+			o.Annotations = setOriginFile(o.Annotations, m.Source)
+			chart.PersistentVolumes = append(chart.PersistentVolumes, o)
 		case "Namespace":
-			chart.Namespaces = append(chart.Namespaces, vo.(*v1.Namespace))
+			o := vo.(*v1.Namespace)
+			o.Annotations = setOriginFile(o.Annotations, m.Source)
+			chart.Namespaces = append(chart.Namespaces, o)
 		}
 	}
+}
+
+func setOriginFile(ann map[string]string, source string) map[string]string {
+	if len(ann) == 0 {
+		return map[string]string{OriginFile: source}
+	}
+	ann[OriginFile] = source
+	return ann
 }
