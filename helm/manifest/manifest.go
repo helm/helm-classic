@@ -54,7 +54,9 @@ func Files(chartDir string) ([]string, error) {
 
 // Manifest represents a Kubernetes manifest object.
 type Manifest struct {
-	Version, Kind   string
+	Version, Kind string
+	// Filename of source, "" if no file
+	Source          string
 	VersionedObject interface{}
 }
 
@@ -84,7 +86,7 @@ func Parse(filename string) ([]*Manifest, error) {
 			return ms, err
 		}
 
-		m := &Manifest{Version: version, Kind: kind, VersionedObject: vo}
+		m := &Manifest{Version: version, Kind: kind, VersionedObject: vo, Source: filename}
 		ms = append(ms, m)
 	}
 	return ms, nil

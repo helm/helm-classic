@@ -12,6 +12,9 @@ install: build
 test:
 	go test -v ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model
 
+quicktest:
+	go test ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model
+
 clean:
 	rm -f ./helm/helm.test
 	rm -f ./helm.bin
