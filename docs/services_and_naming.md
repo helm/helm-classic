@@ -29,7 +29,7 @@ kind: Service
 metadata:
   name: memcached-provider
   labels:
-    - name: memached-provider
+    - name: memcached-provider
     - from: helm
     - heritage: deis
 spec:
@@ -45,7 +45,7 @@ Service discovery works like this:
 
 - Anything that needs Memcached support can look for
   `MEMCACHED_PROVIDER_SERVICE_HOST` and
-  `MEMCACHED_PROVIER_SERVIER_PORT_CLIENT`.
+  `MEMCACHED_PROVIDER_SERVICE_PORT_CLIENT`.
 - Anything that _implements_ a memcached service needs to simply add a
   label to its `metadata: labels` section: `fulfills:
   memcached-provider`.
