@@ -1,5 +1,8 @@
 language: go
 
+env:
+  - GLIDE_DIR="/home/travis/gopath/src/github.com/Masterminds/glide" GO15VENDOREXPERIMENT=1
+
 branches:
   only:
     - master
@@ -8,9 +11,10 @@ go:
   - 1.5.1
 
 install:
-  - wget https://github.com/Masterminds/glide/releases/download/0.6.1/glide-linux-amd64.zip -O /tmp/glide.zip
-  - unzip /tmp/glide.zip linux-amd64/glide -d /tmp
-  - chmod +x /tmp/linux-amd64/glide
-  - export PATH=$PATH:/tmp/linux-amd64
+  - git clone https://github.com/Masterminds/glide.git "$GLIDE_DIR"
+  - pushd "$GLIDE_DIR"
+  - make bootstrap build
+  - popd
+  - export PATH="$PATH:$GLIDE_DIR"
 
 script: make bootstrap build test-charts
