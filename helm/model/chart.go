@@ -30,6 +30,8 @@ type Chart struct {
 	Namespaces             []*v1.Namespace
 	Secrets                []*v1.Secret
 	PersistentVolumes      []*v1.PersistentVolume
+
+	Manifests []*manifest.Manifest
 }
 
 // Load loads an entire chart.
@@ -59,10 +61,33 @@ func Load(chart string) (*Chart, error) {
 		return c, err
 	}
 
+	c.Manifests = ms
 	sortManifests(c, ms)
 
 	return c, nil
 }
+
+// Save writes an entire chart to disk.
+//
+// It will overwrite any files that it finds in the way.
+//
+// This writes a `Chart.yaml`, and then writes manifests into a `manifests`
+// directory, creating the directory if it needs to.
+/*
+func (c *Chart) Save(dir string) error {
+	if fi, err := os.Stat(dir); err != nil {
+		return fmt.Errorf("Could not save Chart.yaml: %s", err)
+	} else if !fi.IsDir() {
+		return fmt.Errorf("Not a directory: %s", dir)
+	}
+
+	if err := c.Chartfile.Save(filepath.Join(dir, "Chart.yaml")); err != nil {
+		return err
+	}
+
+	mdir := filepath.Join(dir, "manifests")
+}
+*/
 
 const OriginFile = "HelmOriginFile"
 

@@ -4,6 +4,7 @@ package manifest
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -13,6 +14,7 @@ import (
 	"k8s.io/kubernetes/pkg/api"
 	_ "k8s.io/kubernetes/pkg/api/v1"
 	_ "k8s.io/kubernetes/pkg/apis/experimental"
+	"k8s.io/kubernetes/pkg/runtime"
 	"k8s.io/kubernetes/pkg/util/yaml"
 )
 
@@ -187,4 +189,13 @@ func SplitYAMLDocument(data []byte, atEOF bool) (advance int, token []byte, err 
 	}
 	// Request more data.
 	return 0, nil, nil
+}
+
+// Marshal data through the Kubernetes versioned JSON marshal.
+func MarshalJSON(obj interface{}, version string) ([]byte, error) {
+	o, ok := obj.(runtime.Object)
+	if !ok {
+		return nil, errors.New("Not an Object")
+	}
+	return api.Scheme.EncodeToVersion(o, version)
 }
