@@ -17,4 +17,4 @@ install:
   - popd
   - export PATH="$PATH:$GLIDE_DIR"
 
-script: make bootstrap build test-charts
+script: make bootstrap build test test-charts
