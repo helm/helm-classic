@@ -69,7 +69,20 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "namespace, n",
-					Value: "default",
+					Value: "",
+					Usage: "The Kubernetes destination namespace.",
+				},
+			},
+		},
+		{
+			Name:      "uninstall",
+			Usage:     "Uninstall a named package from Kubernetes.",
+			ArgsUsage: "[chart-name...]",
+			Action:    uninstall,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "namespace, n",
+					Value: "",
 					Usage: "The Kubernetes destination namespace.",
 				},
 			},
@@ -161,6 +174,12 @@ func build(c *cli.Context) {
 func install(c *cli.Context) {
 	for _, chart := range c.Args() {
 		action.Install(chart, home(c), c.String("namespace"))
+	}
+}
+
+func uninstall(c *cli.Context) {
+	for _, chart := range c.Args() {
+		action.Uninstall(chart, home(c), c.String("namespace"))
 	}
 }
 
