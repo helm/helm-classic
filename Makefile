@@ -17,7 +17,7 @@ clean:
 	rm -f ./helm
 
 bootstrap:
-	glide up
+	glide -y glide-full.yaml up
 
 bootstrap-dist:
 	go get -u github.com/mitchellh/gox
