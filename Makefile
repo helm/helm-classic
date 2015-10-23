@@ -10,11 +10,14 @@ install: build
 	install -m 755 ./helm.bin ${DESTDIR}/usr/local/bin/helm
 
 test:
+	go test -v ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model
+
+quicktest:
 	go test ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model
 
 clean:
 	rm -f ./helm/helm.test
-	rm -f ./helm
+	rm -f ./helm.bin
 
 bootstrap:
 	glide -y glide-full.yaml up

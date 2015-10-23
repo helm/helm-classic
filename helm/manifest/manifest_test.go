@@ -33,3 +33,24 @@ func TestParse(t *testing.T) {
 	}
 
 }
+
+func TestParseDir(t *testing.T) {
+	manifests, err := ParseDir(testchart)
+	if err != nil {
+		t.Errorf("Failed to parse dir %s: %s", testchart, err)
+	}
+
+	target, _ := Files(testchart)
+	if len(manifests) < len(target) {
+		t.Errorf("Expected at least %d manifests. Got %d", len(target), len(manifests))
+	}
+
+	for _, man := range manifests {
+		if man.Source == "" {
+			t.Error("No file set in manifest.Source.")
+		}
+		if man.Kind == "" {
+			t.Error("Expected kind")
+		}
+	}
+}

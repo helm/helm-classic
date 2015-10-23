@@ -8,5 +8,5 @@ details:
   This package provides a sampling of all of the different manifest types.
   It can be used to test ordering and other properties of a chart.
 dependencies:
-  - Name: bogodep
-    Version: ~10.21
+  - name: bogodep
+    version: ~10.21

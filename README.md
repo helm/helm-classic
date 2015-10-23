@@ -18,10 +18,11 @@ A Chart is a unit of Kubernetes manifests that reflect best practices as determi
 
 ## Install Helm
 
+To just use Helm, you can run the following:
+
 ```console
 $ go get github.com/deis/helm/...
 ```
-
 ## Using Helm
 
 To use Helm you'll need a `kubectl` client installed and configured to speak with a running Kubernetes cluster.
@@ -74,6 +75,10 @@ Helm charts are developed as part of a community effort.  To contribute:
 3. `git checkout -b foo`
 4. `git add $HELM_WORKDIR/charts/foo && git commit && git push`
 5. Submit a Pull Request
+
+For helm Go developers, we suggest installing
+[glide](https://github.com/Masterminds/glde) and then running `make
+build` or `make install`.
 
 ## License
 
