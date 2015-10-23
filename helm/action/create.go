@@ -3,7 +3,6 @@ package action
 import (
 	"os"
 	"path"
-	"path/filepath"
 )
 
 import (
@@ -16,7 +15,8 @@ import (
 // - homeDir is the helm home directory for the user
 func Create(chartName, homeDir string) {
 
-	skeletonDir, _ := filepath.Abs("skel")
+	skeletonDir := path.Join(homeDir, CachePath, "skel")
+
 	if fi, err := os.Stat(skeletonDir); err != nil {
 		log.Die("Could not find %s: %s", skeletonDir, err)
 	} else if !fi.IsDir() {
