@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	pretty "github.com/deis/pkg/prettyprint"
 )
 
 var Stdout io.Writer = os.Stdout
@@ -32,22 +34,26 @@ func CleanExit(format string, v ...interface{}) {
 
 // Err prints an error message. It does not cause an exit.
 func Err(format string, v ...interface{}) {
+	fmt.Fprint(Stderr, pretty.Colorize("{{.Red}}[ERROR]{{.Default}} "))
 	fmt.Fprintf(Stderr, appendNewLine(format), v...)
 }
 
 // Info prints a message.
 func Info(format string, v ...interface{}) {
+	fmt.Fprint(Stderr, pretty.Colorize("{{.Green}}--->{{.Default}} "))
 	fmt.Fprintf(Stderr, appendNewLine(format), v...)
 }
 
 func Debug(msg string, v ...interface{}) {
 	if IsDebugging {
-		Info(msg, v...)
+		fmt.Fprint(Stderr, pretty.Colorize("{{.Cyan}}[DEBUG]{{.Default}} "))
+		Msg(msg, v...)
 	}
 }
 
 func Warn(format string, v ...interface{}) {
-	Info(format, v...)
+	fmt.Fprint(Stderr, pretty.Colorize("{{.Yellow}}[WARN]{{.Default}} "))
+	Msg(format, v...)
 }
 
 func appendNewLine(format string) string {
