@@ -77,7 +77,7 @@ Helm charts are developed as part of a community effort.  To contribute:
 5. Submit a Pull Request
 
 For helm Go developers, we suggest installing
-[glide](https://github.com/Masterminds/glde) and then running `make
+[glide](https://github.com/Masterminds/glide) and then running `make
 build` or `make install`.
 
 ## License
