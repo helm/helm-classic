@@ -71,10 +71,11 @@ $ helm install etcd
 Helm charts are developed as part of a community effort.  To contribute:
 
 1. Fork Helm
-2. `helm create foo && helm edit foo`
-3. `git checkout -b foo`
-4. `git add $HELM_WORKDIR/charts/foo && git commit && git push`
-5. Submit a Pull Request
+2. `helm create mychart && helm edit mychart`
+3. `helm publish mychart`
+4. `cd $HELM_CACHEDIR && git checkout -b mychart`
+5. `git add charts/mychart && git commit && git push`
+6. Submit a Pull Request
 
 For helm Go developers, we suggest installing
 [glide](https://github.com/Masterminds/glde) and then running `make
