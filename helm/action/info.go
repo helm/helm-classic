@@ -12,7 +12,7 @@ func Info(chart, homedir string) {
 
 	log.Info("%s", chartPath)
 
-	chartModel, err := model.Load(chartPath)
+	chartModel, err := model.LoadChartfile(chartPath)
 	if err != nil {
 		log.Die("%s - UNKNOWN", chart)
 	}
