@@ -18,11 +18,15 @@ A Chart is a unit of Kubernetes manifests that reflect best practices as determi
 
 ## Install Helm
 
-To just use Helm, you can run the following:
+To install helm for daily use, you will need the Go 1.5 runtime. Once
+that is installed and `$GOPATH` is set, you can run the following:
 
 ```console
 $ go get github.com/deis/helm/...
 ```
+
+This will install `helm` into `$GOPATH/bin/helm`.
+
 ## Using Helm
 
 To use Helm you'll need a `kubectl` client installed and configured to speak with a running Kubernetes cluster.
