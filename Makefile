@@ -14,7 +14,7 @@ test:
 
 clean:
 	rm -f ./helm/helm.test
-	rm -f ./helm
+	rm -f ./helm.bin
 
 bootstrap:
 	glide -y glide-full.yaml up
