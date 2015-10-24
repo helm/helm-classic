@@ -4,7 +4,7 @@ This document outlines a proposed architecture for a Helm UI MVP.
 
 Architectural design goals:
 
-- Outline a definited set of feature requirements that will ship with the MVP.
+- Outline a defined set of feature requirements that will ship with the MVP.
 - Publish an agreed upon UI tech stack that is appropriate for the requirements of the MVP effort, ongoing feature development, and maintenance.
 - Ensure consistency between UI consumption and API(s) delivery.
 
