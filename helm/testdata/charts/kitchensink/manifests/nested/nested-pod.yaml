@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nested
+spec:
+  containers:
+  - name: nested
+    image: alpine:3.2
+    command:
+      - "sleep"
+      - "90000"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nested2
+spec:
+  containers:
+  - name: nested2
+    image: alpine:3.2
+    command:
+      - "sleep"
+      - "90000"

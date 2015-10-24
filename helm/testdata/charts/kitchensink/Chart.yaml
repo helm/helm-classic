@@ -1,0 +1,12 @@
+name: kitchensink
+home: http://github.com/deis/helm
+version: 0.0.1
+description: All the things, all semantically, none working
+maintainers:
+  - Helm <helm@deis.com>
+details:
+  This package provides a sampling of all of the different manifest types.
+  It can be used to test ordering and other properties of a chart.
+dependencies:
+  - name: bogodep
+    version: ~10.21

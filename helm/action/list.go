@@ -3,44 +3,23 @@ package action
 import (
 	"path/filepath"
 
+	"github.com/deis/helm/helm/log"
 	"github.com/deis/helm/helm/model"
 )
 
 // List lists all of the local charts.
-func List(homedir, ns string) {
-	if ns == "" {
-		ns = DefaultNS
-	}
-
-	// List all namespaces
-	if ns == "*" {
-		md := filepath.Join(homedir, ManifestsPath, ns)
-		nss, err := filepath.Glob(md)
-		if err != nil {
-			Warn("Could not find any namespaces in %q: %s", md, err)
-		}
-		for _, n := range nss {
-			dir := filepath.Base(n)
-			Info("%s:", dir)
-			listNS(homedir, dir)
-		}
-		return
-	}
-	listNS(homedir, ns)
-}
-
-func listNS(homedir, ns string) {
-	md := filepath.Join(homedir, ManifestsPath, ns, "*")
+func List(homedir string) {
+	md := filepath.Join(homedir, WorkspaceChartPath, "*")
 	charts, err := filepath.Glob(md)
 	if err != nil {
-		Warn("Could not find any charts in %q: %s", md, err)
+		log.Warn("Could not find any charts in %q: %s", md, err)
 	}
 	for _, c := range charts {
 		cname := filepath.Base(c)
-		if ch, err := model.Load(filepath.Join(c, "Chart.yaml")); err == nil {
-			Info("\t%s (%s %s) - %s", cname, ch.Name, ch.Version, ch.Description)
+		if ch, err := model.LoadChartfile(filepath.Join(c, "Chart.yaml")); err == nil {
+			log.Info("\t%s (%s %s) - %s", cname, ch.Name, ch.Version, ch.Description)
 			continue
 		}
-		Info("\t%s (unknown)", cname)
+		log.Info("\t%s (unknown)", cname)
 	}
 }

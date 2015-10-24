@@ -1,6 +1,6 @@
-VERSION := $(shell git describe --tags)
+VERSION := $(shell git describe --tags 2>/dev/null)
 DIST_DIRS := find * -type d -exec
-GO15VENDOREXPERIMENT=1
+export GO15VENDOREXPERIMENT=1
 
 build:
 	go build -o helm.bin -ldflags "-X main.version=${VERSION}" helm/helm.go
@@ -10,14 +10,17 @@ install: build
 	install -m 755 ./helm.bin ${DESTDIR}/usr/local/bin/helm
 
 test:
-	go test . ./cmd ./gb
+	go test -v ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model
+
+quicktest:
+	go test ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model
 
 clean:
 	rm -f ./helm/helm.test
-	rm -f ./helm
+	rm -f ./helm.bin
 
 bootstrap:
-	glide up
+	glide -y glide-full.yaml up
 
 bootstrap-dist:
 	go get -u github.com/mitchellh/gox
@@ -36,5 +39,7 @@ dist: build-all
 	$(DIST_DIRS) zip -r helm-{}.zip {} \; && \
 	cd ..
 
+test-charts:
+	@./test/test-charts $(TEST_CHARTS)
 
-.PHONY: build test install clean bootstrap bootstrap-dist build-all dist
+.PHONY: build test install clean bootstrap bootstrap-dist build-all dist test-charts

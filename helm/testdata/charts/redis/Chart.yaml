@@ -1,0 +1,8 @@
+name: redis-standalone
+home: http://github.com/deis/redis
+version: 0.0.1
+description: Simple standalone pod running Redis.
+maintainers:
+  - Gabe Monroy <gabe@deis.com>
+details:
+  This package provides a basic, standalone instance of Redis deployed as a single pod.
