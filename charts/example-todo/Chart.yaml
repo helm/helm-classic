@@ -1,0 +1,8 @@
+name: example-todo
+home: http://github.com/gabrtv/example-todo
+version: 0.0.1
+description: This is an example todo app backed by Redis.
+maintainers:
+  - Gabe Monroy <gabe@deis.com>
+details:
+  This package provides an example todo web service backed by Redis.
