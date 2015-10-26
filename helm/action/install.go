@@ -37,13 +37,13 @@ func Install(chart, home, namespace string) {
 		log.Die("Failed to load chart: %s", err)
 	}
 
-	if err := uploadManifests(c); err != nil {
+	if err := uploadManifests(c, namespace); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
 }
 
 // uploadManifests sends manifests to Kubectl in a particular order.
-func uploadManifests(c *model.Chart) error {
+func uploadManifests(c *model.Chart, namespace string) error {
 	// The ordering is significant.
 	// TODO: Right now, we force version v1. We could probably make this more
 	// flexible if there is a use case.
@@ -52,7 +52,7 @@ func uploadManifests(c *model.Chart) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b); err != nil {
+		if err := kubectlCreate(b, namespace); err != nil {
 			return err
 		}
 	}
@@ -61,7 +61,7 @@ func uploadManifests(c *model.Chart) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b); err != nil {
+		if err := kubectlCreate(b, namespace); err != nil {
 			return err
 		}
 	}
@@ -70,7 +70,7 @@ func uploadManifests(c *model.Chart) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b); err != nil {
+		if err := kubectlCreate(b, namespace); err != nil {
 			return err
 		}
 	}
@@ -79,7 +79,7 @@ func uploadManifests(c *model.Chart) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b); err != nil {
+		if err := kubectlCreate(b, namespace); err != nil {
 			return err
 		}
 	}
@@ -88,7 +88,7 @@ func uploadManifests(c *model.Chart) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b); err != nil {
+		if err := kubectlCreate(b, namespace); err != nil {
 			return err
 		}
 	}
@@ -97,7 +97,7 @@ func uploadManifests(c *model.Chart) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b); err != nil {
+		if err := kubectlCreate(b, namespace); err != nil {
 			return err
 		}
 	}
@@ -118,8 +118,13 @@ func chartInstalled(chart, home string) bool {
 }
 
 // kubectlCreate calls `kubectl create` and sends the data via Stdin.
-func kubectlCreate(data []byte) error {
+func kubectlCreate(data []byte, ns string) error {
 	a := []string{"create", "-f", "-"}
+
+	if ns != "" {
+		a = append([]string{"--namespace=" + ns}, a...)
+	}
+
 	c := exec.Command("kubectl", a...)
 	in, err := c.StdinPipe()
 	if err != nil {
