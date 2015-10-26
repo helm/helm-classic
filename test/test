@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+export ROOT_DIR="$(cd "$(dirname $(dirname $0))"; pwd)"
+cd "${ROOT_DIR}"
+
+if [ ! -z "${1}" ]; then
+  TEST_CHARTS="${@}"
+fi
+
+source test/config.sh
+source test/lib.sh
+
+trap gke-destroy EXIT ERR
+
+run-test-plan
