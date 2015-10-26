@@ -71,16 +71,18 @@ func ensureRepo(repo, home string) *vcs.GitRepo {
 
 // ensureHome ensures that a HELM_HOME exists.
 func ensureHome(home string) {
-	if fi, err := os.Stat(home); err != nil {
-		log.Info("Creating %s", home)
-		for _, p := range helmpaths {
-			pp := filepath.Join(home, p)
-			if err := os.MkdirAll(pp, 0755); err != nil {
-				log.Die("Could not create %q: %s", pp, err)
+
+	must := []string{home, filepath.Join(home, CachePath), filepath.Join(home, WorkspacePath)}
+
+	for _, p := range must {
+		if fi, err := os.Stat(p); err != nil {
+			log.Info("Creating %s", p)
+			if err := os.MkdirAll(p, 0755); err != nil {
+				log.Die("Could not create %q: %s", p, err)
 			}
+		} else if !fi.IsDir() {
+			log.Die("%s must be a directory.", home)
 		}
-	} else if !fi.IsDir() {
-		log.Die("%s must be a directory.", home)
 	}
 
 	if err := os.Chdir(home); err != nil {
