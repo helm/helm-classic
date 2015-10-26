@@ -126,6 +126,7 @@ The command line will support (at least) the following commands:
 - `uninstall CHART`: Uninstall the chart via the k8s server configured for the current user via `kubectl`.
 - `create CHART`: Create a new chart for local editing.
 - `edit CHART`: Edit a local chart with your interactive editor.
+- `publish CHART`: Publish a chart from your workspace to your repo checkout
 - `info CHART`: Print information about a Chart
 - `update`: Refresh local metadata about available Charts. This will re-pull the repo.
 - `help`: Print help.

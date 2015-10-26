@@ -100,6 +100,18 @@ func main() {
 			Action:    edit,
 		},
 		{
+			Name:      "publish",
+			Usage:     "Publish a named chart to the git checkout",
+			ArgsUsage: "[chart-name]",
+			Action:    publish,
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "force, f",
+					Usage: "Force publish over an existing chart",
+				},
+			},
+		},
+		{
 			Name:      "list",
 			Usage:     "List all fetched packages",
 			ArgsUsage: "",
@@ -123,6 +135,11 @@ func main() {
 			ArgsUsage: "",
 			Action:    target,
 		},
+	}
+
+	app.Before = func(c *cli.Context) error {
+		log.IsDebugging = c.Bool("debug")
+		return nil
 	}
 
 	app.Run(os.Args)
@@ -189,6 +206,10 @@ func create(c *cli.Context) {
 func edit(c *cli.Context) {
 	minArgs(c, 1, "edit")
 	action.Edit(c.Args()[0], home(c))
+}
+
+func publish(c *cli.Context) {
+	action.Publish(c.Args()[0], home(c), c.Bool("force"))
 }
 
 func search(c *cli.Context) {
