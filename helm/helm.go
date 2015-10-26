@@ -137,6 +137,11 @@ func main() {
 		},
 	}
 
+	app.Before = func(c *cli.Context) error {
+		log.IsDebugging = c.Bool("debug")
+		return nil
+	}
+
 	app.Run(os.Args)
 }
 

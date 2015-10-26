@@ -8,8 +8,7 @@ import (
 var Stdout = os.Stdout
 var Stderr = os.Stderr
 
-// TODO: Wire this to the global --debug flag and then set this to false.
-var IsDebugging = true
+var IsDebugging = false
 
 // Msg passes through the formatter, but otherwise prints exactly as-is.
 //
