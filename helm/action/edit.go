@@ -43,9 +43,11 @@ func Edit(chartName, homeDir string) {
 	if err != nil {
 		log.Die("could not open tempfile: %v", err)
 	}
-	defer os.Remove(f.Name())
 	f.Write(contents.Bytes())
 	f.Close()
+
+	// NOTE: removing the tempfile causes issues with editors
+	// that fork, so we let the OS remove them later
 
 	openEditor(f.Name())
 	saveChart(chartDir, f.Name())
@@ -125,12 +127,11 @@ func openEditor(filename string) {
 		log.Die("must set shell $EDITOR")
 	}
 
-	cmd = exec.Command(editor, filename)
+	args := []string{filename}
+	cmd = exec.Command(editor, args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-
-	// TODO: figure out why editor always exits non-zero
 	cmd.Run()
 }
 
