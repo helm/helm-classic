@@ -10,10 +10,10 @@ install: build
 	install -m 755 ./helm.bin ${DESTDIR}/usr/local/bin/helm
 
 test:
-	go test -v ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model
+	go test -v ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model ./helm/dependency
 
 quicktest:
-	go test ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model
+	go test ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model ./helm/dependency
 
 clean:
 	rm -f ./helm/helm.test

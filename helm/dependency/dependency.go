@@ -9,7 +9,7 @@ import (
 	"github.com/deis/helm/helm/model"
 )
 
-// ResolveDependencies takes a chart and a location and checks whether the chart's dependencies are satisfied.
+// Resolve takes a chart and a location and checks whether the chart's dependencies are satisfied.
 //
 // The `installdir` is the location where installed charts are located. Typically
 // this is in $HELM_HOME/workspace/charts.

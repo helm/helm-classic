@@ -14,6 +14,9 @@ func init() {
 }
 
 func TestInfo(t *testing.T) {
+	// Skip right now. This is covered in issue #58, and fixed in the associated
+	// PR.
+	t.Skip()
 	action.Info("alpine", HOME)
 	//TODO: assert results
 }
