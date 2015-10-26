@@ -1,0 +1,8 @@
+name: dep2
+home: http://github.com/deis/helm
+version: 1.2.9
+description: Example dependency
+maintainers:
+  - Helm <helm@deis.com>
+details:
+  This package is used for dependency testing.

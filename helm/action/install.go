@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/deis/helm/helm/dependency"
 	"github.com/deis/helm/helm/manifest"
 	"github.com/deis/helm/helm/model"
 )
@@ -25,10 +26,10 @@ import (
 // 	- Services
 // 	- Pods
 // 	- ReplicationControllers
-func Install(chart, home, namespace string) {
+func Install(chart, home, namespace string, force bool) {
 	if !chartInstalled(chart, home) {
 		log.Info("No installed chart named %q. Installing now.", chart)
-		Fetch(chart, chart, home)
+		fetch(chart, chart, home)
 	}
 
 	cd := filepath.Join(home, WorkspaceChartPath, chart)
@@ -37,9 +38,27 @@ func Install(chart, home, namespace string) {
 		log.Die("Failed to load chart: %s", err)
 	}
 
+	// Give user the option to bale if dependencies are not satisfied.
+	nope, err := dependency.Resolve(c.Chartfile, filepath.Join(home, WorkspaceChartPath))
+	if err != nil {
+		log.Warn("Failed to check dependencies: %s", err)
+		if !force {
+			log.Die("Re-run with --force to install anyway.")
+		}
+	} else if len(nope) > 0 {
+		log.Warn("Unsatisfied dependencies:")
+		for _, d := range nope {
+			log.Msg("\t%s %s", d.Name, d.Version)
+		}
+		if !force {
+			log.Die("Stopping install. Re-run with --force to install anyway.")
+		}
+	}
+
 	if err := uploadManifests(c, namespace); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
+	PrintREADME(chart, home)
 }
 
 // uploadManifests sends manifests to Kubectl in a particular order.
