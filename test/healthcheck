@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+source "${TEST_DIR}/logging.sh"
+
+jq_string=".items[] | select(.metadata.name == \"${1}\") | .status.phase"
+
+HEALTHCHECK_TIMEOUT_SEC="${HEALTHCHECK_TIMEOUT_SEC:-300}"
+WAIT_TIME=1
+until kubectl get pods -o json | jq -r "${jq_string}" | grep -q "Running" &>/dev/null; do
+   (( WAIT_TIME += 1 ))
+   if [ ${WAIT_TIME} -gt ${HEALTHCHECK_TIMEOUT_SEC} ]; then
+    exit 1
+  fi
+done
+
+

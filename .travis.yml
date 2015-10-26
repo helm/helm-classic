@@ -1,20 +1,20 @@
 language: go
 
 env:
-  - GLIDE_DIR="/home/travis/gopath/src/github.com/Masterminds/glide" GO15VENDOREXPERIMENT=1
-
+- GLIDE_DIR="/home/travis/gopath/src/github.com/Masterminds/glide" GO15VENDOREXPERIMENT=1
 branches:
   only:
-    - master
-
+  - master
 go:
-  - 1.5.1
-
+- 1.5.1
+before_install:
+- openssl aes-256-cbc -K $encrypted_fe74b4a08363_key -iv $encrypted_fe74b4a08363_iv
+  -in .gcloud-helm-test-credentials.json.enc -out .gcloud-helm-test-credentials.json
+  -d
 install:
-  - git clone https://github.com/Masterminds/glide.git "$GLIDE_DIR"
-  - pushd "$GLIDE_DIR"
-  - make bootstrap build
-  - popd
-  - export PATH="$PATH:$GLIDE_DIR"
-
+- git clone https://github.com/Masterminds/glide.git "$GLIDE_DIR"
+- pushd "$GLIDE_DIR"
+- make bootstrap build
+- popd
+- export PATH="$PATH:$GLIDE_DIR"
 script: make bootstrap build test test-charts
