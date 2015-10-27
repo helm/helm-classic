@@ -5,7 +5,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/deis/helm/helm/dependency"
 	"github.com/deis/helm/helm/log"
+	"github.com/deis/helm/helm/model"
 )
 
 // Fetch gets a chart from the source repo and copies to the workdir.
@@ -19,12 +21,36 @@ func Fetch(chart, lname, homedir string) {
 	if lname == "" {
 		lname = chart
 	}
+
+	fetch(chart, lname, homedir)
+
+	cfile, err := model.LoadChartfile(filepath.Join(homedir, WorkspaceChartPath, chart, "Chart.yaml"))
+	if err != nil {
+		log.Die("Source is not a valid chart. Missing Chart.yaml: %s", err)
+	}
+
+	deps, err := dependency.Resolve(cfile, filepath.Join(homedir, WorkspaceChartPath))
+	if err != nil {
+		log.Warn("Could not check dependencies: %s", err)
+		return
+	}
+
+	if len(deps) > 0 {
+		log.Warn("Unsatisfied dependencies:")
+		for _, d := range deps {
+			log.Msg("\t%s %s", d.Name, d.Version)
+		}
+	}
+
+	PrintREADME(lname, homedir)
+}
+
+func fetch(chart, lname, homedir string) {
 	src := filepath.Join(homedir, CacheChartPath, chart)
 	dest := filepath.Join(homedir, WorkspaceChartPath, lname)
 
 	if fi, err := os.Stat(src); err != nil {
 	} else if !fi.IsDir() {
-		log.Die("Could not find %s: %s", chart, err)
 		log.Die("Malformed chart %s: Chart must be in a directory.", chart)
 	}
 
@@ -34,15 +60,19 @@ func Fetch(chart, lname, homedir string) {
 
 	log.Info("Fetching %s to %s", src, dest)
 	if err := copyDir(src, dest); err != nil {
+		log.Die("Failed copying %s to %s", src, dest)
 	}
 }
 
 // Copy a directory and its subdirectories.
 func copyDir(src, dst string) error {
 
+	var failure error
+
 	walker := func(fname string, fi os.FileInfo, e error) error {
 		if e != nil {
 			log.Warn("Encounter error walking %q: %s", fname, e)
+			failure = e
 			return nil
 		}
 
@@ -58,6 +88,7 @@ func copyDir(src, dst string) error {
 		if fi.IsDir() {
 			if err := os.MkdirAll(df, fi.Mode()); err != nil {
 				log.Warn("Could not create %q: %s", df, err)
+				failure = err
 			}
 			return nil
 		}
@@ -87,5 +118,6 @@ func copyDir(src, dst string) error {
 
 		return nil
 	}
-	return filepath.Walk(src, walker)
+	filepath.Walk(src, walker)
+	return failure
 }

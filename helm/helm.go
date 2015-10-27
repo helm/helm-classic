@@ -72,6 +72,10 @@ func main() {
 					Value: "",
 					Usage: "The Kubernetes destination namespace.",
 				},
+				cli.BoolFlag{
+					Name:  "force, aye-aye",
+					Usage: "Perform install even if dependencies are unsatisfied.",
+				},
 			},
 		},
 		{
@@ -186,8 +190,10 @@ func build(c *cli.Context) {
 
 func install(c *cli.Context) {
 	minArgs(c, 1, "install")
+	h := home(c)
+	force := c.Bool("force")
 	for _, chart := range c.Args() {
-		action.Install(chart, home(c), c.String("namespace"))
+		action.Install(chart, h, c.String("namespace"), force)
 	}
 }
 
