@@ -1,6 +1,7 @@
 package action
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -26,7 +27,7 @@ import (
 // 	- Services
 // 	- Pods
 // 	- ReplicationControllers
-func Install(chartName, home, namespace string, force bool) {
+func Install(chartName, home, namespace string, force bool, dryRun bool) {
 	if !chartFetched(chartName, home) {
 		log.Info("No chart named %q in your workspace. Fetching now.", chartName)
 		fetch(chartName, chartName, home)
@@ -55,8 +56,12 @@ func Install(chartName, home, namespace string, force bool) {
 		}
 	}
 
-	log.Info("Running `kubectl create -f` ...")
-	if err := uploadManifests(c, namespace); err != nil {
+	msg := "Running `kubectl create -f` ..."
+	if dryRun {
+		msg = "Performing a dry run of `kubectl create -f` ..."
+	}
+	log.Info(msg)
+	if err := uploadManifests(c, namespace, dryRun); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
 	log.Info("Done")
@@ -64,7 +69,7 @@ func Install(chartName, home, namespace string, force bool) {
 	PrintREADME(chartName, home)
 }
 
-func AltInstall(chartName, cachedir, home, namespace string, force bool) {
+func AltInstall(chartName, cachedir, home, namespace string, force bool, dryRun bool) {
 	// Make sure there is a chart in the cachedir.
 	if _, err := os.Stat(filepath.Join(cachedir, "Chart.yaml")); err != nil {
 		log.Die("Expected a Chart.yaml in %s: %s", cachedir, err)
@@ -106,13 +111,18 @@ func AltInstall(chartName, cachedir, home, namespace string, force bool) {
 		}
 	}
 
-	if err := uploadManifests(c, namespace); err != nil {
+	msg := "Running `kubectl create -f` ..."
+	if dryRun {
+		msg = "Performing a dry run of `kubectl create -f` ..."
+	}
+	log.Info(msg)
+	if err := uploadManifests(c, namespace, dryRun); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
 }
 
 // uploadManifests sends manifests to Kubectl in a particular order.
-func uploadManifests(c *chart.Chart, namespace string) error {
+func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
 	// The ordering is significant.
 	// TODO: Right now, we force version v1. We could probably make this more
 	// flexible if there is a use case.
@@ -121,7 +131,7 @@ func uploadManifests(c *chart.Chart, namespace string) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace); err != nil {
+		if err := kubectlCreate(b, namespace, dryRun); err != nil {
 			return err
 		}
 	}
@@ -130,7 +140,7 @@ func uploadManifests(c *chart.Chart, namespace string) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace); err != nil {
+		if err := kubectlCreate(b, namespace, dryRun); err != nil {
 			return err
 		}
 	}
@@ -139,7 +149,7 @@ func uploadManifests(c *chart.Chart, namespace string) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace); err != nil {
+		if err := kubectlCreate(b, namespace, dryRun); err != nil {
 			return err
 		}
 	}
@@ -148,7 +158,7 @@ func uploadManifests(c *chart.Chart, namespace string) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace); err != nil {
+		if err := kubectlCreate(b, namespace, dryRun); err != nil {
 			return err
 		}
 	}
@@ -157,7 +167,7 @@ func uploadManifests(c *chart.Chart, namespace string) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace); err != nil {
+		if err := kubectlCreate(b, namespace, dryRun); err != nil {
 			return err
 		}
 	}
@@ -166,7 +176,7 @@ func uploadManifests(c *chart.Chart, namespace string) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace); err != nil {
+		if err := kubectlCreate(b, namespace, dryRun); err != nil {
 			return err
 		}
 	}
@@ -187,11 +197,24 @@ func chartFetched(chartName, home string) bool {
 }
 
 // kubectlCreate calls `kubectl create` and sends the data via Stdin.
-func kubectlCreate(data []byte, ns string) error {
+//
+// If dryRun is set to true, then we just output the command that was
+// going to be run to os.Stdout and return nil.
+func kubectlCreate(data []byte, ns string, dryRun bool) error {
 	a := []string{"create", "-f", "-"}
 
 	if ns != "" {
 		a = append([]string{"--namespace=" + ns}, a...)
+	}
+
+	if dryRun {
+		cmd := "kubectl"
+		for _, arg := range a {
+			cmd = fmt.Sprintf("%s %s", cmd, arg)
+		}
+		cmd = fmt.Sprintf("%s < %s", cmd, data)
+		log.Info(cmd)
+		return nil
 	}
 
 	c := exec.Command("kubectl", a...)

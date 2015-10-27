@@ -142,6 +142,10 @@ chart if found. In this case, you may not specify multiple charts at once.
 					Name:  "force, aye-aye",
 					Usage: "Perform install even if dependencies are unsatisfied.",
 				},
+				cli.BoolFlag{
+					Name:  "dry-run",
+					Usage: "Fetch the chart, but only display the underlying kubectl commands.",
+				},
 			},
 		},
 		{
@@ -305,18 +309,19 @@ func install(c *cli.Context) {
 	minArgs(c, 1, "install")
 	h := home(c)
 	force := c.Bool("force")
+	dryRun := c.Bool("dry-run")
 
 	// If chart-path is specified, we do an alternative install.
 	//
 	// This version will only install one chart at a time, since the
 	// chart-path can only point to one chart.
 	if alt := c.String("chart-path"); alt != "" {
-		action.AltInstall(c.Args()[0], alt, h, c.String("namespace"), force)
+		action.AltInstall(c.Args()[0], alt, h, c.String("namespace"), force, dryRun)
 		return
 	}
 
 	for _, chart := range c.Args() {
-		action.Install(chart, h, c.String("namespace"), force)
+		action.Install(chart, h, c.String("namespace"), force, dryRun)
 	}
 }
 
