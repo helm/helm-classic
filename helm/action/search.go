@@ -1,6 +1,8 @@
 package action
 
 import (
+	"errors"
+	"fmt"
 	"path/filepath"
 
 	"github.com/deis/helm/helm/log"
@@ -9,11 +11,10 @@ import (
 
 // Search looks for packages with 'term' in their name.
 func Search(term, homedir string) {
-	term = sanitizeTerm(term)
-	sp := filepath.Join(homedir, CacheChartPath, "*"+term+"*")
-	dirs, err := filepath.Glob(sp)
+
+	dirs, err := search(term, homedir)
 	if err != nil {
-		log.Die("No results found. %s", err)
+		log.Die(err.Error())
 	}
 
 	log.Info("\n=================")
@@ -32,6 +33,26 @@ func Search(term, homedir string) {
 	log.Info("")
 }
 
+func search(term, homedir string) ([]string, error) {
+	term = sanitizeTerm(term)
+	sp := filepath.Join(homedir, CacheChartPath, term)
+	dirs, err := filepath.Glob(sp)
+	if err != nil {
+		return dirs, fmt.Errorf("No results found. %s", err)
+	} else if len(dirs) == 0 {
+		return dirs, errors.New("No results found.")
+	}
+	return dirs, nil
+}
+
 func sanitizeTerm(term string) string {
+	if term == "" {
+		term = "*"
+	}
+
+	if term != "*" {
+		term = "*" + term + "*"
+	}
+
 	return term
 }

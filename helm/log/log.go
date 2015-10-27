@@ -2,11 +2,12 @@ package log
 
 import (
 	"fmt"
+	"io"
 	"os"
 )
 
-var Stdout = os.Stdout
-var Stderr = os.Stderr
+var Stdout io.Writer = os.Stdout
+var Stderr io.Writer = os.Stderr
 
 var IsDebugging = false
 
@@ -21,6 +22,12 @@ func Msg(format string, v ...interface{}) {
 func Die(format string, v ...interface{}) {
 	Err(format, v...)
 	os.Exit(1)
+}
+
+// CleanExit prints a message and then exits with 0.
+func CleanExit(format string, v ...interface{}) {
+	Info(format, v...)
+	os.Exit(0)
 }
 
 // Err prints an error message. It does not cause an exit.

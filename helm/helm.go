@@ -219,8 +219,11 @@ func publish(c *cli.Context) {
 }
 
 func search(c *cli.Context) {
-	minArgs(c, 1, "search")
-	action.Search(c.Args()[0], home(c))
+	term := ""
+	if len(c.Args()) > 0 {
+		term = c.Args()[0]
+	}
+	action.Search(term, home(c))
 }
 
 func info(c *cli.Context) {

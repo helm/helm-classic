@@ -10,13 +10,10 @@ import (
 var HOME = ""
 
 func init() {
-	HOME, _ = filepath.Abs("../testdata/helm_home")
+	HOME, _ = filepath.Abs("../testdata/")
 }
 
 func TestInfo(t *testing.T) {
-	// Skip right now. This is covered in issue #58, and fixed in the associated
-	// PR.
-	t.Skip()
-	action.Info("alpine", HOME)
+	action.Info("kitchensink", HOME)
 	//TODO: assert results
 }
