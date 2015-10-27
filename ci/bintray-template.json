@@ -9,8 +9,8 @@
   },
   "files": [
     {
-      "includePattern": "dist/(.*)\.zip",
-      "uploadPattern": "$1\.zip"
+      "includePattern": "dist/(.*).zip",
+      "uploadPattern": "$1.zip"
     }
   ],
   "publish": true

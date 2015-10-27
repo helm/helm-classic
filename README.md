@@ -21,6 +21,13 @@ repo](https://github.com/deis/charts).
 
 ## Install Helm
 
+Grab a prebuilt binary straight off our build pipeline:
+[ ![Download](https://api.bintray.com/packages/deis/helm-ci/helm/images/download.svg) ](https://bintray.com/deis/helm-ci/helm/_latestVersion)
+
+Or grab the latest release:
+[ ![Download](https://api.bintray.com/packages/deis/helm/helm/images/download.svg) ](https://bintray.com/deis/helm/helm/_latestVersion)
+
+
 To install helm for daily use, you will need the Go 1.5 runtime. Once
 that is installed and `$GOPATH` is set, you can run the following:
 
