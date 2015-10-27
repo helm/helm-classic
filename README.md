@@ -10,6 +10,9 @@ Helm helps you bootstrap your Kubernetes cluster with **Charts** that provide re
 
 A Chart is a unit of Kubernetes manifests that reflect best practices as determined by the Helm community.  Helm's [architecture](docs/architecture.md) is heavily influenced by [Homebrew](https://github.com/Homebrew/homebrew).
 
+To view or contribute Charts, head over to the [charts
+repo](https://github.com/deis/charts).
+
 ## Work in Progress
 
 ![Deis Graphic](https://s3-us-west-2.amazonaws.com/get-deis/deis-graphic-small.png)
