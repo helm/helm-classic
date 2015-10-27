@@ -1,0 +1,17 @@
+{
+  "package": {
+    "name": "helm",
+    "repo": "helm-ci",
+    "subject": "deis"
+  },
+  "version": {
+    "name": "0.0.0"
+  },
+  "files": [
+    {
+      "includePattern": "dist/(.*)",
+      "uploadPattern": "$1"
+    }
+  ],
+  "publish": true
+}
