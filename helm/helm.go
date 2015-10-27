@@ -19,7 +19,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "repo",
-			Value:  "https://github.com/deis/helm",
+			Value:  "https://github.com/deis/charts",
 			Usage:  "The remote Git repository as an HTTP URL",
 			EnvVar: "HELM_REPO_URL",
 		},
