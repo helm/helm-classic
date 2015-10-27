@@ -163,13 +163,9 @@ func list(c *cli.Context) {
 
 func fetch(c *cli.Context) {
 	home := home(c)
+	minArgs(c, 1, "fetch")
 
 	a := c.Args()
-
-	if len(a) == 0 {
-		log.Die("Fetch requires at least a Chart name")
-	}
-
 	chart := a[0]
 
 	var lname string
@@ -189,22 +185,26 @@ func build(c *cli.Context) {
 }
 
 func install(c *cli.Context) {
+	minArgs(c, 1, "install")
 	for _, chart := range c.Args() {
 		action.Install(chart, home(c), c.String("namespace"))
 	}
 }
 
 func uninstall(c *cli.Context) {
+	minArgs(c, 1, "uninstall")
 	for _, chart := range c.Args() {
 		action.Uninstall(chart, home(c), c.String("namespace"))
 	}
 }
 
 func create(c *cli.Context) {
+	minArgs(c, 1, "create")
 	action.Create(c.Args()[0], home(c))
 }
 
 func edit(c *cli.Context) {
+	minArgs(c, 1, "edit")
 	action.Edit(c.Args()[0], home(c))
 }
 
@@ -213,19 +213,31 @@ func publish(c *cli.Context) {
 }
 
 func search(c *cli.Context) {
+	minArgs(c, 1, "search")
 	action.Search(c.Args()[0], home(c))
 }
 
 func info(c *cli.Context) {
-	a := c.Args()
-
-	if len(a) == 0 {
-		log.Die("Info requires at least a Chart name")
-	}
+	minArgs(c, 1, "info")
 
 	action.Info(c.Args()[0], home(c))
 }
 
 func target(c *cli.Context) {
 	action.Target()
+}
+
+// minArgs checks to see if the right number of args are passed.
+//
+// If not, it prints an error and quits.
+func minArgs(c *cli.Context, i int, name string) {
+	if len(c.Args()) < i {
+		m := "arguments"
+		if i == 1 {
+			m = "argument"
+		}
+		log.Err("Expected %d %s", i, m)
+		cli.ShowCommandHelp(c, name)
+		log.Die("")
+	}
 }
