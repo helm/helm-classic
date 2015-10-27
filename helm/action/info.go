@@ -1,6 +1,9 @@
 package action
 
 import (
+	"bufio"
+	"bytes"
+	"fmt"
 	"path/filepath"
 
 	"github.com/deis/helm/helm/log"
@@ -10,18 +13,32 @@ import (
 func Info(chart, homedir string) {
 	chartPath := filepath.Join(homedir, CacheChartPath, chart, "Chart.yaml")
 
-	log.Info("%s", chartPath)
+	chartDescription, err := describeChart(chartPath)
+	if err != nil {
+		log.Die("Could not find chart %s", chart)
+	}
+
+	log.Info("%s", chartDescription)
+}
+
+func describeChart(chartPath string) (bytes.Buffer, error) {
+
+	var output bytes.Buffer
 
 	chartModel, err := model.LoadChartfile(chartPath)
 	if err != nil {
-		log.Die("%s - UNKNOWN", chart)
+		return output, err
 	}
 
-	log.Info("Chart: %s", chartModel.Name)
-	log.Info("Description: %s", chartModel.Description)
-	log.Info("Details: %s", chartModel.Details)
-	log.Info("Version: %s", chartModel.Version)
-	log.Info("Website: %s", chartModel.Home)
-	log.Info("From: %s", chartPath)
-	log.Info("Dependencies: %s", chartModel.Dependencies)
+	w := bufio.NewWriter(&output)
+	fmt.Fprintf(w, "Chart: %s\n", chartModel.Name)
+	fmt.Fprintf(w, "Description: %s\n", chartModel.Description)
+	fmt.Fprintf(w, "Details: %s\n", chartModel.Details)
+	fmt.Fprintf(w, "Version: %s\n", chartModel.Version)
+	fmt.Fprintf(w, "Website: %s\n", chartModel.Home)
+	fmt.Fprintf(w, "From: %s\n", chartPath)
+	fmt.Fprintf(w, "Dependencies: %s\n", chartModel.Dependencies)
+	w.Flush()
+
+	return output, nil
 }
