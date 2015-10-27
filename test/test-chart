@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+source "${TEST_DIR}/logging.sh"
+
+echo
+log-info "helm update..."
+./helm.bin update
+
+echo
+log-info "helm install ${1}..."
+./helm.bin install "${1}"
+
+echo
+
+if ./test/healthcheck "${1}"; then
+  log-info "helm package ${1} OK"
+else
+  log-info "helm package ${1} NOT OK"
+  exit 1
+fi

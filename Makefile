@@ -40,6 +40,6 @@ dist: build-all
 	cd ..
 
 test-charts:
-	@./test/test-charts $(TEST_CHARTS)
+	@./test/test $(TEST_CHARTS)
 
 .PHONY: build test install clean bootstrap bootstrap-dist build-all dist test-charts
