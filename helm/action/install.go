@@ -61,6 +61,53 @@ func Install(chart, home, namespace string, force bool) {
 	PrintREADME(chart, home)
 }
 
+func AltInstall(chart, cachedir, home, namespace string, force bool) {
+	// Make sure there is a chart in the cachedir.
+	if _, err := os.Stat(filepath.Join(cachedir, "Chart.yaml")); err != nil {
+		log.Die("Expected a Chart.yaml in %s: %s", cachedir, err)
+	}
+	// Make sure there is a manifests dir.
+	if fi, err := os.Stat(filepath.Join(cachedir, "manifests")); err != nil {
+		log.Die("Expected 'manifests/' in %s: %s", cachedir, err)
+	} else if !fi.IsDir() {
+		log.Die("Expected 'manifests/' to be a directory in %s: %s", cachedir, err)
+	}
+
+	// Copy the source chart to the workspace. We ruthlessly overwrite in
+	// this case.
+	dest := filepath.Join(home, WorkspaceChartPath, chart)
+	if err := copyDir(cachedir, dest); err != nil {
+		log.Die("Failed to copy %s to %s: %s", cachedir, dest, err)
+	}
+
+	// Load the chart.
+	c, err := model.Load(dest)
+	if err != nil {
+		log.Die("Failed to load chart: %s", err)
+	}
+
+	// Give user the option to bale if dependencies are not satisfied.
+	nope, err := dependency.Resolve(c.Chartfile, filepath.Join(home, WorkspaceChartPath))
+	if err != nil {
+		log.Warn("Failed to check dependencies: %s", err)
+		if !force {
+			log.Die("Re-run with --force to install anyway.")
+		}
+	} else if len(nope) > 0 {
+		log.Warn("Unsatisfied dependencies:")
+		for _, d := range nope {
+			log.Msg("\t%s %s", d.Name, d.Version)
+		}
+		if !force {
+			log.Die("Stopping install. Re-run with --force to install anyway.")
+		}
+	}
+
+	if err := uploadManifests(c, namespace); err != nil {
+		log.Die("Failed to upload manifests: %s", err)
+	}
+}
+
 // uploadManifests sends manifests to Kubectl in a particular order.
 func uploadManifests(c *model.Chart, namespace string) error {
 	// The ordering is significant.
