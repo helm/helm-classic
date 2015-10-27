@@ -68,6 +68,11 @@ func main() {
 			Action:    install,
 			Flags: []cli.Flag{
 				cli.StringFlag{
+					Name:  "chart-path,p",
+					Value: "",
+					Usage: "An alternate path to fetch a chart. If specified, Helm will ignore the cache.",
+				},
+				cli.StringFlag{
 					Name:  "namespace, n",
 					Value: "",
 					Usage: "The Kubernetes destination namespace.",
@@ -149,10 +154,12 @@ func main() {
 	app.Run(os.Args)
 }
 
+// home runs the --home flag through os.ExpandEnv.
 func home(c *cli.Context) string {
 	return os.ExpandEnv(c.GlobalString("home"))
 }
 
+// repo runs the --repo flag through os.ExpandEnv.
 func repo(c *cli.Context) string {
 	return os.ExpandEnv(c.GlobalString("repo"))
 }
@@ -192,6 +199,16 @@ func install(c *cli.Context) {
 	minArgs(c, 1, "install")
 	h := home(c)
 	force := c.Bool("force")
+
+	// If chart-path is specified, we do an alternative install.
+	//
+	// This version will only install one chart at a time, since the
+	// chart-path can only point to one chart.
+	if alt := c.String("chart-path"); alt != "" {
+		action.AltInstall(c.Args()[0], alt, h, c.String("namespace"))
+		return
+	}
+
 	for _, chart := range c.Args() {
 		action.Install(chart, h, c.String("namespace"), force)
 	}
