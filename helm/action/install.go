@@ -61,7 +61,7 @@ func Install(chart, home, namespace string, force bool) {
 	PrintREADME(chart, home)
 }
 
-func AltInstall(chart, cachedir, home, namespace string) {
+func AltInstall(chart, cachedir, home, namespace string, force bool) {
 	// Make sure there is a chart in the cachedir.
 	if _, err := os.Stat(filepath.Join(cachedir, "Chart.yaml")); err != nil {
 		log.Die("Expected a Chart.yaml in %s: %s", cachedir, err)
@@ -84,6 +84,23 @@ func AltInstall(chart, cachedir, home, namespace string) {
 	c, err := model.Load(dest)
 	if err != nil {
 		log.Die("Failed to load chart: %s", err)
+	}
+
+	// Give user the option to bale if dependencies are not satisfied.
+	nope, err := dependency.Resolve(c.Chartfile, filepath.Join(home, WorkspaceChartPath))
+	if err != nil {
+		log.Warn("Failed to check dependencies: %s", err)
+		if !force {
+			log.Die("Re-run with --force to install anyway.")
+		}
+	} else if len(nope) > 0 {
+		log.Warn("Unsatisfied dependencies:")
+		for _, d := range nope {
+			log.Msg("\t%s %s", d.Name, d.Version)
+		}
+		if !force {
+			log.Die("Stopping install. Re-run with --force to install anyway.")
+		}
 	}
 
 	if err := uploadManifests(c, namespace); err != nil {

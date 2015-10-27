@@ -205,7 +205,7 @@ func install(c *cli.Context) {
 	// This version will only install one chart at a time, since the
 	// chart-path can only point to one chart.
 	if alt := c.String("chart-path"); alt != "" {
-		action.AltInstall(c.Args()[0], alt, h, c.String("namespace"))
+		action.AltInstall(c.Args()[0], alt, h, c.String("namespace"), force)
 		return
 	}
 
