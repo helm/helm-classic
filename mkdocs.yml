@@ -2,6 +2,6 @@ site_name: Helm Documentation
 pages:
  - Home: index.md
  - Architecture: architecture.md
- - Services and Naming: services_and_nameing.md
+ - Services and Naming: services_and_naming.md
  - UI Design: ui_design.md
 theme: readthedocs
