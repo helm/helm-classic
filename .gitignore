@@ -1,2 +1,5 @@
 vendor/
-helm.bin
+bin/
+dist/
+ci/bintray-ci.json
+
