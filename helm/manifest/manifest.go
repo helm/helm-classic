@@ -121,7 +121,7 @@ func ParseDir(chartDir string) ([]*Manifest, error) {
 		}
 
 		if filepath.Ext(fname) != ".yaml" {
-			log.Debug("Skipping %s. Don't look like no YAML file.", fname)
+			log.Debug("Skipping %s. Not a YAML file.", fname)
 			return nil
 		}
 
