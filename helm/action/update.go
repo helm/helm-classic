@@ -34,8 +34,7 @@ func gitUpdate(git *vcs.GitRepo) error {
 		return err
 	}
 
-	// TODO: We should make this pretty.
-	log.Info("Updated")
+	log.Info("Updated %s from %s", git.LocalPath(), git.Remote())
 	return nil
 }
 
