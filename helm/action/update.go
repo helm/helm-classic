@@ -20,7 +20,7 @@ func Update(repo, home string) {
 	// Basically, install if this is the first run.
 	ensurePrereqs()
 	ensureHome(home)
-	gitrepo := filepath.Join(home, CachePath)
+	gitrepo := filepath.Join(home, CacheChartPath)
 	git := ensureRepo(repo, gitrepo)
 
 	if err := gitUpdate(git); err != nil {
@@ -71,7 +71,7 @@ func ensureRepo(repo, home string) *vcs.GitRepo {
 // ensureHome ensures that a HELM_HOME exists.
 func ensureHome(home string) {
 
-	must := []string{home, filepath.Join(home, CachePath), filepath.Join(home, WorkspacePath)}
+	must := []string{home, filepath.Join(home, CachePath), filepath.Join(home, WorkspacePath), filepath.Join(home, CacheChartPath)}
 
 	for _, p := range must {
 		if fi, err := os.Stat(p); err != nil {

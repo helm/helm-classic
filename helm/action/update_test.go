@@ -25,6 +25,6 @@ func TestEnsureHome(t *testing.T) {
 }
 
 func TestEnsureRepo(t *testing.T) {
-	repo := "https://github.com/deis/helm"
-	ensureRepo(repo, filepath.Join(HOME, "cache"))
+	repo := "https://github.com/deis/charts"
+	ensureRepo(repo, filepath.Join(HOME, "cache", "charts"))
 }
