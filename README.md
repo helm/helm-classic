@@ -1,6 +1,6 @@
 # Helm - The Kubernetes Package Manager
 
-[![Build Status](https://travis-ci.org/deis/helm.svg?branch=master)](https://travis-ci.org/deis/helm)
+[![Build Status](https://travis-ci.org/deis/helm.svg?branch=master)](https://travis-ci.org/deis/helm) [![Go Report Card](http://goreportcard.com/badge/deis/helm)](http://goreportcard.com/report/deis/helm)
 
 Helm helps you bootstrap your Kubernetes cluster with **Charts** that provide ready-to-use workloads like:
 
