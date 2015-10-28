@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"regexp"
 
 	"github.com/deis/helm/helm/log"
 	"github.com/deis/helm/helm/model"
@@ -11,8 +12,7 @@ import (
 
 // Search looks for packages with 'term' in their name.
 func Search(term, homedir string) {
-
-	dirs, err := search(term, homedir)
+	charts, err := search(term, homedir)
 	if err != nil {
 		log.Die(err.Error())
 	}
@@ -21,38 +21,36 @@ func Search(term, homedir string) {
 	log.Info("Available Charts")
 	log.Info("=================\n")
 
-	for _, d := range dirs {
-		y, err := model.LoadChartfile(filepath.Join(d, "Chart.yaml"))
-		if err != nil {
-			log.Info("\t%s - UNKNOWN", filepath.Base(d))
-			continue
-		}
-		log.Info("\t%s (%s %s) - %s", filepath.Base(d), y.Name, y.Version, y.Description)
-	}
-
 	log.Info("")
+
+	for dir, chart := range charts {
+		log.Info("\t%s (%s %s) - %s", filepath.Base(dir), chart.Name, chart.Version, chart.Description)
+	}
 }
 
-func search(term, homedir string) ([]string, error) {
-	term = sanitizeTerm(term)
-	sp := filepath.Join(homedir, CacheChartPath, term)
-	dirs, err := filepath.Glob(sp)
+func search(term, homedir string) (map[string]*model.Chartfile, error) {
+	dirs, err := filepath.Glob(filepath.Join(homedir, CacheChartPath, "*"))
+
 	if err != nil {
-		return dirs, fmt.Errorf("No results found. %s", err)
+		return nil, fmt.Errorf("No results found. %s", err)
 	} else if len(dirs) == 0 {
-		return dirs, errors.New("No results found.")
-	}
-	return dirs, nil
-}
-
-func sanitizeTerm(term string) string {
-	if term == "" {
-		term = "*"
+		return nil, errors.New("No results found.")
 	}
 
-	if term != "*" {
-		term = "*" + term + "*"
+	charts := make(map[string]*model.Chartfile)
+
+	r, _ := regexp.Compile(term)
+
+	for _, dir := range dirs {
+		chart, err := model.LoadChartfile(filepath.Join(dir, "Chart.yaml"))
+
+		if err != nil {
+			log.Info("\t%s - UNKNOWN", filepath.Base(dir))
+			continue
+		} else if r.MatchString(chart.Name) || r.MatchString(chart.Description) {
+			charts[dir] = chart
+		}
 	}
 
-	return term
+	return charts, nil
 }

@@ -1,4 +1,4 @@
-name: searchtest1
+name: homeslice
 home: http://github.com/deis/redis
 version: 0.0.1
 description: Search Test

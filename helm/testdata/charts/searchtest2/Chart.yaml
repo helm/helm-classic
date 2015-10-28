@@ -1,7 +1,7 @@
 name: searchtest2
 home: http://github.com/deis/redis
 version: 0.0.1
-description: Search Test
+description: homeskillet
 maintainers:
   - Helm Team <helm@deis.com>
 details:
