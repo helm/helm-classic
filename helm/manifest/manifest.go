@@ -2,20 +2,19 @@
 package manifest
 
 import (
-	"bufio"
 	"bytes"
-	"errors"
-	"fmt"
-	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/deis/helm/helm/log"
-	"k8s.io/kubernetes/pkg/api"
-	_ "k8s.io/kubernetes/pkg/api/v1"
-	_ "k8s.io/kubernetes/pkg/apis/experimental"
-	"k8s.io/kubernetes/pkg/runtime"
-	"k8s.io/kubernetes/pkg/util/yaml"
+	//"k8s.io/kubernetes/pkg/api"
+	//_ "k8s.io/kubernetes/pkg/api/v1"
+	//_ "k8s.io/kubernetes/pkg/apis/experimental"
+	//"k8s.io/kubernetes/pkg/runtime"
+	//"k8s.io/kubernetes/pkg/util/yaml"
+	"github.com/technosophos/kubelite/codec"
+	//"github.com/technosophos/kubelite/v1"
 )
 
 // Files gets a list of all manifest files inside of a chart.
@@ -58,38 +57,38 @@ func Files(chartDir string) ([]string, error) {
 type Manifest struct {
 	Version, Kind string
 	// Filename of source, "" if no file
-	Source          string
-	VersionedObject interface{}
+	Source     string
+	Definition *codec.Manifest
 }
 
 // Parse takes a filename, loads the file, and parses it into one or more *Manifest objects.
 func Parse(filename string) ([]*Manifest, error) {
-	in, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-
 	ms := []*Manifest{}
 
-	docs, err := SplitYAML(in)
-	in.Close()
+	d, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return ms, err
 	}
 
-	for _, doc := range docs {
-		data, err := yaml.ToJSON(doc)
+	// Parse all of the manifests in the project
+	ys, err := codec.YAML.Decode(d).All()
+	if err != nil {
+		return ms, err
+	}
+	ms = make([]*Manifest, len(ys))
+	for i, y := range ys {
+		r, err := y.Ref()
 		if err != nil {
-			return nil, fmt.Errorf("Failed to parse %s: %s", filename, err)
+			log.Warn("Skip. Error fetching reference: %s", err)
+			continue
 		}
 
-		vo, version, kind, err := api.Scheme.Raw().DecodeToVersionedObject(data)
-		if err != nil {
-			return ms, err
+		ms[i] = &Manifest{
+			Kind:       r.Kind,
+			Version:    r.APIVersion,
+			Source:     filename,
+			Definition: y,
 		}
-
-		m := &Manifest{Version: version, Kind: kind, VersionedObject: vo, Source: filename}
-		ms = append(ms, m)
 	}
 	return ms, nil
 }
@@ -138,64 +137,9 @@ func ParseDir(chartDir string) ([]*Manifest, error) {
 	return files, filepath.Walk(dir, walker)
 }
 
-// SplitYAML splits a compount YAML file into an array of byte arrays.
-//
-// Each byte array contains an entire YAML "file".
-func SplitYAML(r io.Reader) ([][]byte, error) {
-	docs := [][]byte{}
-
-	scanner := bufio.NewScanner(r)
-	scanner.Split(SplitYAMLDocument)
-
-	for scanner.Scan() {
-		b := scanner.Bytes()
-		if len(b) > 0 {
-			docs = append(docs, b)
-		}
-	}
-	return docs, scanner.Err()
-}
-
-const yamlSeparator = "\n---"
-
-// SplitYAMLDocument is a bufio.SplitFunc for splitting a YAML document into individual documents.
-//
-// This is from Kubernetes' 'pkg/util/yaml'.splitYAMLDocument, which is unfortunately
-// not exported.
-func SplitYAMLDocument(data []byte, atEOF bool) (advance int, token []byte, err error) {
-	if atEOF && len(data) == 0 {
-		return 0, nil, nil
-	}
-	sep := len([]byte(yamlSeparator))
-	if i := bytes.Index(data, []byte(yamlSeparator)); i >= 0 {
-		// We have a potential document terminator
-		i += sep
-		after := data[i:]
-		if len(after) == 0 {
-			// we can't read any more characters
-			if atEOF {
-				return len(data), data[:len(data)-sep], nil
-			}
-			return 0, nil, nil
-		}
-		if j := bytes.IndexByte(after, '\n'); j >= 0 {
-			return i + j + 1, data[0 : i-sep], nil
-		}
-		return 0, nil, nil
-	}
-	// If we're at EOF, we have a final, non-terminated line. Return it.
-	if atEOF {
-		return len(data), data, nil
-	}
-	// Request more data.
-	return 0, nil, nil
-}
-
-// Marshal data through the Kubernetes versioned JSON marshal.
-func MarshalJSON(obj interface{}, version string) ([]byte, error) {
-	o, ok := obj.(runtime.Object)
-	if !ok {
-		return nil, errors.New("Not an Object")
-	}
-	return api.Scheme.EncodeToVersion(o, version)
+func MarshalJSON(v interface{}, version string) ([]byte, error) {
+	var b bytes.Buffer
+	err := codec.JSON.Encode(&b).One(v)
+	log.Info("Generated JSON: %s", b.String())
+	return b.Bytes(), err
 }
