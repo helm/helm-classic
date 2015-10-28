@@ -1,19 +1,43 @@
-package action_test
+package action
 
 import (
-	"path/filepath"
+	"bytes"
 	"testing"
 
-	"github.com/deis/helm/helm/action"
+	"github.com/deis/helm/helm/log"
 )
 
-var HOME = ""
+func TestInfo(t *testing.T) {
+	var output bytes.Buffer
+	log.Stdout = &output
 
-func init() {
-	HOME, _ = filepath.Abs("../testdata/")
+	format := ""
+
+	Info("alpine", TestHome, format)
+
+	expected := `Name: alpine-pod
+Home: http://github.com/deis/helm
+Version: 0.0.1
+Description: Simple pod running Alpine Linux.
+Details: This package provides a basic Alpine Linux image that can be used for basic debugging and troubleshooting. By default, it starts up, sleeps for a long time, and then eventually stops.
+`
+
+	if output.String() != expected {
+		t.Errorf("Expected %v - Got %v ", expected, output.String())
+	}
 }
 
-func TestInfo(t *testing.T) {
-	action.Info("kitchensink", HOME)
-	//TODO: assert results
+func TestInfoFormat(t *testing.T) {
+	var output bytes.Buffer
+	log.Stdout = &output
+
+	format := `Hello {{.Name}}`
+
+	Info("alpine", TestHome, format)
+
+	expected := `Hello alpine-pod`
+
+	if output.String() != expected {
+		t.Errorf("Expected %v - Got %v ", expected, output.String())
+	}
 }

@@ -2,26 +2,44 @@ package action
 
 import (
 	"path/filepath"
+	"text/template"
 
 	"github.com/deis/helm/helm/log"
 	"github.com/deis/helm/helm/model"
 )
 
-func Info(chart, homedir string) {
-	chartPath := filepath.Join(homedir, CacheChartPath, chart, "Chart.yaml")
+const defaultInfoFormat = `Name: {{.Name}}
+Home: {{.Home}}
+Version: {{.Version}}
+Description: {{.Description}}
+Details: {{.Details}}
+`
 
-	log.Info("%s", chartPath)
+// Print information about a chart
+//
+// - chartName to display
+// - homeDir is the helm home directory for the user
+// - format is a optional Go template
+func Info(chartName, homedir, format string) {
+	chartPath := filepath.Join(homedir, CacheChartPath, chartName, "Chart.yaml")
 
-	chartModel, err := model.LoadChartfile(chartPath)
-	if err != nil {
-		log.Die("%s - UNKNOWN", chart)
+	if format == "" {
+		format = defaultInfoFormat
 	}
 
-	log.Info("Chart: %s", chartModel.Name)
-	log.Info("Description: %s", chartModel.Description)
-	log.Info("Details: %s", chartModel.Details)
-	log.Info("Version: %s", chartModel.Version)
-	log.Info("Website: %s", chartModel.Home)
-	log.Info("From: %s", chartPath)
-	log.Info("Dependencies: %s", chartModel.Dependencies)
+	chart, err := model.LoadChartfile(chartPath)
+	if err != nil {
+		log.Die("Could not find chart %s \nError %s", chartName, err.Error())
+	}
+
+	log.Info(chartName)
+
+	tmpl, err := template.New("info").Parse(format)
+	if err != nil {
+		log.Die("%s", err)
+	}
+
+	if err = tmpl.Execute(log.Stdout, chart); err != nil {
+		log.Die("%s", err)
+	}
 }
