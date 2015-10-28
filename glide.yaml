@@ -8,3 +8,5 @@ import:
   - package: gopkg.in/yaml.v2
   - package: golang.org/x/crypto
   - package: github.com/technosophos/kubelite
+  - package: github.com/ghodss/yaml
+
