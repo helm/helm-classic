@@ -35,38 +35,33 @@ To quickly install a standalone etcd instance:
 $ helm update
 ---> Fetching updates...
 ---> Done
-$ helm search etcd
-	etcd-standalone: etcd-standalone is a single Etcd instance (no cluster)
-	etcd-ha-cluster: an HA Etcd cluster (3+ pods)
-	etcd-discovery:  a single-pod Etcd service discovery server
-$ helm info etcd-standalone
-	Description: etcd-standalone is a single Etcd instance (no cluster)
-	Version: 2.2.0-beta3
-	Website: https://github.com/coreos/etcd
-	Built: Oct. 21, 2015
-	Provides: etcd-rc.yaml etcd-service.yaml
-$ helm install etcd-standalone
----> Downloading etcd-standalone-2.2.0-beta3
----> Cached files into $HELM_WORKDIR/charts/etcd-standalone/
----> Running kubectl create -f ...
+$ helm search
+--->
+=================
+---> Available Charts
+---> =================
+
+---> 	.git - UNKNOWN
+---> 	README.md - UNKNOWN
+---> 	alpine (alpine-pod 0.0.1) - Simple pod running Alpine Linux.
+---> 	example-todo (example-todo 0.0.6) - Example Todo application backed by Redis
+---> 	redis-cluster (redis-cluster 0.0.5) - Highly available Redis cluster with multiple sentinels and standbys.
+---> 	redis-standalone (redis-standalone 0.0.1) - Standalone Redis Master
+--->
+$ helm info example-todo
+---> /Users/nickleli/.helm/cache/charts/example-todo/Chart.yaml
+---> Chart: example-todo
+---> Description: Example Todo application backed by Redis
+---> Details: This chart contains an Example Todo application backed by Redis. It supports standalone and clustered (sentinel) Redis backends.
+---> Version: 0.0.6
+---> Website: http://github.com/deis/example-todo
+---> Dependencies: []
+$ helm install example-todo
+---> No installed chart named "example-todo". Installing now.
+---> Fetching
 ---> Done
 ```
 
-To fetch, customize and install the same chart:
-
-```
-$ helm update
----> Fetching updates...
----> Done
-$ helm fetch etcd-standalone etcd
----> Downloading etcd-standalone-2.2.0-beta3
----> Cached files into $HELM_WORKDIR/charts/etcd/
----> Done
-$ helm edit etcd
-$ helm install etcd
----> Found etcd in $HELM_WORKDIR/charts/etcd/ ...
----> Running kubectl create -f ...
-```
 
 ## Contributing to the Helm CLI
 
