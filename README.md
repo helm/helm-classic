@@ -19,27 +19,15 @@ repo](https://github.com/deis/charts).
 
 `helm` is changing quickly. Your feedback and participation are more than welcome, but be aware that this project is considered a work in progress.
 
-## Install Helm
+## Installing Helm
 
-Grab a prebuilt binary straight off our build pipeline:
-[ ![Download](https://api.bintray.com/packages/deis/helm-ci/helm/images/download.svg) ](https://bintray.com/deis/helm-ci/helm/_latestVersion)
-
-Or grab the latest release:
-[ ![Download](https://api.bintray.com/packages/deis/helm/helm/images/download.svg) ](https://bintray.com/deis/helm/helm/_latestVersion)
-
-
-To install helm for daily use, you will need the Go 1.5 runtime. Once
-that is installed and `$GOPATH` is set, you can run the following:
-
-```console
-$ go get github.com/deis/helm/...
-```
-
-This will install `helm` into `$GOPATH/bin/helm`.
+1. Grab a prebuilt binary from:
+  - the latest release: [ ![Download](https://api.bintray.com/packages/deis/helm/helm/images/download.svg) ](https://bintray.com/deis/helm/helm/_latestVersion)
+  - the CI build pipeline: [ ![Download](https://api.bintray.com/packages/deis/helm-ci/helm/images/download.svg) ](https://bintray.com/deis/helm-ci/helm/_latestVersion)
+2. Unzip the package and make sure `helm` is available on the PATH.
+3. Install a `kubectl` client and configure it to speak with a running Kubernetes cluster.
 
 ## Using Helm
-
-To use Helm you'll need a `kubectl` client installed and configured to speak with a running Kubernetes cluster.
 
 To quickly install a standalone etcd instance:
 
@@ -80,20 +68,30 @@ $ helm install etcd
 ---> Running kubectl create -f ...
 ```
 
-## Contributing
+## Contributing to the Helm CLI
 
-Helm charts are developed as part of a community effort.  To contribute:
+- Make sure you have a `kubectl` client installed and configured to speak with a running Kubernetes cluster.
+- Install [glide](https://github.com/Masterminds/glide)
+- Run the following commands:
 
-1. Fork Helm
-2. `helm create mychart && helm edit mychart`
-3. `helm publish mychart`
-4. `cd $HELM_CACHEDIR && git checkout -b mychart`
-5. `git add charts/mychart && git commit && git push`
-6. Submit a Pull Request
+```console
+git clone https://github.com/deis/helm.git $GOPATH/github.com/deis/helm
 
-For helm Go developers, we suggest installing
-[glide](https://github.com/Masterminds/glide) and then running `make
-build` or `make install`.
+cd $GOPATH/src/github.com/deis/helm
+
+make bootstrap # installs all of helm's dependencies
+
+make build # generates bin/helm binary
+
+./bin/helm # prints usage
+
+# optional
+
+make install # installs helm system-wide
+
+helm # prints usage
+
+```
 
 ## License
 
