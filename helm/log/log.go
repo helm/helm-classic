@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	pretty "github.com/deis/helm/helm/prettyprint"
+	pretty "github.com/deis/pkg/prettyprint"
 )
 
 var Stdout io.Writer = os.Stdout
