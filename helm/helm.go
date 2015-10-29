@@ -96,6 +96,13 @@ the 'nginx' chart into a directory named 'www' in your workspace.
 			},
 		},
 		{
+			Name:      "remove",
+			Aliases:   []string{"rm"},
+			Usage:     "Removes a Chart from your working directory.",
+			ArgsUsage: "[chart-name]",
+			Action:    remove,
+		},
+		{
 			Name:  "install",
 			Usage: "Install a named package into Kubernetes.",
 			Description: `If the given 'chart-name' is present in your workspace, it
@@ -274,6 +281,16 @@ func fetch(c *cli.Context) {
 	}
 
 	action.Fetch(chart, lname, home)
+}
+
+func remove(c *cli.Context) {
+	home := home(c)
+	minArgs(c, 1, "remove")
+
+	a := c.Args()
+	chart := a[0]
+
+	action.Remove(chart, home)
 }
 
 func install(c *cli.Context) {
