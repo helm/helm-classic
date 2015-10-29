@@ -3,6 +3,7 @@ package log
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 
 	pretty "github.com/deis/helm/helm/prettyprint"
@@ -12,6 +13,12 @@ var Stdout io.Writer = os.Stdout
 var Stderr io.Writer = os.Stderr
 
 var IsDebugging = false
+
+// New creates a *log.Logger that writes to this source.
+func New() *log.Logger {
+	ll := log.New(Stdout, pretty.Colorize("{{.Yellow}}---->{{.Default}}"), 0)
+	return ll
+}
 
 // Msg passes through the formatter, but otherwise prints exactly as-is.
 //
