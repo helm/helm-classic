@@ -6,6 +6,12 @@ import (
 	"testing"
 )
 
+var HOME = ""
+
+func init() {
+	HOME = filepath.Join(helmRoot, "helm/testdata/helm_home")
+}
+
 func TestEnsurePrereqs(t *testing.T) {
 	pp := os.Getenv("PATH")
 	defer os.Setenv("PATH", pp)
@@ -15,10 +21,10 @@ func TestEnsurePrereqs(t *testing.T) {
 }
 
 func TestEnsureHome(t *testing.T) {
-	ensureHome(TestHome)
+	ensureHome(HOME)
 }
 
 func TestEnsureRepo(t *testing.T) {
 	repo := "https://github.com/deis/charts"
-	ensureRepo(repo, filepath.Join(TestHome, "cache", "charts"))
+	ensureRepo(repo, filepath.Join(HOME, "cache", "charts"))
 }
