@@ -57,6 +57,12 @@ ENVIRONMENT:
 		},
 	}
 
+	app.CommandNotFound = func(c *cli.Context, command string) {
+		log.Err("No matching command '%s'", command)
+		cli.ShowAppHelp(c)
+		log.Die("")
+	}
+
 	app.Commands = []cli.Command{
 		{
 			Name:  "update",
