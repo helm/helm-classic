@@ -5,10 +5,10 @@ import (
 )
 
 func TestSearchByName(t *testing.T) {
-	home := "../testdata/"
+	tmpHome := createTmpHome()
 	term := "homeslice"
 
-	charts, err := search(term, home)
+	charts, err := search(term, tmpHome)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -25,10 +25,10 @@ func TestSearchByName(t *testing.T) {
 }
 
 func TestSearchByDescription(t *testing.T) {
-	home := "../testdata/"
+	tmpHome := createTmpHome()
 	term := "homeskillet"
 
-	charts, err := search(term, home)
+	charts, err := search(term, tmpHome)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,8 +45,8 @@ func TestSearchByDescription(t *testing.T) {
 }
 
 func TestSearch(t *testing.T) {
-	home := "../testdata/"
+	tmpHome := createTmpHome()
 	term := "homeslice"
 
-	Search(term, home)
+	Search(term, tmpHome)
 }
