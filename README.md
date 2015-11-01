@@ -75,7 +75,7 @@ $ helm install etcd
 - Run the following commands:
 
 ```console
-git clone https://github.com/deis/helm.git $GOPATH/github.com/deis/helm
+git clone https://github.com/deis/helm.git $GOPATH/src/github.com/deis/helm
 
 cd $GOPATH/src/github.com/deis/helm
 
