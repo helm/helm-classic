@@ -2,6 +2,7 @@ package action
 
 import (
 	"bytes"
+	"os"
 	"testing"
 
 	"github.com/deis/helm/helm/log"
@@ -28,6 +29,9 @@ Details: This package provides a sampling of all of the different manifest types
 	if output.String() != expected {
 		t.Errorf("Expected %v - Got %v ", expected, output.String())
 	}
+
+	// reset log
+	log.Stdout = os.Stdout
 }
 
 func TestInfoFormat(t *testing.T) {
@@ -46,4 +50,7 @@ func TestInfoFormat(t *testing.T) {
 	if output.String() != expected {
 		t.Errorf("Expected %v - Got %v ", expected, output.String())
 	}
+
+	// reset log
+	log.Stdout = os.Stdout
 }

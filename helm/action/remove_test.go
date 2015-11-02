@@ -2,6 +2,7 @@ package action
 
 import (
 	"bytes"
+	"os"
 	"testing"
 
 	"github.com/deis/helm/helm/log"
@@ -24,4 +25,7 @@ func TestRemove(t *testing.T) {
 	if actual != expected {
 		t.Errorf("Expected %v - Got %v ", expected, actual)
 	}
+
+	// reset log
+	log.Stdout = os.Stdout
 }
