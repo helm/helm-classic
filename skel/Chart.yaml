@@ -1,9 +1,0 @@
-name: example-pod
-home: http://example.com/your/project/home
-version: 0.0.1
-description: Provide a brief description of your application here.
-maintainers:
-  - Your Name <email@address>
-details:
-  This section allows you to provide additional details about your application.
-  Provide any information that would be useful to users at a glance.

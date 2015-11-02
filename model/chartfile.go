@@ -35,6 +35,16 @@ func LoadChartfile(filename string) (*Chartfile, error) {
 	return &y, yaml.Unmarshal(b, &y)
 }
 
+// Save saves a Chart.yaml file
+func (c *Chartfile) Save(filename string) error {
+	b, err := yaml.Marshal(c)
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(filename, b, 0644)
+}
+
 // VersionOK returns true if the given version meets the constraints.
 //
 // It returns false if the version string or constraint is unparsable or if the
