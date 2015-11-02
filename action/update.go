@@ -5,9 +5,11 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/Masterminds/semver"
 	"github.com/Masterminds/vcs"
 
 	"github.com/deis/helm/log"
+	"github.com/deis/helm/release"
 )
 
 // Update fetches the remote repo into the home directory.
@@ -38,6 +40,40 @@ func gitUpdate(git *vcs.GitRepo) error {
 
 	log.Debug("Updated %s from %s", git.LocalPath(), git.Remote())
 	return nil
+}
+
+// checklatest checks whether this version of Helm is the latest version.
+//
+// This does not ensure that this is the latest. If a newer version is found,
+// this generates a message indicating that.
+//
+// The passed-in version is the base version that will be checked against the
+// remote release list.
+func CheckLatest(version string) {
+	ver, err := release.LatestVersion()
+	if err != nil {
+		log.Warn("Skipped Helm version check: %s", err)
+		return
+	}
+
+	current, err := semver.NewVersion(version)
+	if err != nil {
+		log.Warn("Local version %s is not well-formed", version)
+		return
+	}
+	remote, err := semver.NewVersion(ver)
+	if err != nil {
+		log.Warn("Remote version %s is not well-formed", ver)
+		return
+	}
+
+	if remote.GreaterThan(current) {
+		log.Warn("A new version of Helm is available. You have %s. The latest is %v", version, ver)
+		if dl, err := release.LatestDownloadURL(); err == nil {
+			log.Info("Download version %s here: %s", ver, dl)
+		}
+	}
+
 }
 
 // ensurePrereqs verifies that Git and Kubectl are both available.
