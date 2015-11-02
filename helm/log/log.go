@@ -16,7 +16,7 @@ var IsDebugging = false
 
 // New creates a *log.Logger that writes to this source.
 func New() *log.Logger {
-	ll := log.New(Stdout, pretty.Colorize("{{.Yellow}}---->{{.Default}}"), 0)
+	ll := log.New(Stdout, pretty.Colorize("{{.Yellow}}--->{{.Default}} "), 0)
 	return ll
 }
 
