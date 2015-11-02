@@ -58,6 +58,8 @@ func ensureRepo(repo, home string) *vcs.GitRepo {
 		log.Die("Could not get repository %q: %s", repo, err)
 	}
 
+	git.Logger = log.New()
+
 	if !git.CheckLocal() {
 		log.Info("Cloning repo into %q. Please wait.", home)
 		if err := git.Get(); err != nil {
