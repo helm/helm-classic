@@ -32,8 +32,6 @@ func Info(chartName, homedir, format string) {
 		log.Die("Could not find chart %s \nError %s", chartName, err.Error())
 	}
 
-	log.Info(chartName)
-
 	tmpl, err := template.New("info").Parse(format)
 	if err != nil {
 		log.Die("%s", err)
