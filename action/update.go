@@ -7,7 +7,7 @@ import (
 
 	"github.com/Masterminds/vcs"
 
-	"github.com/deis/helm/helm/log"
+	"github.com/deis/helm/log"
 )
 
 // Update fetches the remote repo into the home directory.

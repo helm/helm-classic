@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/deis/helm/helm/log"
-	"github.com/deis/helm/helm/model"
+	"github.com/deis/helm/log"
+	"github.com/deis/helm/model"
 )
 
 // Search looks for packages with 'term' in their name.

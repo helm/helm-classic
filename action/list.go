@@ -3,8 +3,8 @@ package action
 import (
 	"path/filepath"
 
-	"github.com/deis/helm/helm/log"
-	"github.com/deis/helm/helm/model"
+	"github.com/deis/helm/log"
+	"github.com/deis/helm/model"
 )
 
 // List lists all of the local charts.

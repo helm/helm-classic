@@ -13,10 +13,9 @@ bootstrap-dist:
 	go get -u github.com/mitchellh/gox
 
 build:
-	go build -o bin/helm -ldflags "-X main.version=${VERSION}" helm/helm.go
+	go build -o bin/helm -ldflags "-X main.version=${VERSION}" helm.go
 
 build-all:
-	@cd helm && \
 	gox -verbose \
 	-ldflags "-X main.version=${VERSION}" \
 	-os="linux darwin " \
@@ -48,10 +47,10 @@ else
 endif
 
 quicktest:
-	go test ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model ./helm/dependency
+	go test ./. ./manifest ./action ./log ./model ./dependency
 
 test:
-	go test -v ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model ./helm/dependency
+	go test -v ./. ./manifest ./action ./log ./model ./dependency
 
 test-charts:
 	@./_test/test-charts $(TEST_CHARTS)

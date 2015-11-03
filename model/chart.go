@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/deis/helm/helm/log"
-	"github.com/deis/helm/helm/manifest"
+	"github.com/deis/helm/log"
+	"github.com/deis/helm/manifest"
 	//"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/v1"
 )

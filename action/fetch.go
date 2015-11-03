@@ -5,9 +5,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/deis/helm/helm/dependency"
-	"github.com/deis/helm/helm/log"
-	"github.com/deis/helm/helm/model"
+	"github.com/deis/helm/dependency"
+	"github.com/deis/helm/log"
+	"github.com/deis/helm/model"
 )
 
 // Fetch gets a chart from the source repo and copies to the workdir.

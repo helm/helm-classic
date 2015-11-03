@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/deis/helm/helm/log"
+	"github.com/deis/helm/log"
 )
 
 func TestInfo(t *testing.T) {

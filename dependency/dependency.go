@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/deis/helm/helm/log"
-	"github.com/deis/helm/helm/model"
+	"github.com/deis/helm/log"
+	"github.com/deis/helm/model"
 )
 
 // Resolve takes a chart and a location and checks whether the chart's dependencies are satisfied.
