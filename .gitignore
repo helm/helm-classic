@@ -1,5 +1,5 @@
-vendor/
-bin/
 _dist/
+bin/
 ci/bintray-ci.json
-
+testdata/helm_home/
+vendor/
