@@ -24,7 +24,8 @@ func Fetch(chartName, lname, homedir string) {
 
 	fetch(chartName, lname, homedir)
 
-	cfile, err := chart.LoadChartfile(filepath.Join(homedir, WorkspaceChartPath, chartName, "Chart.yaml"))
+	chartFilePath := filepath.Join(homedir, WorkspaceChartPath, lname, "Chart.yaml")
+	cfile, err := chart.LoadChartfile(chartFilePath)
 	if err != nil {
 		log.Die("Source is not a valid chart. Missing Chart.yaml: %s", err)
 	}
