@@ -33,13 +33,10 @@ To quickly install a standalone etcd instance:
 
 ```
 $ helm update
----> Fetching updates...
+---> Cloning into '$HOME/.helm/cache/charts'...
+---> Updating cache from https://github.com/deis/charts
 ---> Done
 $ helm search redis
----> =================
----> Available Charts
----> =================
---->
 ---> 	redis-cluster (redis-cluster 0.0.5) - Highly available Redis cluster with multiple sentinels and standbys.
 ---> 	redis-standalone (redis-standalone 0.0.1) - Standalone Redis Master
 $ helm info redis-cluster
@@ -49,26 +46,35 @@ Version: 0.0.5
 Description: Highly available Redis cluster with multiple sentinels and standbys.
 Details: This package provides a highly available Redis cluster with multiple sentinels and standbys. Note the `redis-master` pod is used for bootstrapping only and can be deleted once the cluster is up and running.
 $ helm install redis-cluster
----> Downloading etcd-standalone-2.2.0-beta3
----> Cached files into $HELM_WORKDIR/charts/etcd-standalone/
----> Running kubectl create -f ...
+---> No chart named "redis-cluster" in your workspace. Fetching now.
+---> Fetched chart into workspace /Users/gabriel/.helm/workspace/charts/redis-cluster
+---> Running `kubectl create -f` ...
+services/redis-sentinel
+pods/redis-master
+replicationcontrollers/redis
+replicationcontrollers/redis-sentinel
 ---> Done
 ```
 
-To fetch, customize and install the same chart:
+To fetch, modify and install a chart out of your local workspace:
 
 ```
 $ helm update
----> Fetching updates...
+---> Updating cache from https://github.com/deis/charts
 ---> Done
-$ helm fetch etcd-standalone etcd
----> Downloading etcd-standalone-2.2.0-beta3
----> Cached files into $HELM_WORKDIR/charts/etcd/
+$ helm fetch redis-standalone redis
+---> Fetched chart into workspace /Users/gabriel/.helm/workspace/charts/redis
 ---> Done
-$ helm edit etcd
-$ helm install etcd
----> Found etcd in $HELM_WORKDIR/charts/etcd/ ...
----> Running kubectl create -f ...
+$ helm edit redis
+$ helm install redis
+---> Running `kubectl create -f` ...
+replicationcontrollers/redis-standalone
+---> Done
+========================================
+# Redis Standalone
+
+This is a standalone Redis master with no high-availability, useful for rapid prototyping.
+========================================
 ```
 
 ## Contributing to the Helm CLI
