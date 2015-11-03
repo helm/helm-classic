@@ -5,8 +5,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/deis/helm/helm/log"
-	"github.com/deis/helm/helm/model"
+	"github.com/deis/helm/log"
+	"github.com/deis/helm/model"
 )
 
 func Uninstall(chart, home, namespace string) {

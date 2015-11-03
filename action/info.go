@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/deis/helm/helm/log"
-	"github.com/deis/helm/helm/model"
+	"github.com/deis/helm/log"
+	"github.com/deis/helm/model"
 )
 
 const defaultInfoFormat = `Name: {{.Name}}

@@ -7,7 +7,7 @@ import (
 
 func TestListChart(t *testing.T) {
 
-	chartDir := filepath.Join(helmRoot, "helm/testdata/charts/redis")
+	chartDir := filepath.Join(helmRoot, "testdata/charts/redis")
 
 	files, err := listChart(chartDir)
 	if err != nil {
@@ -22,13 +22,13 @@ func TestListChart(t *testing.T) {
 
 func TestJoinChart(t *testing.T) {
 
-	chartDir := filepath.Join(helmRoot, "helm/testdata/charts/redis")
+	chartDir := filepath.Join(helmRoot, "testdata/charts/redis")
 
 	// prepare files fixture
 	var files []string
 	paths := []string{
-		"helm/testdata/charts/redis/Chart.yaml",
-		"helm/testdata/charts/redis/manifests/redis-pod.yaml",
+		"testdata/charts/redis/Chart.yaml",
+		"testdata/charts/redis/manifests/redis-pod.yaml",
 	}
 	for _, f := range paths {
 		files = append(files, filepath.Join(helmRoot, f))

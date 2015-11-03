@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/deis/helm/helm/log"
+	"github.com/deis/helm/log"
 )
 
 // Target displays information about the cluster

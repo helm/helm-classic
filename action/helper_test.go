@@ -22,7 +22,7 @@ func createTmpHome() string {
 	os.Mkdir(tmpHomeCache, 0755)
 
 	// absolute path to testdata charts
-	testChartsPath := filepath.Join(helmRoot, "helm/testdata/charts")
+	testChartsPath := filepath.Join(helmRoot, "testdata/charts")
 
 	// copy testdata charts into cache
 	// mock git clone

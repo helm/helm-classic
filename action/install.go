@@ -5,13 +5,13 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/deis/helm/helm/dependency"
-	"github.com/deis/helm/helm/manifest"
-	"github.com/deis/helm/helm/model"
+	"github.com/deis/helm/dependency"
+	"github.com/deis/helm/manifest"
+	"github.com/deis/helm/model"
 )
 
 import (
-	"github.com/deis/helm/helm/log"
+	"github.com/deis/helm/log"
 )
 
 // Install loads a chart into Kubernetes.

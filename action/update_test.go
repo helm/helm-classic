@@ -9,7 +9,7 @@ import (
 var HOME = ""
 
 func init() {
-	HOME = filepath.Join(helmRoot, "helm/testdata/helm_home")
+	HOME = filepath.Join(helmRoot, "testdata/helm_home")
 }
 
 func TestEnsurePrereqs(t *testing.T) {
