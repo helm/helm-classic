@@ -3,9 +3,9 @@ package action
 import (
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 
 	"github.com/deis/helm/chart"
 	"github.com/deis/helm/log"
@@ -13,52 +13,70 @@ import (
 
 // Search looks for packages with 'term' in their name.
 func Search(term, homedir string) {
-	charts, err := search(term, homedir)
+	charts, err := searchAll(term, homedir)
 	if err != nil {
 		log.Die(err.Error())
 	}
 
-	for dir, chart := range charts {
-		log.Info("\t%s (%s %s) - %s", filepath.Base(dir), chart.Name, chart.Version, chart.Description)
+	for _, name := range sortedIndex(charts) {
+		chart := charts[name]
+		log.Msg("\t%s (%s %s) - %s", name, chart.Name, chart.Version, chart.Description)
 	}
 }
 
-func search(term, homedir string) (map[string]*chart.Chartfile, error) {
-	files, err := filepath.Glob(filepath.Join(homedir, CacheChartPath, "*"))
+func sortedIndex(m map[string]*chart.Chartfile) []string {
+	ss := make(sort.StringSlice, len(m))
 
-	// only return chart directories
-	var dirs []string
-	for _, f := range files {
-		if filepath.Base(f) == ".git" {
-			continue
-		}
-		fm, _ := os.Stat(f)
-		if !fm.IsDir() {
-			continue
-		}
-		dirs = append(dirs, f)
+	i := 0
+	for k, _ := range m {
+		ss[i] = k
+		i++
 	}
 
+	ss.Sort()
+	return ss
+}
+
+func searchAll(term, homedir string) (map[string]*chart.Chartfile, error) {
+	r := mustRepofile(homedir)
+	results := map[string]*chart.Chartfile{}
+	for _, table := range r.Tables {
+		tablename := table.Name
+		if table.Name == r.Default {
+			tablename = ""
+		}
+		base := filepath.Join(homedir, CachePath, table.Name, "*")
+		if err := search(term, base, tablename, results); err != nil {
+			log.Warn("Search error: %s", err)
+		}
+	}
+	return results, nil
+}
+
+func search(term, base, table string, charts map[string]*chart.Chartfile) error {
+	dirs, err := filepath.Glob(base)
 	if err != nil {
-		return nil, fmt.Errorf("No results found. %s", err)
+		return fmt.Errorf("No results found. %s", err)
 	} else if len(dirs) == 0 {
-		return nil, errors.New("No results found.")
+		return errors.New("No results found.")
 	}
 
-	charts := make(map[string]*chart.Chartfile)
-
-	r, _ := regexp.Compile(term)
+	r, err := regexp.Compile(term)
+	if err != nil {
+		log.Die("Invalid expression %q: %s", term, err)
+	}
 
 	for _, dir := range dirs {
-		chart, err := chart.LoadChartfile(filepath.Join(dir, "Chart.yaml"))
+		cname := filepath.Join(table, filepath.Base(dir))
+		chrt, err := chart.LoadChartfile(filepath.Join(dir, "Chart.yaml"))
 
 		if err != nil {
-			log.Warn("failed to load Chart.yaml: %v", err)
+			// This dir is not a chart. Skip it.
 			continue
-		} else if r.MatchString(chart.Name) || r.MatchString(chart.Description) {
-			charts[dir] = chart
+		} else if r.MatchString(chrt.Name) || r.MatchString(chrt.Description) {
+			charts[cname] = chrt
 		}
 	}
 
-	return charts, nil
+	return nil
 }

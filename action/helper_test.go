@@ -8,6 +8,12 @@ import (
 	"testing"
 )
 
+const tmpRepofile = `default: charts
+tables:
+  - name: charts
+    repo: https://github.com/deis/charts
+`
+
 var helmRoot string
 
 func init() {
@@ -22,6 +28,8 @@ func createTmpHome() string {
 	// create cache directory
 	tmpHomeCache := filepath.Join(tmpHome, "cache")
 	os.Mkdir(tmpHomeCache, 0755)
+
+	ioutil.WriteFile(filepath.Join(tmpHomeCache, Repofile), []byte(tmpRepofile), 0755)
 
 	// absolute path to testdata charts
 	testChartsPath := filepath.Join(helmRoot, "testdata/charts")

@@ -8,7 +8,7 @@ func TestSearchByName(t *testing.T) {
 	tmpHome := createTmpHome()
 	term := "homeslice"
 
-	charts, err := search(term, tmpHome)
+	charts, err := searchAll(term, tmpHome)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +28,7 @@ func TestSearchByDescription(t *testing.T) {
 	tmpHome := createTmpHome()
 	term := "homeskillet"
 
-	charts, err := search(term, tmpHome)
+	charts, err := searchAll(term, tmpHome)
 	if err != nil {
 		t.Fatal(err)
 	}

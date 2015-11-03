@@ -32,19 +32,12 @@ For more information on Helm, go to http://helm.sh.
 ENVIRONMENT:
    $HELM_HOME:     Set an alternative location for Helm files. By default, these
                    are stored in ~/.helm
-   $HELM_REPO_URL: Set an alternative upstream chart repository.
 
 `
 	app.Version = version
 	app.EnableBashCompletion = true
 
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:   "repo",
-			Value:  "https://github.com/deis/charts",
-			Usage:  "The remote Git repository as an HTTP URL",
-			EnvVar: "HELM_REPO_URL",
-		},
 		cli.StringFlag{
 			Name:   "home",
 			Value:  "$HOME/.helm",
@@ -79,7 +72,7 @@ Subsequent calls to 'helm update' will simply synchronize the local cache
 with the remote.`,
 			ArgsUsage: "",
 			Action: func(c *cli.Context) {
-				action.Update(repo(c), home(c))
+				action.Update(home(c))
 			},
 		},
 		{
@@ -253,6 +246,40 @@ list all available charts.
 			ArgsUsage: "",
 			Action: func(c *cli.Context) {
 				action.Target()
+			},
+		},
+		{
+			Name:    "repo",
+			Aliases: []string{"repository"},
+			Usage:   "Work with other Chart repositories.",
+			Subcommands: []cli.Command{
+				{
+					Name:      "add",
+					Usage:     "Add a remote chart repository.",
+					ArgsUsage: "[name] [git url]",
+					Action: func(c *cli.Context) {
+						minArgs(c, 2, "add")
+						a := c.Args()
+						action.AddRepo(home(c), a[0], a[1])
+					},
+				},
+				{
+					Name:  "list",
+					Usage: "List all remote chart repositories.",
+					Action: func(c *cli.Context) {
+						action.ListRepos(home(c))
+					},
+				},
+				{
+					Name:      "remove",
+					Aliases:   []string{"rm"},
+					Usage:     "Remove a remote chart repository.",
+					ArgsUsage: "[name] [git url]",
+					Action: func(c *cli.Context) {
+						minArgs(c, 1, "remove")
+						action.DeleteRepo(home(c), c.Args()[0])
+					},
+				},
 			},
 		},
 	}
