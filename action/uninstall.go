@@ -9,6 +9,16 @@ import (
 	"github.com/deis/helm/log"
 )
 
+// Uninstall removes a chart from Kubernetes.
+//
+// Manifests are removed from Kubernetes in the following order:
+//
+// 	- Services (to shut down traffic)
+// 	- Pods (which can be part of RCs)
+// 	- ReplicationControllers
+// 	- Volumes
+// 	- Secrets
+//	- Namespaces
 func Uninstall(chartName, home, namespace string) {
 	if !chartFetched(chartName, home) {
 		log.Info("No chart named %q in your workspace. Nothing to delete.", chartName)
@@ -30,16 +40,9 @@ func Uninstall(chartName, home, namespace string) {
 
 func deleteChart(c *chart.Chart, ns string) error {
 	// We delete charts in the ALMOST reverse order that we created them. We
-	// start with services to effectively shut down traffic. Then we delete
-	// rcs and pods.
+	// start with services to effectively shut down traffic.
 	ktype := "service"
 	for _, o := range c.Services {
-		if err := kubectlDelete(o.Name, ktype, ns); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
-	}
-	ktype = "rc"
-	for _, o := range c.ReplicationControllers {
 		if err := kubectlDelete(o.Name, ktype, ns); err != nil {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
 		}
@@ -50,7 +53,12 @@ func deleteChart(c *chart.Chart, ns string) error {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
 		}
 	}
-
+	ktype = "rc"
+	for _, o := range c.ReplicationControllers {
+		if err := kubectlDelete(o.Name, ktype, ns); err != nil {
+			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
+		}
+	}
 	ktype = "secret"
 	for _, o := range c.Secrets {
 		if err := kubectlDelete(o.Name, ktype, ns); err != nil {
