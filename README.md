@@ -71,7 +71,7 @@ $ helm install etcd
 ## Contributing to the Helm CLI
 
 - Make sure you have a `kubectl` client installed and configured to speak with a running Kubernetes cluster.
-- Install [glide](https://github.com/Masterminds/glide) (WARNNG: If you installed glide using `brew`, you may not have the correct version. If you run into glide related issues, try uninstalling (`brew uninstall glide`) and then grab HEAD by running `go get github.com/Masterminds/glide`.)
+- Install [glide](https://github.com/Masterminds/glide)
 - Run the following commands:
 
 ```console
