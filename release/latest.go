@@ -4,15 +4,15 @@ import (
 	"github.com/google/go-github/github"
 )
 
-const owner = "deis"
-const project = "helm"
+var Owner = "deis"
+var Project = "helm"
 
 // GHClient is a GitHub client.
 var GHClient = github.NewClient(nil)
 
 // Latest returns information on the latest Helm version.
 func Latest() (*github.RepositoryRelease, error) {
-	rel, _, err := GHClient.Repositories.GetLatestRelease(owner, project)
+	rel, _, err := GHClient.Repositories.GetLatestRelease(Owner, Project)
 	return rel, err
 }
 
