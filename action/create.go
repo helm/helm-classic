@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/deis/helm/chart"
 	"github.com/deis/helm/log"
-	"github.com/deis/helm/model"
 )
 
 // readmeSkel is the template for the README.md
@@ -67,9 +67,9 @@ func Create(chartName, homeDir string) {
 	log.Info("Created chart in %s", chartDir)
 }
 
-// newSkelChartfile populates a Chartfile model with example data
-func newSkelChartfile(chartName string) *model.Chartfile {
-	return &model.Chartfile{
+// newSkelChartfile populates a Chartfile struct with example data
+func newSkelChartfile(chartName string) *chart.Chartfile {
+	return &chart.Chartfile{
 		Name:        chartName,
 		Home:        "http://example.com/your/project/home",
 		Version:     "0.1.0",
@@ -80,7 +80,7 @@ func newSkelChartfile(chartName string) *model.Chartfile {
 }
 
 // createReadme populates readmeSkel and saves to the chart directory
-func createReadme(chartDir string, c *model.Chartfile) error {
+func createReadme(chartDir string, c *chart.Chartfile) error {
 	tmpl := template.Must(template.New("info").Parse(readmeSkel))
 
 	readmeFile, err := os.Create(filepath.Join(chartDir, "README.md"))

@@ -5,18 +5,18 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/deis/helm/chart"
 	"github.com/deis/helm/log"
-	"github.com/deis/helm/model"
 )
 
-func Uninstall(chart, home, namespace string) {
-	if !chartInstalled(chart, home) {
-		log.Info("No installed chart named %q. Nothing to delete.", chart)
+func Uninstall(chartName, home, namespace string) {
+	if !chartInstalled(chartName, home) {
+		log.Info("No installed chart named %q. Nothing to delete.", chartName)
 		return
 	}
 
-	cd := filepath.Join(home, WorkspaceChartPath, chart)
-	c, err := model.Load(cd)
+	cd := filepath.Join(home, WorkspaceChartPath, chartName)
+	c, err := chart.Load(cd)
 	if err != nil {
 		log.Die("Failed to load chart: %s", err)
 	}
@@ -26,7 +26,7 @@ func Uninstall(chart, home, namespace string) {
 	}
 }
 
-func deleteChart(c *model.Chart, ns string) error {
+func deleteChart(c *chart.Chart, ns string) error {
 	// We delete charts in the ALMOST reverse order that we created them. We
 	// start with services to effectively shut down traffic. Then we delete
 	// rcs and pods.

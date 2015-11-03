@@ -5,9 +5,9 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/deis/helm/chart"
 	"github.com/deis/helm/dependency"
 	"github.com/deis/helm/manifest"
-	"github.com/deis/helm/model"
 )
 
 import (
@@ -26,14 +26,14 @@ import (
 // 	- Services
 // 	- Pods
 // 	- ReplicationControllers
-func Install(chart, home, namespace string, force bool) {
-	if !chartInstalled(chart, home) {
-		log.Info("No installed chart named %q. Installing now.", chart)
-		fetch(chart, chart, home)
+func Install(chartName, home, namespace string, force bool) {
+	if !chartInstalled(chartName, home) {
+		log.Info("No installed chart named %q. Installing now.", chartName)
+		fetch(chartName, chartName, home)
 	}
 
-	cd := filepath.Join(home, WorkspaceChartPath, chart)
-	c, err := model.Load(cd)
+	cd := filepath.Join(home, WorkspaceChartPath, chartName)
+	c, err := chart.Load(cd)
 	if err != nil {
 		log.Die("Failed to load chart: %s", err)
 	}
@@ -58,10 +58,10 @@ func Install(chart, home, namespace string, force bool) {
 	if err := uploadManifests(c, namespace); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
-	PrintREADME(chart, home)
+	PrintREADME(chartName, home)
 }
 
-func AltInstall(chart, cachedir, home, namespace string, force bool) {
+func AltInstall(chartName, cachedir, home, namespace string, force bool) {
 	// Make sure there is a chart in the cachedir.
 	if _, err := os.Stat(filepath.Join(cachedir, "Chart.yaml")); err != nil {
 		log.Die("Expected a Chart.yaml in %s: %s", cachedir, err)
@@ -75,13 +75,13 @@ func AltInstall(chart, cachedir, home, namespace string, force bool) {
 
 	// Copy the source chart to the workspace. We ruthlessly overwrite in
 	// this case.
-	dest := filepath.Join(home, WorkspaceChartPath, chart)
+	dest := filepath.Join(home, WorkspaceChartPath, chartName)
 	if err := copyDir(cachedir, dest); err != nil {
 		log.Die("Failed to copy %s to %s: %s", cachedir, dest, err)
 	}
 
 	// Load the chart.
-	c, err := model.Load(dest)
+	c, err := chart.Load(dest)
 	if err != nil {
 		log.Die("Failed to load chart: %s", err)
 	}
@@ -109,7 +109,7 @@ func AltInstall(chart, cachedir, home, namespace string, force bool) {
 }
 
 // uploadManifests sends manifests to Kubectl in a particular order.
-func uploadManifests(c *model.Chart, namespace string) error {
+func uploadManifests(c *chart.Chart, namespace string) error {
 	// The ordering is significant.
 	// TODO: Right now, we force version v1. We could probably make this more
 	// flexible if there is a use case.
@@ -173,8 +173,8 @@ func uploadManifests(c *model.Chart, namespace string) error {
 // Check by chart directory name whether a chart is installed.
 //
 // This does NOT check the Chart.yaml file.
-func chartInstalled(chart, home string) bool {
-	p := filepath.Join(home, WorkspaceChartPath, chart, "Chart.yaml")
+func chartInstalled(chartName, home string) bool {
+	p := filepath.Join(home, WorkspaceChartPath, chartName, "Chart.yaml")
 	log.Debug("Looking for %q", p)
 	if fi, err := os.Stat(p); err != nil || fi.IsDir() {
 		log.Debug("No chart: %s", err)

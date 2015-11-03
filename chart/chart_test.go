@@ -1,4 +1,4 @@
-package model
+package chart
 
 import (
 	"testing"

@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/deis/helm/model"
+	"github.com/deis/helm/chart"
 )
 
 var testInstalldir = "../testdata/charts"
@@ -18,7 +18,7 @@ func init() {
 }
 
 func TestResolve(t *testing.T) {
-	cf, err := model.LoadChartfile(filepath.Join(testInstalldir, "deptest/Chart.yaml"))
+	cf, err := chart.LoadChartfile(filepath.Join(testInstalldir, "deptest/Chart.yaml"))
 	if err != nil {
 		t.Errorf("Could not load chartfile deptest/Chart.yaml: %s", err)
 	}
