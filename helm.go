@@ -65,8 +65,9 @@ ENVIRONMENT:
 
 	app.Commands = []cli.Command{
 		{
-			Name:  "update",
-			Usage: "Get the latest version of all Charts from GitHub.",
+			Name:    "update",
+			Aliases: []string{"up"},
+			Usage:   "Get the latest version of all Charts from GitHub.",
 			Description: `This will synchronize the local repository with the upstream GitHub project.
 The local cached copy is stored in '~/.helm/cache' or (if specified)
 '$HELM_HOME/cache'.
