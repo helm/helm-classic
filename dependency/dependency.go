@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/deis/helm/chart"
 	"github.com/deis/helm/log"
-	"github.com/deis/helm/model"
 )
 
 // Resolve takes a chart and a location and checks whether the chart's dependencies are satisfied.
@@ -18,19 +18,19 @@ import (
 //
 // It returns an error only if it cannot perform the task of resolving dependencies.
 // Failed dependencies to not constitute an error.
-func Resolve(cf *model.Chartfile, installdir string) ([]*model.Dependency, error) {
+func Resolve(cf *chart.Chartfile, installdir string) ([]*chart.Dependency, error) {
 	if len(cf.Dependencies) == 0 {
 		log.Debug("No dependencies to check. :achievement-unlocked:")
-		return []*model.Dependency{}, nil
+		return []*chart.Dependency{}, nil
 	}
 
 	cache, err := dependencyCache(installdir)
 	if err != nil {
 		log.Debug("Failed to build dependency cache: %s", err)
-		return []*model.Dependency{}, err
+		return []*chart.Dependency{}, err
 	}
 
-	res := []*model.Dependency{}
+	res := []*chart.Dependency{}
 
 	// TODO: This could be made more efficient.
 	for _, check := range cf.Dependencies {
@@ -52,8 +52,8 @@ func Resolve(cf *model.Chartfile, installdir string) ([]*model.Dependency, error
 }
 
 // dependencyCache builds a map of chart and Chartfile.
-func dependencyCache(chartdir string) (map[string]*model.Chartfile, error) {
-	cache := map[string]*model.Chartfile{}
+func dependencyCache(chartdir string) (map[string]*chart.Chartfile, error) {
+	cache := map[string]*chart.Chartfile{}
 	dir, err := os.Open(chartdir)
 	if err != nil {
 		return cache, err
@@ -69,7 +69,7 @@ func dependencyCache(chartdir string) (map[string]*model.Chartfile, error) {
 		if !fi.IsDir() {
 			continue
 		}
-		cf, err := model.LoadChartfile(filepath.Join(chartdir, fi.Name(), "Chart.yaml"))
+		cf, err := chart.LoadChartfile(filepath.Join(chartdir, fi.Name(), "Chart.yaml"))
 		if err != nil {
 			// If the chartfile does not load, we ignore it.
 			continue

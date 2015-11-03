@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"regexp"
 
+	"github.com/deis/helm/chart"
 	"github.com/deis/helm/log"
-	"github.com/deis/helm/model"
 )
 
 // Search looks for packages with 'term' in their name.
@@ -29,7 +29,7 @@ func Search(term, homedir string) {
 	}
 }
 
-func search(term, homedir string) (map[string]*model.Chartfile, error) {
+func search(term, homedir string) (map[string]*chart.Chartfile, error) {
 	files, err := filepath.Glob(filepath.Join(homedir, CacheChartPath, "*"))
 
 	// only return chart directories
@@ -51,12 +51,12 @@ func search(term, homedir string) (map[string]*model.Chartfile, error) {
 		return nil, errors.New("No results found.")
 	}
 
-	charts := make(map[string]*model.Chartfile)
+	charts := make(map[string]*chart.Chartfile)
 
 	r, _ := regexp.Compile(term)
 
 	for _, dir := range dirs {
-		chart, err := model.LoadChartfile(filepath.Join(dir, "Chart.yaml"))
+		chart, err := chart.LoadChartfile(filepath.Join(dir, "Chart.yaml"))
 
 		if err != nil {
 			log.Warn("failed to load Chart.yaml: %v", err)

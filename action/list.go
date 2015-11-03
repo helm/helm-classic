@@ -3,8 +3,8 @@ package action
 import (
 	"path/filepath"
 
+	"github.com/deis/helm/chart"
 	"github.com/deis/helm/log"
-	"github.com/deis/helm/model"
 )
 
 // List lists all of the local charts.
@@ -16,7 +16,7 @@ func List(homedir string) {
 	}
 	for _, c := range charts {
 		cname := filepath.Base(c)
-		if ch, err := model.LoadChartfile(filepath.Join(c, "Chart.yaml")); err == nil {
+		if ch, err := chart.LoadChartfile(filepath.Join(c, "Chart.yaml")); err == nil {
 			log.Info("\t%s (%s %s) - %s", cname, ch.Name, ch.Version, ch.Description)
 			continue
 		}

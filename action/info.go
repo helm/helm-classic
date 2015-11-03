@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/deis/helm/chart"
 	"github.com/deis/helm/log"
-	"github.com/deis/helm/model"
 )
 
 const defaultInfoFormat = `Name: {{.Name}}
@@ -27,7 +27,7 @@ func Info(chartName, homedir, format string) {
 		format = defaultInfoFormat
 	}
 
-	chart, err := model.LoadChartfile(chartPath)
+	chart, err := chart.LoadChartfile(chartPath)
 	if err != nil {
 		log.Die("Could not find chart %s \nError %s", chartName, err.Error())
 	}

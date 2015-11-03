@@ -5,26 +5,26 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/deis/helm/chart"
 	"github.com/deis/helm/dependency"
 	"github.com/deis/helm/log"
-	"github.com/deis/helm/model"
 )
 
 // Fetch gets a chart from the source repo and copies to the workdir.
 //
-// - chart is the source
+// - chartName is the source
 // - lname is the local name for that chart (chart-name); if blank, it is set to the chart.
 // - homedir is the home directory for the user
 // - ns is the namespace for this package. If blank, it is set to the DefaultNS.
-func Fetch(chart, lname, homedir string) {
+func Fetch(chartName, lname, homedir string) {
 
 	if lname == "" {
-		lname = chart
+		lname = chartName
 	}
 
-	fetch(chart, lname, homedir)
+	fetch(chartName, lname, homedir)
 
-	cfile, err := model.LoadChartfile(filepath.Join(homedir, WorkspaceChartPath, chart, "Chart.yaml"))
+	cfile, err := chart.LoadChartfile(filepath.Join(homedir, WorkspaceChartPath, chartName, "Chart.yaml"))
 	if err != nil {
 		log.Die("Source is not a valid chart. Missing Chart.yaml: %s", err)
 	}
@@ -45,13 +45,13 @@ func Fetch(chart, lname, homedir string) {
 	PrintREADME(lname, homedir)
 }
 
-func fetch(chart, lname, homedir string) {
-	src := filepath.Join(homedir, CacheChartPath, chart)
+func fetch(chartName, lname, homedir string) {
+	src := filepath.Join(homedir, CacheChartPath, chartName)
 	dest := filepath.Join(homedir, WorkspaceChartPath, lname)
 
 	if fi, err := os.Stat(src); err != nil {
 	} else if !fi.IsDir() {
-		log.Die("Malformed chart %s: Chart must be in a directory.", chart)
+		log.Die("Malformed chart %s: Chart must be in a directory.", chartName)
 	}
 
 	if err := os.MkdirAll(dest, 0755); err != nil {

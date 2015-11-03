@@ -24,8 +24,7 @@ build-all:
 	cd ..
 
 clean:
-	rm -f ./helm/helm.test
-	rm -f ./helm.bin
+	rm -f ./bin/helm
 
 dist: build-all
 	@mkdir -p _dist
@@ -48,10 +47,10 @@ else
 endif
 
 quicktest:
-	go test ./. ./manifest ./action ./log ./model ./dependency
+	go test ./. ./manifest ./action ./log ./chart ./dependency
 
 test:
-	go test -v ./. ./manifest ./action ./log ./model ./dependency
+	go test -v ./. ./manifest ./action ./log ./chart ./dependency
 
 test-charts:
 	@./_test/test-charts $(TEST_CHARTS)
