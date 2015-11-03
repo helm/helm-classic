@@ -3,6 +3,7 @@ package action
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"regexp"
 
@@ -17,9 +18,9 @@ func Search(term, homedir string) {
 		log.Die(err.Error())
 	}
 
-	log.Info("\n=================")
+	log.Info("=================")
 	log.Info("Available Charts")
-	log.Info("=================\n")
+	log.Info("=================")
 
 	log.Info("")
 
@@ -29,7 +30,20 @@ func Search(term, homedir string) {
 }
 
 func search(term, homedir string) (map[string]*model.Chartfile, error) {
-	dirs, err := filepath.Glob(filepath.Join(homedir, CacheChartPath, "*"))
+	files, err := filepath.Glob(filepath.Join(homedir, CacheChartPath, "*"))
+
+	// only return chart directories
+	var dirs []string
+	for _, f := range files {
+		if filepath.Base(f) == ".git" {
+			continue
+		}
+		fm, _ := os.Stat(f)
+		if !fm.IsDir() {
+			continue
+		}
+		dirs = append(dirs, f)
+	}
 
 	if err != nil {
 		return nil, fmt.Errorf("No results found. %s", err)
@@ -45,7 +59,7 @@ func search(term, homedir string) (map[string]*model.Chartfile, error) {
 		chart, err := model.LoadChartfile(filepath.Join(dir, "Chart.yaml"))
 
 		if err != nil {
-			log.Info("\t%s - UNKNOWN", filepath.Base(dir))
+			log.Warn("failed to load Chart.yaml: %v", err)
 			continue
 		} else if r.MatchString(chart.Name) || r.MatchString(chart.Description) {
 			charts[dir] = chart

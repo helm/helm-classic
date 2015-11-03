@@ -35,17 +35,20 @@ To quickly install a standalone etcd instance:
 $ helm update
 ---> Fetching updates...
 ---> Done
-$ helm search etcd
-	etcd-standalone: etcd-standalone is a single Etcd instance (no cluster)
-	etcd-ha-cluster: an HA Etcd cluster (3+ pods)
-	etcd-discovery:  a single-pod Etcd service discovery server
-$ helm info etcd-standalone
-	Description: etcd-standalone is a single Etcd instance (no cluster)
-	Version: 2.2.0-beta3
-	Website: https://github.com/coreos/etcd
-	Built: Oct. 21, 2015
-	Provides: etcd-rc.yaml etcd-service.yaml
-$ helm install etcd-standalone
+$ helm search redis
+---> =================
+---> Available Charts
+---> =================
+--->
+---> 	redis-cluster (redis-cluster 0.0.5) - Highly available Redis cluster with multiple sentinels and standbys.
+---> 	redis-standalone (redis-standalone 0.0.1) - Standalone Redis Master
+$ helm info redis-cluster
+Name: redis-cluster
+Home: http://github.com/deis/redis-cluster
+Version: 0.0.5
+Description: Highly available Redis cluster with multiple sentinels and standbys.
+Details: This package provides a highly available Redis cluster with multiple sentinels and standbys. Note the `redis-master` pod is used for bootstrapping only and can be deleted once the cluster is up and running.
+$ helm install redis-cluster
 ---> Downloading etcd-standalone-2.2.0-beta3
 ---> Cached files into $HELM_WORKDIR/charts/etcd-standalone/
 ---> Running kubectl create -f ...
