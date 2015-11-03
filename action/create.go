@@ -1,13 +1,39 @@
 package action
 
 import (
+	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
+	"text/template"
+
+	"github.com/deis/helm/log"
+	"github.com/deis/helm/model"
 )
 
-import (
-	"github.com/deis/helm/log"
-)
+// readmeSkel is the template for the README.md
+const readmeSkel = `# {{.Name}}
+
+Describe your chart here. Link to upstream repositories, Docker images or any
+external documentation.
+
+If your application requires any specific configuration like Secrets, you may
+include that information here.
+`
+
+// manifestSkel is an example manifest for a new chart
+const manifestSkel = `---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+  heritage: helm
+spec:
+  restartPolicy: Never
+  containers:
+  - name: example
+  image: "alpine:3.2"
+    command: ["/bin/sleep","9000"]
+`
 
 // Create a chart
 //
@@ -15,19 +41,57 @@ import (
 // - homeDir is the helm home directory for the user
 func Create(chartName, homeDir string) {
 
-	skeletonDir := path.Join(homeDir, CachePath, "skel")
+	chart := newSkelChartfile(chartName)
+	chartDir := filepath.Join(homeDir, WorkspaceChartPath, chartName)
 
-	if fi, err := os.Stat(skeletonDir); err != nil {
-		log.Die("Could not find %s: %s", skeletonDir, err)
-	} else if !fi.IsDir() {
-		log.Die("Malformed skeleton: %s: Must be a directory.", skeletonDir)
+	// create directories
+	if err := os.MkdirAll(filepath.Join(chartDir, "manifests"), 0755); err != nil {
+		log.Die("Could not create %q: %s", chartDir, err)
 	}
 
-	chartDir := path.Join(homeDir, WorkspaceChartPath, chartName)
-
-	// copy skeleton to chart directory
-	if err := copyDir(skeletonDir, chartDir); err != nil {
-		log.Die("failed to copy skeleton directory: %v", err)
+	// create Chartfile.yaml
+	if err := chart.Save(filepath.Join(chartDir, "Chart.yaml")); err != nil {
+		log.Die("Could not create Chart.yaml: err", err)
 	}
 
+	// create README.md
+	if err := createReadme(chartDir, chart); err != nil {
+		log.Die("Could not create README.md: err", err)
+	}
+
+	// create example-pod
+	if err := createExampleManifest(chartDir); err != nil {
+		log.Die("Could not create example manifest: err", err)
+	}
+
+	log.Info("Created chart in %s", chartDir)
+}
+
+// newSkelChartfile populates a Chartfile model with example data
+func newSkelChartfile(chartName string) *model.Chartfile {
+	return &model.Chartfile{
+		Name:        chartName,
+		Home:        "http://example.com/your/project/home",
+		Version:     "0.1.0",
+		Description: "Provide a brief description of your application here.",
+		Maintainers: []string{"Your Name <email@address>"},
+		Details:     "This section allows you to provide additional details about your application.\nProvide any information that would be useful to users at a glance.",
+	}
+}
+
+// createReadme populates readmeSkel and saves to the chart directory
+func createReadme(chartDir string, c *model.Chartfile) error {
+	tmpl := template.Must(template.New("info").Parse(readmeSkel))
+
+	readmeFile, err := os.Create(filepath.Join(chartDir, "README.md"))
+	if err != nil {
+		return err
+	}
+
+	return tmpl.Execute(readmeFile, c)
+}
+
+// createExampleManifest saves manifestSkel to the manifests directory
+func createExampleManifest(chartDir string) error {
+	return ioutil.WriteFile(filepath.Join(chartDir, "manifests/example-pod.yaml"), []byte(manifestSkel), 0644)
 }

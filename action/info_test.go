@@ -25,10 +25,7 @@ Version: 0.0.1
 Description: All the things, all semantically, none working
 Details: This package provides a sampling of all of the different manifest types. It can be used to test ordering and other properties of a chart.
 `
-
-	if output.String() != expected {
-		t.Errorf("Expected %v - Got %v ", expected, output.String())
-	}
+	expect(t, output.String(), expected)
 
 	// reset log
 	log.Stdout = os.Stdout
@@ -47,9 +44,7 @@ func TestInfoFormat(t *testing.T) {
 
 	expected := `Hello kitchensink`
 
-	if output.String() != expected {
-		t.Errorf("Expected %v - Got %v ", expected, output.String())
-	}
+	expect(t, output.String(), expected)
 
 	// reset log
 	log.Stdout = os.Stdout

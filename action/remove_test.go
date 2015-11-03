@@ -21,10 +21,7 @@ func TestRemove(t *testing.T) {
 
 	expected := pretty.Colorize("{{.Green}}--->{{.Default}} ") + "All clear! You have successfully removed kitchensink from your workspace.\n"
 
-	actual := output.String()
-	if actual != expected {
-		t.Errorf("Expected %v - Got %v ", expected, actual)
-	}
+	expect(t, output.String(), expected)
 
 	// reset log
 	log.Stdout = os.Stdout
