@@ -20,7 +20,7 @@ build-all:
 	-ldflags "-X main.version=${VERSION}" \
 	-os="linux darwin " \
 	-arch="amd64 386" \
-	-output="../dist/{{.OS}}-{{.Arch}}/{{.Dir}}" . && \
+	-output="_dist/{{.OS}}-{{.Arch}}/{{.Dir}}" . && \
 	cd ..
 
 clean:
@@ -28,9 +28,10 @@ clean:
 	rm -f ./helm.bin
 
 dist: build-all
-	@cd dist && \
-  $(DIST_DIRS) zip -jr helm-$(VERSION)-{}.zip {} \; && \
-  cd ..
+	@mkdir -p _dist
+	@cd _dist && \
+	$(DIST_DIRS) zip -jr helm-$(VERSION)-{}.zip {} \; && \
+	cd ..
 
 install: build
 	install -d ${DESTDIR}/usr/local/bin/
