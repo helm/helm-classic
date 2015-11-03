@@ -6,6 +6,8 @@ import (
 
 func TestSearchByName(t *testing.T) {
 	tmpHome := createTmpHome()
+	fakeUpdate(tmpHome)
+
 	term := "homeslice"
 
 	charts, err := search(term, tmpHome)
@@ -26,6 +28,8 @@ func TestSearchByName(t *testing.T) {
 
 func TestSearchByDescription(t *testing.T) {
 	tmpHome := createTmpHome()
+	fakeUpdate(tmpHome)
+
 	term := "homeskillet"
 
 	charts, err := search(term, tmpHome)
@@ -46,6 +50,8 @@ func TestSearchByDescription(t *testing.T) {
 
 func TestSearch(t *testing.T) {
 	tmpHome := createTmpHome()
+	fakeUpdate(tmpHome)
+
 	term := "homeslice"
 
 	Search(term, tmpHome)

@@ -11,6 +11,7 @@ import (
 func TestInfo(t *testing.T) {
 
 	tmpHome := createTmpHome()
+	fakeUpdate(tmpHome)
 
 	var output bytes.Buffer
 	log.Stdout = &output
@@ -34,6 +35,7 @@ Details: This package provides a sampling of all of the different manifest types
 func TestInfoFormat(t *testing.T) {
 
 	tmpHome := createTmpHome()
+	fakeUpdate(tmpHome)
 
 	var output bytes.Buffer
 	log.Stdout = &output

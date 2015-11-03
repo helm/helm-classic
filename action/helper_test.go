@@ -15,22 +15,20 @@ func init() {
 }
 
 func createTmpHome() string {
-	// create a temp directory
 	tmpHome, _ := ioutil.TempDir("", "helm_home")
 	defer os.Remove(tmpHome)
+	return tmpHome
+}
 
-	// create cache directory
-	tmpHomeCache := filepath.Join(tmpHome, "cache")
-	os.Mkdir(tmpHomeCache, 0755)
+func fakeUpdate(home string) {
+	ensureHome(home)
 
 	// absolute path to testdata charts
 	testChartsPath := filepath.Join(helmRoot, "testdata/charts")
 
 	// copy testdata charts into cache
 	// mock git clone
-	copyDir(testChartsPath, filepath.Join(tmpHomeCache, "charts"))
-
-	return tmpHome
+	copyDir(testChartsPath, filepath.Join(home, "cache/charts"))
 }
 
 func expect(t *testing.T, a interface{}, b interface{}) {
