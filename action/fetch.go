@@ -52,6 +52,7 @@ func fetch(chartName, lname, homedir string) {
 	dest := filepath.Join(homedir, WorkspaceChartPath, lname)
 
 	if fi, err := os.Stat(src); err != nil {
+		log.Die("Chart %s not found in %s", lname, src)
 	} else if !fi.IsDir() {
 		log.Die("Malformed chart %s: Chart must be in a directory.", chartName)
 	}
