@@ -27,8 +27,8 @@ import (
 // 	- Pods
 // 	- ReplicationControllers
 func Install(chartName, home, namespace string, force bool) {
-	if !chartInstalled(chartName, home) {
-		log.Info("No installed chart named %q. Installing now.", chartName)
+	if !chartFetched(chartName, home) {
+		log.Info("No chart named %q in your workspace. Fetching now.", chartName)
 		fetch(chartName, chartName, home)
 	}
 
@@ -55,9 +55,12 @@ func Install(chartName, home, namespace string, force bool) {
 		}
 	}
 
+	log.Info("Running `kubectl create -f` ...")
 	if err := uploadManifests(c, namespace); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
+	log.Info("Done")
+
 	PrintREADME(chartName, home)
 }
 
@@ -170,10 +173,10 @@ func uploadManifests(c *chart.Chart, namespace string) error {
 	return nil
 }
 
-// Check by chart directory name whether a chart is installed.
+// Check by chart directory name whether a chart is fetched into the workspace.
 //
 // This does NOT check the Chart.yaml file.
-func chartInstalled(chartName, home string) bool {
+func chartFetched(chartName, home string) bool {
 	p := filepath.Join(home, WorkspaceChartPath, chartName, "Chart.yaml")
 	log.Debug("Looking for %q", p)
 	if fi, err := os.Stat(p); err != nil || fi.IsDir() {
@@ -204,7 +207,7 @@ func kubectlCreate(data []byte, ns string) error {
 		return err
 	}
 
-	log.Info("File: %s", string(data))
+	log.Debug("File: %s", string(data))
 	in.Write(data)
 	in.Close()
 

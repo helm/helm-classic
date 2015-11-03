@@ -42,7 +42,8 @@ func Fetch(chartName, lname, homedir string) {
 		}
 	}
 
-	PrintREADME(lname, homedir)
+	log.Info("Fetched chart into workspace %s", filepath.Join(homedir, WorkspaceChartPath, lname))
+	log.Info("Done")
 }
 
 func fetch(chartName, lname, homedir string) {
@@ -58,7 +59,7 @@ func fetch(chartName, lname, homedir string) {
 		log.Die("Could not create %q: %s", dest, err)
 	}
 
-	log.Info("Fetching %s to %s", src, dest)
+	log.Debug("Fetching %s to %s", src, dest)
 	if err := copyDir(src, dest); err != nil {
 		log.Die("Failed copying %s to %s", src, dest)
 	}
@@ -76,7 +77,7 @@ func copyDir(src, dst string) error {
 			return nil
 		}
 
-		log.Info("Copying %s", fname)
+		log.Debug("Copying %s", fname)
 		rf, err := filepath.Rel(src, fname)
 		if err != nil {
 			log.Warn("Could not find relative path: %s", err)

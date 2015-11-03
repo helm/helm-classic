@@ -23,9 +23,11 @@ func Update(repo, home string) {
 	gitrepo := filepath.Join(home, CacheChartPath)
 	git := ensureRepo(repo, gitrepo)
 
+	log.Info("Updating cache from %s", repo)
 	if err := gitUpdate(git); err != nil {
 		log.Die("Failed to update from Git: %s", err)
 	}
+	log.Info("Done")
 }
 
 // gitUpdate updates a Git repo.
@@ -34,7 +36,7 @@ func gitUpdate(git *vcs.GitRepo) error {
 		return err
 	}
 
-	log.Info("Updated %s from %s", git.LocalPath(), git.Remote())
+	log.Debug("Updated %s from %s", git.LocalPath(), git.Remote())
 	return nil
 }
 
@@ -61,7 +63,7 @@ func ensureRepo(repo, home string) *vcs.GitRepo {
 	git.Logger = log.New()
 
 	if !git.CheckLocal() {
-		log.Info("Cloning repo into %q. Please wait.", home)
+		log.Debug("Cloning repo into %q. Please wait.", home)
 		if err := git.Get(); err != nil {
 			log.Die("Could not create repository in %q: %s", home, err)
 		}
@@ -77,7 +79,7 @@ func ensureHome(home string) {
 
 	for _, p := range must {
 		if fi, err := os.Stat(p); err != nil {
-			log.Info("Creating %s", p)
+			log.Debug("Creating %s", p)
 			if err := os.MkdirAll(p, 0755); err != nil {
 				log.Die("Could not create %q: %s", p, err)
 			}

@@ -10,8 +10,8 @@ import (
 )
 
 func Uninstall(chartName, home, namespace string) {
-	if !chartInstalled(chartName, home) {
-		log.Info("No installed chart named %q. Nothing to delete.", chartName)
+	if !chartFetched(chartName, home) {
+		log.Info("No chart named %q in your workspace. Nothing to delete.", chartName)
 		return
 	}
 
@@ -21,9 +21,11 @@ func Uninstall(chartName, home, namespace string) {
 		log.Die("Failed to load chart: %s", err)
 	}
 
+	log.Info("Running `kubectl delete` ...")
 	if err := deleteChart(c, namespace); err != nil {
 		log.Die("Failed to completely delete chart: %s", err)
 	}
+	log.Info("Done")
 }
 
 func deleteChart(c *chart.Chart, ns string) error {

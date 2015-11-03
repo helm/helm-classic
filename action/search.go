@@ -18,12 +18,6 @@ func Search(term, homedir string) {
 		log.Die(err.Error())
 	}
 
-	log.Info("=================")
-	log.Info("Available Charts")
-	log.Info("=================")
-
-	log.Info("")
-
 	for dir, chart := range charts {
 		log.Info("\t%s (%s %s) - %s", filepath.Base(dir), chart.Name, chart.Version, chart.Description)
 	}
