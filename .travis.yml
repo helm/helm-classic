@@ -7,6 +7,10 @@ branches:
   only:
     - master
 
+cache:
+  directories:
+    - $GOPATH/src/github.com/deis/helm/vendor
+
 go:
   - 1.5.1
 
