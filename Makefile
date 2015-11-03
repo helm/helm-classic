@@ -54,7 +54,7 @@ test:
 	go test -v ./helm/. ./helm/manifest ./helm/action ./helm/log ./helm/model ./helm/dependency
 
 test-charts:
-	@./test/test-charts $(TEST_CHARTS)
+	@./_test/test-charts $(TEST_CHARTS)
 
 .PHONY: bootstrap \
 				bootstrap-dist \

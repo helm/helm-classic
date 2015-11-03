@@ -5,8 +5,8 @@ set -eo pipefail
 export THIS_DIR="$(cd "$(dirname $(dirname $0))"; pwd)"
 cd "${THIS_DIR}"
 
-source test/config.sh
-source test/lib.sh
+source _test/config.sh
+source _test/lib.sh
 
 log-lifecycle Building helm
 
