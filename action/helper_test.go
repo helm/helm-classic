@@ -8,6 +8,12 @@ import (
 	"testing"
 )
 
+const tmpRepofile = `default: charts
+tables:
+  - name: charts
+    repo: https://github.com/deis/charts
+`
+
 var helmRoot string
 
 func init() {
@@ -22,6 +28,9 @@ func createTmpHome() string {
 
 func fakeUpdate(home string) {
 	ensureHome(home)
+	tmpHomeCache := filepath.Join(home, "cache")
+
+	ioutil.WriteFile(filepath.Join(tmpHomeCache, Repofile), []byte(tmpRepofile), 0755)
 
 	// absolute path to testdata charts
 	testChartsPath := filepath.Join(helmRoot, "testdata/charts")

@@ -1,6 +1,7 @@
 package action
 
 import (
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,10 +11,11 @@ import (
 
 	"github.com/deis/helm/log"
 	"github.com/deis/helm/release"
+	"github.com/deis/helm/repo"
 )
 
 // Update fetches the remote repo into the home directory.
-func Update(repo, home string) {
+func Update(home string) {
 	home, err := filepath.Abs(home)
 	if err != nil {
 		log.Die("Could not generate absolute path for %q: %s", home, err)
@@ -22,12 +24,14 @@ func Update(repo, home string) {
 	// Basically, install if this is the first run.
 	ensurePrereqs()
 	ensureHome(home)
-	gitrepo := filepath.Join(home, CacheChartPath)
-	git := ensureRepo(repo, gitrepo)
 
-	log.Info("Updating cache from %s", repo)
-	if err := gitUpdate(git); err != nil {
-		log.Die("Failed to update from Git: %s", err)
+	rpath := filepath.Join(home, CachePath, Repofile)
+	rc, err := repo.LoadRepofile(rpath)
+	if err != nil {
+		log.Die(err.Error())
+	}
+	if err := rc.UpdateAll(); err != nil {
+		log.Die("Not all repos could be updated: %s", err)
 	}
 	log.Info("Done")
 }
@@ -87,6 +91,7 @@ func ensurePrereqs() {
 }
 
 // ensureRepo ensures that the repo exists and is checked out.
+// DEPRECATED: You should use the functions in package `repo` instead.
 func ensureRepo(repo, home string) *vcs.GitRepo {
 	if err := os.Chdir(home); err != nil {
 		log.Die("Could not change to directory %q: %s", home, err)
@@ -121,6 +126,15 @@ func ensureHome(home string) {
 			}
 		} else if !fi.IsDir() {
 			log.Die("%s must be a directory.", home)
+		}
+	}
+
+	refi := filepath.Join(home, CachePath, Repofile)
+	if _, err := os.Stat(refi); err != nil {
+		log.Info("Creating %s", refi)
+		// Attempt to create a Repos.yaml
+		if err := ioutil.WriteFile(refi, []byte(repo.DefaultRepofile), 0755); err != nil {
+			log.Die("Could not create %s: %s", refi, err)
 		}
 	}
 

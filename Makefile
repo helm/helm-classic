@@ -47,10 +47,10 @@ else
 endif
 
 quicktest:
-	go test ./. ./manifest ./action ./log ./chart ./dependency ./release
+	go test ./. ./manifest ./action ./log ./chart ./dependency ./repo ./release
 
 test:
-	go test -v ./. ./manifest ./action ./log ./chart ./dependency ./release
+	go test -v ./. ./manifest ./action ./log ./chart ./dependency ./repo ./release
 
 test-charts:
 	@./_test/test-charts $(TEST_CHARTS)
