@@ -53,16 +53,16 @@ include that information here.
 	actualManifest := string(manifest)
 	expectedManifest := `---
 apiVersion: v1
-  kind: Pod
-  metadata:
-    name: example-pod
-    heritage: helm
-  spec:
-    restartPolicy: Never
-    containers:
-    - name: example
+kind: Pod
+metadata:
+  name: example-pod
+  heritage: helm
+spec:
+  restartPolicy: Never
+  containers:
+  - name: example
     image: "alpine:3.2"
-      command: ["/bin/sleep","9000"]
+    command: ["/bin/sleep","9000"]
 `
 	expect(t, actualManifest, expectedManifest)
 }
