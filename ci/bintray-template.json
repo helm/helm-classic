@@ -9,7 +9,7 @@
   },
   "files": [
     {
-      "includePattern": "dist/(.*).zip",
+      "includePattern": "_dist/(.*).zip",
       "uploadPattern": "$1.zip"
     }
   ],
