@@ -31,7 +31,7 @@ spec:
   restartPolicy: Never
   containers:
   - name: example
-  image: "alpine:3.2"
+    image: "alpine:3.2"
     command: ["/bin/sleep","9000"]
 `
 
