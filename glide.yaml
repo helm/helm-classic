@@ -1,13 +1,16 @@
+parent: null
 package: github.com/deis/helm
 import:
-  - package: k8s.io/kubernetes
-    ref:     2e5a3cfbc62e4a63423f43f2e6d5723806569b17
-    subpackages:
-      - /pkg
-  - package: github.com/Masterminds/vcs
-  - package: github.com/Masterminds/semver
-  - package: gopkg.in/yaml.v2
-  - package: golang.org/x/crypto
-  - package: github.com/codegangsta/cli
-    ref:     f445c894402839580d30de47551cedc152dad814
-  - package: speter.net/go/exp/math/dec/inf
+- package: k8s.io/kubernetes
+  version: 2e5a3cfbc62e4a63423f43f2e6d5723806569b17
+  subpackages:
+  - /pkg
+- package: github.com/google/go-github
+- package: github.com/Masterminds/vcs
+- package: github.com/Masterminds/semver
+- package: gopkg.in/yaml.v2
+- package: golang.org/x/crypto
+- package: github.com/codegangsta/cli
+  version: f445c894402839580d30de47551cedc152dad814
+- package: speter.net/go/exp/math/dec/inf
+- package: github.com/google/go-querystring

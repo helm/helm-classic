@@ -8,7 +8,7 @@ import (
 	"github.com/deis/helm/log"
 )
 
-const version = "0.0.1"
+var version = "0.0.1"
 
 func main() {
 	app := cli.NewApp()
@@ -79,6 +79,7 @@ Subsequent calls to 'helm update' will simply synchronize the local cache
 with the remote.`,
 			ArgsUsage: "",
 			Action: func(c *cli.Context) {
+				action.CheckLatest(version)
 				action.Update(repo(c), home(c))
 			},
 		},

@@ -1,4 +1,4 @@
-VERSION := $(shell git describe --tags 2>/dev/null)
+VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null)+$(shell git rev-parse --short HEAD)
 DIST_DIRS := find * -type d -exec
 export GO15VENDOREXPERIMENT=1
 
@@ -47,10 +47,10 @@ else
 endif
 
 quicktest:
-	go test ./. ./manifest ./action ./log ./chart ./dependency
+	go test ./. ./manifest ./action ./log ./chart ./dependency ./release
 
 test:
-	go test -v ./. ./manifest ./action ./log ./chart ./dependency
+	go test -v ./. ./manifest ./action ./log ./chart ./dependency ./release
 
 test-charts:
 	@./_test/test-charts $(TEST_CHARTS)
