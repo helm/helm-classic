@@ -33,6 +33,9 @@ func TestEnsureRepo(t *testing.T) {
 }
 
 func TestCheckLatest(t *testing.T) {
+	if exists := os.Getenv("CI"); exists != "" {
+		t.Skip("skipping test to prevent getting rate limited by github")
+	}
 	var oldRepo = release.Project
 	var oldOwner = release.Owner
 	var b bytes.Buffer

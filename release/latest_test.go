@@ -1,10 +1,14 @@
 package release
 
 import (
+	"os"
 	"testing"
 )
 
 func TestLatest(t *testing.T) {
+	if exists := os.Getenv("CI"); exists != "" {
+		t.Skip("skipping test to prevent getting rate limited by github")
+	}
 	rr, err := Latest()
 	if err != nil {
 		t.Errorf("Failed to get latest: %s", err)
@@ -16,6 +20,9 @@ func TestLatest(t *testing.T) {
 }
 
 func TestLatestVersion(t *testing.T) {
+	if exists := os.Getenv("CI"); exists != "" {
+		t.Skip("skipping test to prevent getting rate limited by github")
+	}
 	v, err := LatestVersion()
 	if err != nil {
 		t.Error(err)
@@ -27,6 +34,9 @@ func TestLatestVersion(t *testing.T) {
 }
 
 func TestLatestDownloadURL(t *testing.T) {
+	if exists := os.Getenv("CI"); exists != "" {
+		t.Skip("skipping test to prevent getting rate limited by github")
+	}
 	v, err := LatestDownloadURL()
 	if err != nil {
 		t.Error(err)
