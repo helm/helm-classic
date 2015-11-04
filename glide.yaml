@@ -14,3 +14,6 @@ import:
   version: f445c894402839580d30de47551cedc152dad814
 - package: speter.net/go/exp/math/dec/inf
 - package: github.com/google/go-querystring
+- package: github.com/deis/pkg
+  subpackages:
+  - /prettyprint
