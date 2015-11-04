@@ -84,7 +84,7 @@ Some of the features we plan to tackle in the near future:
 - [ ] Mandatory Group Labels [#80](https://github.com/deis/helm/issues/80)
 - [ ] Linting for Charts [#96](https://github.com/deis/helm/issues/96)
 - [ ] End-to-End Testing of Charts [#4](https://github.com/deis/helm/issues/4)
-- [ ] Dry-Run Installs [#78](https://github.com/deis/helm/issues/78)
+- [x] Dry-Run Installs [#78](https://github.com/deis/helm/issues/78)
 - [ ] Improved Dependency Resolution (based on service provider)
 - [ ] Upgrading Charts
 
