@@ -6,7 +6,7 @@ Helm bootstraps your Kubernetes cluster with **Charts** that provide ready-to-us
 
 - A Redis cluster
 - A Postgres database
-- An HAProxy Edge Load Balancer
+- An HAProxy edge load balancer
 
 A Chart is a unit of Kubernetes manifests that reflect best practices as determined by the Helm community.  Helm's [architecture](docs/architecture.md) is heavily influenced by [Homebrew](https://github.com/Homebrew/homebrew).
 
