@@ -11,6 +11,7 @@ import (
 
 func TestRemove(t *testing.T) {
 	tmpHome := createTmpHome()
+	fakeUpdate(tmpHome)
 
 	Fetch("kitchensink", "", tmpHome)
 
