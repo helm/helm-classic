@@ -30,6 +30,9 @@ func Msg(format string, v ...interface{}) {
 // Die prints an error and then call os.Exit(1).
 func Die(format string, v ...interface{}) {
 	Err(format, v...)
+	if IsDebugging {
+		panic(fmt.Sprintf(format, v...))
+	}
 	os.Exit(1)
 }
 

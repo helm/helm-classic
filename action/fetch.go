@@ -8,6 +8,7 @@ import (
 	"github.com/deis/helm/chart"
 	"github.com/deis/helm/dependency"
 	"github.com/deis/helm/log"
+	"github.com/deis/helm/repo"
 )
 
 // Fetch gets a chart from the source repo and copies to the workdir.
@@ -18,11 +19,14 @@ import (
 // - ns is the namespace for this package. If blank, it is set to the DefaultNS.
 func Fetch(chartName, lname, homedir string) {
 
+	r := mustRepofile(homedir)
+	repository, chartName := r.RepoChart(chartName)
+
 	if lname == "" {
 		lname = chartName
 	}
 
-	fetch(chartName, lname, homedir)
+	fetch(chartName, lname, homedir, repository)
 
 	chartFilePath := filepath.Join(homedir, WorkspaceChartPath, lname, "Chart.yaml")
 	cfile, err := chart.LoadChartfile(chartFilePath)
@@ -47,8 +51,18 @@ func Fetch(chartName, lname, homedir string) {
 	log.Info("Done")
 }
 
-func fetch(chartName, lname, homedir string) {
-	src := filepath.Join(homedir, CacheChartPath, chartName)
+// mustRepofile attempts to laod the Repofile or dies trying.
+func mustRepofile(homedir string) *repo.Repofile {
+	rpath := filepath.Join(homedir, CachePath, Repofile)
+	r, err := repo.LoadRepofile(rpath)
+	if err != nil {
+		log.Die("Could not load %s: %s", rpath, err)
+	}
+	return r
+}
+
+func fetch(chartName, lname, homedir, chartpath string) {
+	src := filepath.Join(homedir, CachePath, chartpath, chartName)
 	dest := filepath.Join(homedir, WorkspaceChartPath, lname)
 
 	if fi, err := os.Stat(src); err != nil {

@@ -21,7 +21,9 @@ Details: {{.Details}}
 // - homeDir is the helm home directory for the user
 // - format is a optional Go template
 func Info(chartName, homedir, format string) {
-	chartPath := filepath.Join(homedir, CacheChartPath, chartName, "Chart.yaml")
+	r := mustRepofile(homedir)
+	table, chartLocal := r.RepoChart(chartName)
+	chartPath := filepath.Join(homedir, CachePath, table, chartLocal, "Chart.yaml")
 
 	if format == "" {
 		format = defaultInfoFormat
@@ -29,7 +31,7 @@ func Info(chartName, homedir, format string) {
 
 	chart, err := chart.LoadChartfile(chartPath)
 	if err != nil {
-		log.Die("Could not find chart %s \nError %s", chartName, err.Error())
+		log.Die("Could not find chart %s: %s", chartName, err.Error())
 	}
 
 	tmpl, err := template.New("info").Parse(format)
