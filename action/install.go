@@ -27,7 +27,7 @@ import (
 func Install(chartName, home, namespace string, force bool, dryRun bool) {
 
 	ochart := chartName
-	r := mustRepofile(home)
+	r := mustConfig(home).Repos
 	table, chartName := r.RepoChart(chartName)
 
 	if !chartFetched(chartName, home) {

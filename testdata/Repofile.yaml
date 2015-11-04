@@ -1,8 +1,0 @@
-default: technosophos
-tables:
-    - name: charts
-      repo: https://github.com/deis/charts
-    - name: technosophos
-      repo: https://github.com/deis/charts
-    - name: clown-nose
-      repo: https://github.com/deis/charts

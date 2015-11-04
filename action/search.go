@@ -38,7 +38,7 @@ func sortedIndex(m map[string]*chart.Chartfile) []string {
 }
 
 func searchAll(term, homedir string) (map[string]*chart.Chartfile, error) {
-	r := mustRepofile(homedir)
+	r := mustConfig(homedir).Repos
 	results := map[string]*chart.Chartfile{}
 	for _, table := range r.Tables {
 		tablename := table.Name

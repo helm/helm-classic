@@ -1,0 +1,6 @@
+repos:
+    default: charts
+    tables:
+    - name: charts
+      repo: https://github.com/deis/charts
+workspace:

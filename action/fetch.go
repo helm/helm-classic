@@ -8,7 +8,6 @@ import (
 	"github.com/deis/helm/chart"
 	"github.com/deis/helm/dependency"
 	"github.com/deis/helm/log"
-	"github.com/deis/helm/repo"
 )
 
 // Fetch gets a chart from the source repo and copies to the workdir.
@@ -19,7 +18,7 @@ import (
 // - ns is the namespace for this package. If blank, it is set to the DefaultNS.
 func Fetch(chartName, lname, homedir string) {
 
-	r := mustRepofile(homedir)
+	r := mustConfig(homedir).Repos
 	repository, chartName := r.RepoChart(chartName)
 
 	if lname == "" {
@@ -49,16 +48,6 @@ func Fetch(chartName, lname, homedir string) {
 
 	log.Info("Fetched chart into workspace %s", filepath.Join(homedir, WorkspaceChartPath, lname))
 	log.Info("Done")
-}
-
-// mustRepofile attempts to laod the Repofile or dies trying.
-func mustRepofile(homedir string) *repo.Repofile {
-	rpath := filepath.Join(homedir, CachePath, Repofile)
-	r, err := repo.LoadRepofile(rpath)
-	if err != nil {
-		log.Die("Could not load %s: %s", rpath, err)
-	}
-	return r
 }
 
 func fetch(chartName, lname, homedir, chartpath string) {

@@ -21,7 +21,7 @@ Details: {{.Details}}
 // - homeDir is the helm home directory for the user
 // - format is a optional Go template
 func Info(chartName, homedir, format string) {
-	r := mustRepofile(homedir)
+	r := mustConfig(homedir).Repos
 	table, chartLocal := r.RepoChart(chartName)
 	chartPath := filepath.Join(homedir, CachePath, table, chartLocal, "Chart.yaml")
 

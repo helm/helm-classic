@@ -1,4 +1,4 @@
-package repo
+package config
 
 import (
 	"errors"
@@ -13,24 +13,42 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-const DefaultRepofile = `default: charts
-tables:
-  - name: charts
-    repo: https://github.com/deis/charts
+const DefaultConfigfile = `repos:
+  default: charts
+  tables:
+    - name: charts
+      repo: https://github.com/deis/charts
+workspace:
 `
 
 var NotFound = errors.New("No local repository")
 
-// Repofile describes a configuration file for remote repositories.
-type Repofile struct {
+// Configfile is the top-level conifguration object for Helm.
+type Configfile struct {
+	// filename may contain a reference back to the file that was read into
+	// this object.
 	filename string
 
+	// Repos points to the repository configuration
+	Repos     *Repos     `yaml:"repos"`
+	Workspace *Workspace `yaml:"workspace"`
+}
+
+// Repos describes a collection of repository (table) mappings.
+type Repos struct {
 	// Dir points to the directory where the Git repositories are stored.
+	// Currently we do not expose this as a changeable option, but we may
+	// choose to in the future.
 	Dir string `yaml:"-"`
 	// Default is the local name of the default repository.
 	Default string `yaml:"default"`
 	// Tables is a list of table items.
 	Tables []*Table `yaml:tables`
+}
+type Workspace struct {
+	// Dir indicates where the workspace is.
+	// Currently, this is not exposed via configuration.
+	Dir string `yaml:"-"`
 }
 
 // Table describes a single table entry.
@@ -41,11 +59,8 @@ type Table struct {
 	Repo string `yaml:"repo"`
 }
 
-// LoadRepofile loads a Repofile from a filename.
-//
-// The directory where the git repos live is determined by analyzing the path
-// to the filename. It can be overridden by explicitly setting Repofile.Dir.
-func LoadRepofile(filename string) (*Repofile, error) {
+// Load loads a configuration by filename.
+func Load(filename string) (*Configfile, error) {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
@@ -56,30 +71,44 @@ func LoadRepofile(filename string) (*Repofile, error) {
 		return nil, err
 	}
 
-	rf, err := ParseRepofile(b)
+	cfg, err := Parse(b)
 	if err != nil {
-		return rf, err
+		return cfg, err
 	}
-	rf.filename = abs
-	rf.Dir = filepath.Dir(abs)
+	cfg.filename = abs
+	if cfg.Repos.Dir == "" {
+		cfg.Repos.Dir = filepath.Join(filepath.Dir(abs), "cache")
+	}
 
-	return rf, nil
+	if cfg.Workspace == nil {
+		cfg.Workspace = &Workspace{}
+	}
+
+	if cfg.Workspace.Dir == "" {
+		cfg.Workspace.Dir = filepath.Join(filepath.Dir(abs), "workspace")
+	}
+
+	return cfg, nil
 }
 
-// ParseRepofile parses a byte slice into a *Repofile.
-//
-// Note that the Repofile.Dir is set to "."
-func ParseRepofile(data []byte) (*Repofile, error) {
-	r := &Repofile{
-		filename: "Remote.yaml",
-		Dir:      ".",
+// Parse parses a byte slice into a *Configfile.
+func Parse(data []byte) (*Configfile, error) {
+	r := &Configfile{
+		filename: "config.yaml",
 	}
-	return r, yaml.Unmarshal(data, r)
+
+	if err := yaml.Unmarshal(data, r); err != nil {
+		return r, err
+	}
+	return r, nil
 }
 
-// Save writes the Repofile as YAML into the named file.
-func (r *Repofile) Save(filename string) error {
-	b, err := yaml.Marshal(r)
+// Save writes the Configfile as YAML into the named file.
+func (c *Configfile) Save(filename string) error {
+	if filename == "" {
+		filename = c.filename
+	}
+	b, err := yaml.Marshal(c)
 	if err != nil {
 		return err
 	}
@@ -90,7 +119,7 @@ func (r *Repofile) Save(filename string) error {
 //
 // If no repo name is present in the fully qualified name, the default repo
 // is returned.
-func (r *Repofile) RepoChart(name string) (string, string) {
+func (r *Repos) RepoChart(name string) (string, string) {
 	res := strings.SplitN(name, "/", 2)
 	if len(res) == 1 {
 		return r.Default, name
@@ -99,7 +128,7 @@ func (r *Repofile) RepoChart(name string) (string, string) {
 }
 
 // Add adds the named remote and then fetches it.
-func (r *Repofile) Add(name, repo string) error {
+func (r *Repos) Add(name, repo string) error {
 	for _, r := range r.Tables {
 		if r.Name == name {
 			return fmt.Errorf("Remote %s already exists, and is pointed to %s", name, r.Repo)
@@ -116,18 +145,13 @@ func (r *Repofile) Add(name, repo string) error {
 		return err
 	}
 
-	if err := r.Save(r.filename); err != nil {
-		r.deleteRepo(name)
-		return err
-	}
-
 	return nil
 }
 
 // Update performs an update of the local copy.
 //
 // This does a Git fast-forward pull from the remote repo.
-func (r *Repofile) Update(name string) error {
+func (r *Repos) Update(name string) error {
 	for _, t := range r.Tables {
 		if t.Name == name {
 			rpath := filepath.Join(r.Dir, name)
@@ -167,7 +191,7 @@ func ensureRepo(repo, dir string) (*vcs.GitRepo, error) {
 // Update all remotes.
 //
 // This does a Git fast-forward pull from each remote repo.
-func (r *Repofile) UpdateAll() error {
+func (r *Repos) UpdateAll() error {
 	for _, table := range r.Tables {
 		log.Info("Updating %s", table.Name)
 		rpath := filepath.Join(r.Dir, table.Name)
@@ -185,7 +209,7 @@ func (r *Repofile) UpdateAll() error {
 // Delete removes a local copy of a remote.
 //
 // This destroys the on-disk cache and removes the entry from the YAML file.
-func (r *Repofile) Delete(name string) error {
+func (r *Repos) Delete(name string) error {
 	res := []*Table{}
 
 	counter := 0
@@ -201,14 +225,10 @@ func (r *Repofile) Delete(name string) error {
 	}
 
 	r.Tables = res
-	if err := r.Save(r.filename); err != nil {
-		return err
-	}
-
 	return r.deleteRepo(name)
 }
 
-func (r *Repofile) deleteRepo(name string) error {
+func (r *Repos) deleteRepo(name string) error {
 	rpath := filepath.Join(r.Dir, name)
 	if fi, err := os.Stat(rpath); err != nil || !fi.IsDir() {
 		log.Info("Deleted nothing. No repo named %s", name)

@@ -16,7 +16,8 @@ func TestListRepos(t *testing.T) {
 	log.Stdout = &b
 	defer func() { log.Stdout = os.Stdout }()
 
-	homedir := "../testdata"
+	homedir := createTmpHome()
+	fakeUpdate(homedir)
 	ListRepos(homedir)
 
 	out := b.String()

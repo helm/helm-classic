@@ -9,9 +9,9 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/Masterminds/vcs"
 
+	"github.com/deis/helm/config"
 	"github.com/deis/helm/log"
 	"github.com/deis/helm/release"
-	"github.com/deis/helm/repo"
 )
 
 // Update fetches the remote repo into the home directory.
@@ -25,11 +25,7 @@ func Update(home string) {
 	ensurePrereqs()
 	ensureHome(home)
 
-	rpath := filepath.Join(home, CachePath, Repofile)
-	rc, err := repo.LoadRepofile(rpath)
-	if err != nil {
-		log.Die(err.Error())
-	}
+	rc := mustConfig(home).Repos
 	if err := rc.UpdateAll(); err != nil {
 		log.Die("Not all repos could be updated: %s", err)
 	}
@@ -129,11 +125,11 @@ func ensureHome(home string) {
 		}
 	}
 
-	refi := filepath.Join(home, CachePath, Repofile)
+	refi := filepath.Join(home, Configfile)
 	if _, err := os.Stat(refi); err != nil {
 		log.Info("Creating %s", refi)
 		// Attempt to create a Repos.yaml
-		if err := ioutil.WriteFile(refi, []byte(repo.DefaultRepofile), 0755); err != nil {
+		if err := ioutil.WriteFile(refi, []byte(config.DefaultConfigfile), 0755); err != nil {
 			log.Die("Could not create %s: %s", refi, err)
 		}
 	}
