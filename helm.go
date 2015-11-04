@@ -79,8 +79,16 @@ Subsequent calls to 'helm update' will simply synchronize the local cache
 with the remote.`,
 			ArgsUsage: "",
 			Action: func(c *cli.Context) {
-				action.CheckLatest(version)
+				if !c.Bool("no-version-check") {
+					action.CheckLatest(version)
+				}
 				action.Update(repo(c), home(c))
+			},
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "no-version-check",
+					Usage: "Disable Helm's automatic check for newer versions of itself.",
+				},
 			},
 		},
 		{
