@@ -2,10 +2,10 @@
 
 [![Build Status](https://travis-ci.org/deis/helm.svg?branch=master)](https://travis-ci.org/deis/helm) [![Go Report Card](http://goreportcard.com/badge/deis/helm)](http://goreportcard.com/report/deis/helm)
 
-Helm helps you bootstrap your Kubernetes cluster with **Charts** that provide ready-to-use workloads like:
+Helm bootstraps your Kubernetes cluster with **Charts** that provide ready-to-use workloads like:
 
+- A Redis cluster
 - A Postgres database
-- A scale-out etcd cluster
 - An HAProxy Edge Load Balancer
 
 A Chart is a unit of Kubernetes manifests that reflect best practices as determined by the Helm community.  Helm's [architecture](docs/architecture.md) is heavily influenced by [Homebrew](https://github.com/Homebrew/homebrew).
@@ -17,7 +17,9 @@ repo](https://github.com/deis/charts).
 
 ![Deis Graphic](https://s3-us-west-2.amazonaws.com/get-deis/deis-graphic-small.png)
 
-`helm` is changing quickly. Your feedback and participation are more than welcome, but be aware that this project is considered a work in progress.
+Helm is changing quickly. Your feedback and participation are more than welcome, but be aware that this project is considered a work in progress.
+
+Please note that Helm is not a general-purpose tool for managing a Kubernetes cluster.  For that, we recommend using [kubectl](http://kubernetes.io/v1.0/docs/user-guide/kubectl/kubectl.html).
 
 ## Installing Helm
 
@@ -70,12 +72,23 @@ $ helm install redis
 ---> Running `kubectl create -f` ...
 replicationcontrollers/redis-standalone
 ---> Done
-========================================
-# Redis Standalone
-
-This is a standalone Redis master with no high-availability, useful for rapid prototyping.
-========================================
 ```
+
+## Future Plans
+
+Helm provides package manager semantics for Kubernetes workloads.  This is a novel concept.  As a result, there are a number of features that are not yet implemented and others that are not yet designed.  Your feedback is always appreciated.
+
+Some of the features we plan to tackle in the near future:
+
+- [ ] Working with External (or Private) Repositories [#118](https://github.com/deis/helm/issues/118)
+- [ ] Mandatory Group Labels [#80](https://github.com/deis/helm/issues/80)
+- [ ] Linting for Charts [#96](https://github.com/deis/helm/issues/96)
+- [ ] End-to-End Testing of Charts [#4](https://github.com/deis/helm/issues/4)
+- [ ] Dry-Run Installs [#78](https://github.com/deis/helm/issues/78)
+- [ ] Improved Dependency Resolution (based on service provider)
+- [ ] Upgrading Charts
+
+For more detailed information on the project roadmap, see the [GitHub milestones](https://github.com/deis/helm/milestones).
 
 ## Contributing to the Helm CLI
 
