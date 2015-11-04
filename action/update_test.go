@@ -9,6 +9,7 @@ import (
 
 	"github.com/deis/helm/log"
 	"github.com/deis/helm/release"
+	"github.com/google/go-github/github"
 )
 
 func TestEnsurePrereqs(t *testing.T) {
@@ -33,25 +34,39 @@ func TestEnsureRepo(t *testing.T) {
 }
 
 func TestCheckLatest(t *testing.T) {
-	var oldRepo = release.Project
-	var oldOwner = release.Owner
+	setupTestCheckLatest()
 	var b bytes.Buffer
 	defer func() {
-		release.Project = oldRepo
-		release.Owner = oldOwner
 		log.Stdout = os.Stdout
+		release.RepoService = nil
 	}()
 
 	log.IsDebugging = true
 	log.Stdout = &b
-
-	// Once there is a release greater than 0.0.1, we can remove this.
-	release.Project = "glide"
-	release.Owner = "Masterminds"
 
 	CheckLatest("0.0.1")
 
 	if !strings.Contains(b.String(), "A new version of Helm") {
 		t.Error("Expected notification of a new release.")
 	}
+}
+
+type MockGHRepoService struct {
+	Release *github.RepositoryRelease
+}
+
+func setupTestCheckLatest() {
+	v := "9.8.7"
+	u := "http://example.com/latest/release"
+	i := 987
+	r := &github.RepositoryRelease{
+		TagName: &v,
+		HTMLURL: &u,
+		ID:      &i,
+	}
+	release.RepoService = &MockGHRepoService{Release: r}
+}
+
+func (m *MockGHRepoService) GetLatestRelease(o, p string) (*github.RepositoryRelease, *github.Response, error) {
+	return m.Release, nil, nil
 }

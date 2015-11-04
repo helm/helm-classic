@@ -9,10 +9,18 @@ var Project = "helm"
 
 // GHClient is a GitHub client.
 var GHClient = github.NewClient(nil)
+var RepoService GHRepoService
+
+type GHRepoService interface {
+	GetLatestRelease(string, string) (*github.RepositoryRelease, *github.Response, error)
+}
 
 // Latest returns information on the latest Helm version.
 func Latest() (*github.RepositoryRelease, error) {
-	rel, _, err := GHClient.Repositories.GetLatestRelease(Owner, Project)
+	if RepoService == nil {
+		RepoService = github.NewClient(nil).Repositories
+	}
+	rel, _, err := RepoService.GetLatestRelease(Owner, Project)
 	return rel, err
 }
 
