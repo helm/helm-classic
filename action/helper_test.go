@@ -6,11 +6,23 @@ import (
 	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/deis/helm/log"
 )
+
+const tmpConfigfile = `repos:
+  default: charts
+  tables:
+    - name: charts
+      repo: https://github.com/deis/charts
+`
 
 var helmRoot string
 
 func init() {
+	// Turn on debug output, convert os.Exit(1) to panic()
+	log.IsDebugging = true
+
 	helmRoot = filepath.Join(os.Getenv("GOPATH"), "src/github.com/deis/helm/")
 }
 
@@ -22,6 +34,8 @@ func createTmpHome() string {
 
 func fakeUpdate(home string) {
 	ensureHome(home)
+
+	ioutil.WriteFile(filepath.Join(home, Configfile), []byte(tmpConfigfile), 0755)
 
 	// absolute path to testdata charts
 	testChartsPath := filepath.Join(helmRoot, "testdata/charts")

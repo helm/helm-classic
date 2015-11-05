@@ -18,11 +18,14 @@ import (
 // - ns is the namespace for this package. If blank, it is set to the DefaultNS.
 func Fetch(chartName, lname, homedir string) {
 
+	r := mustConfig(homedir).Repos
+	repository, chartName := r.RepoChart(chartName)
+
 	if lname == "" {
 		lname = chartName
 	}
 
-	fetch(chartName, lname, homedir)
+	fetch(chartName, lname, homedir, repository)
 
 	chartFilePath := filepath.Join(homedir, WorkspaceChartPath, lname, "Chart.yaml")
 	cfile, err := chart.LoadChartfile(chartFilePath)
@@ -47,8 +50,8 @@ func Fetch(chartName, lname, homedir string) {
 	log.Info("Done")
 }
 
-func fetch(chartName, lname, homedir string) {
-	src := filepath.Join(homedir, CacheChartPath, chartName)
+func fetch(chartName, lname, homedir, chartpath string) {
+	src := filepath.Join(homedir, CachePath, chartpath, chartName)
 	dest := filepath.Join(homedir, WorkspaceChartPath, lname)
 
 	if fi, err := os.Stat(src); err != nil {

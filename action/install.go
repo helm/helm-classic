@@ -8,11 +8,8 @@ import (
 
 	"github.com/deis/helm/chart"
 	"github.com/deis/helm/dependency"
-	"github.com/deis/helm/manifest"
-)
-
-import (
 	"github.com/deis/helm/log"
+	"github.com/deis/helm/manifest"
 )
 
 // Install loads a chart into Kubernetes.
@@ -28,9 +25,14 @@ import (
 // 	- Pods
 // 	- ReplicationControllers
 func Install(chartName, home, namespace string, force bool, dryRun bool) {
+
+	ochart := chartName
+	r := mustConfig(home).Repos
+	table, chartName := r.RepoChart(chartName)
+
 	if !chartFetched(chartName, home) {
-		log.Info("No chart named %q in your workspace. Fetching now.", chartName)
-		fetch(chartName, chartName, home)
+		log.Info("No chart named %q in your workspace. Fetching now.", ochart)
+		fetch(chartName, chartName, home, table)
 	}
 
 	cd := filepath.Join(home, WorkspaceChartPath, chartName)
@@ -69,6 +71,9 @@ func Install(chartName, home, namespace string, force bool, dryRun bool) {
 	PrintREADME(chartName, home)
 }
 
+// AltInstall allows loading a chart from the current directory.
+//
+// It does not directly support chart tables (repos).
 func AltInstall(chartName, cachedir, home, namespace string, force bool, dryRun bool) {
 	// Make sure there is a chart in the cachedir.
 	if _, err := os.Stat(filepath.Join(cachedir, "Chart.yaml")); err != nil {
