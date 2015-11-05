@@ -15,7 +15,6 @@ import (
 // - chartName is the source
 // - lname is the local name for that chart (chart-name); if blank, it is set to the chart.
 // - homedir is the home directory for the user
-// - ns is the namespace for this package. If blank, it is set to the DefaultNS.
 func Fetch(chartName, lname, homedir string) {
 
 	r := mustConfig(homedir).Repos
