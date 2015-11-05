@@ -30,7 +30,7 @@ include:
 For more information on Helm, go to http://helm.sh.
 
 NOTE:
-	Ask your docktor if helm is right for you. Side effects may include prolonged
+	Ask your doctor if helm is right for you. Side effects may include prolonged
 	naval fantasies, fits of delirium, and prolonged pirate imitations. Do not use
 	helm if you are already on Mesos. If you notice a parrot on your shoulder,
 	contact a doctor immediately.
