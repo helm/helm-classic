@@ -42,22 +42,26 @@ Use case: User is looking for a standalone etcd instance (one pod, no clustering
 
 ```
 $ helm update
----> Fetching updates...
+---> Cloning into '$HOME/.helm/cache/charts'...
+---> Updating cache from https://github.com/deis/charts
 ---> Done
-$ helm search etcd
-	etcd-standalone: etcd-standalone is a single Etcd instance (no cluster)
-	etcd-ha-cluster: an HA Etcd cluster (3+ pods)
-	etcd-discovery:  a single-pod Etcd service discovery server
-$ helm info etcd-standalone
-	Description: etcd-standalone is a single Etcd instance (no cluster)
-	Version: 2.2.0-beta3
-	Website: https://github.com/coreos/etcd
-	Built: Oct. 21, 2015
-	Provides: etcd-rc.yaml etcd-service.yaml
-$ helm install etcd-standalone
----> Downloading etcd-standalone-2.2.0-beta3
----> Cached files into $HELM_WORKDIR/charts/etcd-standalone/
----> Running kubectl create -f ...
+$ helm search redis
+---> 	redis-cluster (redis-cluster 0.0.5) - Highly available Redis cluster with multiple sentinels and standbys.
+---> 	redis-standalone (redis-standalone 0.0.1) - Standalone Redis Master
+$ helm info redis-cluster
+Name: redis-cluster
+Home: http://github.com/deis/redis-cluster
+Version: 0.0.5
+Description: Highly available Redis cluster with multiple sentinels and standbys.
+Details: This package provides a highly available Redis cluster with multiple sentinels and standbys. Note the `redis-master` pod is used for bootstrapping only and can be deleted once the cluster is up and running.
+$ helm install redis-cluster
+---> No chart named "redis-cluster" in your workspace. Fetching now.
+---> Fetched chart into workspace $HOME/.helm/workspace/charts/redis-cluster
+---> Running `kubectl create -f` ...
+services/redis-sentinel
+pods/redis-master
+replicationcontrollers/redis
+replicationcontrollers/redis-sentinel
 ---> Done
 ```
 
@@ -67,15 +71,15 @@ Use Case: User wants to get an NGINX chart, modify it, and then install the modi
 
 ```
 $ helm update
----> Fetching updates...
+---> Updating cache from https://github.com/deis/charts
 ---> Done
-$ helm fetch nginx-standard mynginx
----> Downloading nginx-standard
----> Cached files into $HELM_WORKDIR/charts/mynginx/
-$ helm edit mynginx
-$ helm install mynginx
----> Found mynginx in $HELM_WORKDIR/charts/mynginx/ ...
----> Running kubectl create -f ...
+$ helm fetch redis-standalone redis
+---> Fetched chart into workspace $HOME/.helm/workspace/charts/redis
+---> Done
+$ helm edit redis
+$ helm install redis
+---> Running `kubectl create -f` ...
+replicationcontrollers/redis-standalone
 ---> Done
 ```
 
@@ -144,7 +148,7 @@ The tree looks something like this:
       |
       |- cache/       # Where `helm update` data goes
       |
-      |- workdir/     # Working directory, where `helm fetch` copies to
+      |- workspace/     # Working directory, where `helm fetch` copies to
       |
       |- config.yaml  # configuration info
 ```
@@ -153,7 +157,7 @@ The default location for `$HELM_HOME` will be `$HOME/.helm`. This reflects the f
 
 - Individual Helm developer/user
 - CI/CD system
-- Workdir shared by `git` repo among several developers
+- Workspace shared by `git` repo among several developers
 - Dockerized Helm that runs in a container
 
 ### Client Config

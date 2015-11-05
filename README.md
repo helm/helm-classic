@@ -49,7 +49,7 @@ Description: Highly available Redis cluster with multiple sentinels and standbys
 Details: This package provides a highly available Redis cluster with multiple sentinels and standbys. Note the `redis-master` pod is used for bootstrapping only and can be deleted once the cluster is up and running.
 $ helm install redis-cluster
 ---> No chart named "redis-cluster" in your workspace. Fetching now.
----> Fetched chart into workspace /Users/gabriel/.helm/workspace/charts/redis-cluster
+---> Fetched chart into workspace $HOME/.helm/workspace/charts/redis-cluster
 ---> Running `kubectl create -f` ...
 services/redis-sentinel
 pods/redis-master
@@ -65,7 +65,7 @@ $ helm update
 ---> Updating cache from https://github.com/deis/charts
 ---> Done
 $ helm fetch redis-standalone redis
----> Fetched chart into workspace /Users/gabriel/.helm/workspace/charts/redis
+---> Fetched chart into workspace $HOME/.helm/workspace/charts/redis
 ---> Done
 $ helm edit redis
 $ helm install redis
