@@ -34,7 +34,6 @@ func createTmpHome() string {
 
 func fakeUpdate(home string) {
 	ensureHome(home)
-	tmpHomeCache := filepath.Join(home, "cache")
 
 	ioutil.WriteFile(filepath.Join(home, Configfile), []byte(tmpConfigfile), 0755)
 
