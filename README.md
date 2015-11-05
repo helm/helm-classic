@@ -6,12 +6,11 @@ Helm bootstraps your Kubernetes cluster with **Charts** that provide ready-to-us
 
 - A Redis cluster
 - A Postgres database
-- An HAProxy Edge Load Balancer
+- An HAProxy edge load balancer
 
 A Chart is a unit of Kubernetes manifests that reflect best practices as determined by the Helm community.  Helm's [architecture](docs/architecture.md) is heavily influenced by [Homebrew](https://github.com/Homebrew/homebrew).
 
-To view or contribute Charts, head over to the [charts
-repo](https://github.com/deis/charts).
+To view or contribute Charts, head over to the [charts repo](https://github.com/deis/charts).
 
 ## Work in Progress
 
@@ -93,7 +92,8 @@ For more detailed information on the project roadmap, see the [GitHub milestones
 ## Contributing to the Helm CLI
 
 - Make sure you have a `kubectl` client installed and configured to speak with a running Kubernetes cluster.
-- Install [glide](https://github.com/Masterminds/glide)
+- Helm requires Go 1.5
+- Install [glide](https://github.com/Masterminds/glide) >= 0.7.0
 - Run the following commands:
 
 ```console
