@@ -40,11 +40,11 @@ install: build
 prep-bintray-json:
 # TRAVIS_TAG is set to the tag name if the build is a tag
 ifdef TRAVIS_TAG
-	@jq '.version.name |= "$(VERSION)"' ci/bintray-template.json | \
-		jq '.package.repo |= "helm"' > ci/bintray-ci.json
+	@jq '.version.name |= "$(VERSION)"' _scripts/ci/bintray-template.json | \
+		jq '.package.repo |= "helm"' > _scripts/ci/bintray-ci.json
 else
-	@jq '.version.name |= "$(VERSION)"' ci/bintray-template.json \
-		> ci/bintray-ci.json
+	@jq '.version.name |= "$(VERSION)"' _scripts/ci/bintray-template.json \
+		> _scripts/ci/bintray-ci.json
 endif
 
 quicktest:
