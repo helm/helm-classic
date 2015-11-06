@@ -262,6 +262,14 @@ list all available charts.
 			},
 		},
 		{
+			Name:      "home",
+			Usage:     "Displays the location of the Helm home.",
+			ArgsUsage: "",
+			Action: func(c *cli.Context) {
+				log.Msg(home(c))
+			},
+		},
+		{
 			Name:    "repo",
 			Aliases: []string{"repository"},
 			Usage:   "Work with other Chart repositories.",
