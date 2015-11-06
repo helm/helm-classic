@@ -20,6 +20,7 @@ install:
   - make bootstrap build
   - popd
   - export PATH="$PATH:$GLIDE_DIR"
+  - go get github.com/golang/lint/golint
 
 script: make bootstrap build test test-charts
 

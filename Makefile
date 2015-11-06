@@ -1,5 +1,6 @@
 VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null)+$(shell git rev-parse --short HEAD)
 DIST_DIRS := find * -type d -exec
+GO_PACKAGES := action chart config dependency log manifest release
 export GO15VENDOREXPERIMENT=1
 
 ifndef VERSION
@@ -47,13 +48,24 @@ else
 endif
 
 quicktest:
-	go test ./. ./manifest ./action ./log ./chart ./dependency ./config ./release
+	go test -short ./. ./manifest ./action ./log ./chart ./dependency ./config ./release
 
-test:
+test: test-style
 	go test -v ./. ./manifest ./action ./log ./chart ./dependency ./config ./release
 
 test-charts:
 	@./_test/test-charts $(TEST_CHARTS)
+
+test-style:
+	@if [ $(shell gofmt -l *.go $(GO_PACKAGES)) ]; then \
+		echo "gofmt check failed:"; gofmt -l *.go $(GO_PACKAGES); exit 1; \
+	fi
+	@for i in . $(GO_PACKAGES); do \
+		golint $$i; \
+	done
+	@for i in . $(GO_PACKAGES); do \
+		go vet github.com/deis/helm/$$i; \
+	done
 
 .PHONY: bootstrap \
 				bootstrap-dist \
@@ -63,5 +75,7 @@ test-charts:
 				dist \
 				install \
 				prep-bintray-json \
+				quicktest \
 				test \
-				test-charts
+				test-charts \
+				test-style

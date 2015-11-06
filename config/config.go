@@ -43,7 +43,7 @@ type Repos struct {
 	// Default is the local name of the default repository.
 	Default string `yaml:"default"`
 	// Tables is a list of table items.
-	Tables []*Table `yaml:tables`
+	Tables []*Table `yaml:"tables"`
 }
 type Workspace struct {
 	// Dir indicates where the workspace is.
