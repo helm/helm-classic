@@ -47,7 +47,7 @@ function url_decode {
 PROGRAM="helm"
 PLATFORM="$(uname | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
-HELM_ARTIFACT_REPO="${HELM_ARTIFACT_REPO:-"helm-ci"}"
+HELM_ARTIFACT_REPO="${HELM_ARTIFACT_REPO:-"helm"}"
 HELM_VERSION_URL="https://bintray.com/deis/${HELM_ARTIFACT_REPO}/helm/_latestVersion"
 HELM_BIN_URL_BASE="https://dl.bintray.com/deis/${HELM_ARTIFACT_REPO}"
 
