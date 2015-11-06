@@ -57,8 +57,8 @@ test-charts:
 	@./_test/test-charts $(TEST_CHARTS)
 
 test-style:
-	@if [ $(shell gofmt -l *.go $(GO_PACKAGES)) ]; then \
-		echo "gofmt check failed:"; gofmt -l *.go $(GO_PACKAGES); exit 1; \
+	@if [ $(shell gofmt -e -l -s *.go $(GO_PACKAGES)) ]; then \
+		echo "gofmt check failed:"; gofmt -e -l -s *.go $(GO_PACKAGES); exit 1; \
 	fi
 	@for i in . $(GO_PACKAGES); do \
 		golint $$i; \

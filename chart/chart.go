@@ -89,6 +89,7 @@ func (c *Chart) Save(dir string) error {
 }
 */
 
+// OriginFile is the annotation key for a file's origin.
 const OriginFile = "HelmOriginFile"
 
 // sortManifests sorts manifests into their respective categories, adding to the Chart.
