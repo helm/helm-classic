@@ -1,7 +1,12 @@
 package action
 
 import (
+	"io/ioutil"
+	"os"
+	"strings"
 	"testing"
+
+	"github.com/deis/helm/log"
 )
 
 func TestSearchByName(t *testing.T) {
@@ -16,7 +21,7 @@ func TestSearchByName(t *testing.T) {
 	}
 
 	if len(charts) != 1 {
-		t.Fatalf("Expected 2 results, got %d", len(charts))
+		t.Fatalf("Expected 1 result, got %d", len(charts))
 	}
 
 	for _, chart := range charts {
@@ -38,7 +43,7 @@ func TestSearchByDescription(t *testing.T) {
 	}
 
 	if len(charts) != 1 {
-		t.Fatalf("Expected 2 results, got %d", len(charts))
+		t.Fatalf("Expected 1 result, got %d", len(charts))
 	}
 
 	for _, chart := range charts {
@@ -55,4 +60,30 @@ func TestSearch(t *testing.T) {
 	term := "homeslice"
 
 	Search(term, tmpHome)
+}
+
+func TestSearchNotFound(t *testing.T) {
+	tmpHome := createTmpHome()
+	fakeUpdate(tmpHome)
+
+	term := "nonexistent"
+
+	// capture stdout for testing
+	old := log.Stdout
+	r, w, _ := os.Pipe()
+	log.Stdout = w
+
+	Search(term, tmpHome)
+
+	// read test output and restore previous stdout
+	w.Close()
+	out, _ := ioutil.ReadAll(r)
+	log.Stdout = old
+	output := string(out[:])
+
+	// test that a "no chart found" message was printed
+	txt := "No chart found for \"" + term + "\"."
+	if !strings.Contains(output, txt) {
+		t.Fatalf("Expected %s to be printed, got %s", txt, output)
+	}
 }
