@@ -28,7 +28,7 @@ before_deploy: make bootstrap-dist dist prep-bintray-json
 
 deploy:
 - provider: bintray
-  file: ci/bintray-ci.json
+  file: _scripts/ci/bintray-ci.json
   user: deis-admin
   key:
     secure: "c7bWThGpO9vE/A1ePSW/kyhJPOVl6COsWK+199PVuQz1G3mB5xL0FUA21qGp25RAGyJW/iBBp6CQRCKXksnlicwgVk8cOyiYhy1tsxo06c6aAtuf8FBP+EIXtvqlH5QTskvkQzKfhUsYFVoXVr0VRIFcNYejBl/npWdvLy+sz90a8L3JuZ/RbMEYXgQ85SqLUR5OvEKI1C078i10RGcnQNcxOrcl71sB+1nDux3h0wXEzOKkHsmFd7CBNvgNnGx6ugV+YFj6TwfezE2LiWtGugbto1TY9PEGZsEg6I0eKvqXmoWTghd92QF22EEc81C8WJH56Ew/3vMnQlGGgUzhpy982gFSSLo73zb/6HwSC6LdBa6Jjg5L6xWiRteyX6dYFobGRrHytX6q6Q7lrM43Q9FwdIxlqKSyr7wZIOFg+uG3B/W/8Q6EXx7vnSJsUuO5P9QDpTQqAQakJ4gyq68WsPx0E3trLA3326Fum/GfnawiXJmtTHhdTvY3RGS0Pt6FWBBoaN2oHObaciMd77jq6auDCzO4wgx+LoBcekM3QOoEAVx/ASXfzxgZAvur7RK+opzPzHCR3sWpFloasNeSMXq2fJLhWo/DQWNxWisDmZ6JVgf9S15N5S896lpiND1JqgQDNJcbad5dpEhfthJzKDPneXOuqEna+fpfCZ/OPS0="
