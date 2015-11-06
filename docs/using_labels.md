@@ -45,6 +45,12 @@ Helm uses the `mode` label as a convention for specifying the operating mode of 
 
 Charts may have dependencies on the operating `mode` of another Chart.
 
+### Heritage Label
+
+All Helm Charts include the label `heritage: helm`. This provides a
+convenient and standard way to query which components in a Kubernetes
+cluster trace to Helm.
+
 ## Using Labels
 
 In Kubernetes, labels are typically edited by hand and stored with manifests in a version control system.  Helm makes it easier to use labels effectively using the `helm` CLI.
