@@ -18,10 +18,15 @@ func Search(term, homedir string) {
 		log.Die(err.Error())
 	}
 
-	for _, name := range sortedIndex(charts) {
-		chart := charts[name]
-		log.Msg("\t%s (%s %s) - %s", name, chart.Name, chart.Version, chart.Description)
+	if len(charts) > 0 {
+		for _, name := range sortedIndex(charts) {
+			chart := charts[name]
+			log.Msg("\t%s (%s %s) - %s", name, chart.Name, chart.Version, chart.Description)
+		}
+	} else {
+		log.Msg("No chart found for \"%s\".", term)
 	}
+
 }
 
 func sortedIndex(m map[string]*chart.Chartfile) []string {
