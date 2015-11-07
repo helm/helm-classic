@@ -4,13 +4,16 @@ import (
 	"github.com/google/go-github/github"
 )
 
+// Owner is default Helm repository owner or organization.
 var Owner = "deis"
+
+// Project is the default Helm repository name.
 var Project = "helm"
 
-// GHClient is a GitHub client.
-var GHClient = github.NewClient(nil)
+// RepoService is a GitHub client instance.
 var RepoService GHRepoService
 
+// GHRepoService is a restricted interface to GitHub client operations.
 type GHRepoService interface {
 	GetLatestRelease(string, string) (*github.RepositoryRelease, *github.Response, error)
 }
@@ -38,7 +41,7 @@ func LatestVersion() (string, error) {
 	return *rel.TagName, nil
 }
 
-// LatestDowloadURL returns the URL to download a release.
+// LatestDownloadURL returns the URL from which to download a release.
 func LatestDownloadURL() (string, error) {
 	src, err := Latest()
 	if err != nil || src.HTMLURL == nil {

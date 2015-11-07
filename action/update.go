@@ -42,7 +42,7 @@ func gitUpdate(git *vcs.GitRepo) error {
 	return nil
 }
 
-// checklatest checks whether this version of Helm is the latest version.
+// CheckLatest checks whether this version of Helm is the latest version.
 //
 // This does not ensure that this is the latest. If a newer version is found,
 // this generates a message indicating that.

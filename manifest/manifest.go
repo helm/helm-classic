@@ -12,7 +12,7 @@ import (
 
 	"github.com/deis/helm/log"
 	"k8s.io/kubernetes/pkg/api"
-	_ "k8s.io/kubernetes/pkg/api/v1"
+	_ "k8s.io/kubernetes/pkg/api/v1" // side-effect imports required to enable k8s APIs
 	_ "k8s.io/kubernetes/pkg/apis/experimental"
 	"k8s.io/kubernetes/pkg/runtime"
 	"k8s.io/kubernetes/pkg/util/yaml"
@@ -191,7 +191,7 @@ func SplitYAMLDocument(data []byte, atEOF bool) (advance int, token []byte, err 
 	return 0, nil, nil
 }
 
-// Marshal data through the Kubernetes versioned JSON marshal.
+// MarshalJSON encodes data with Kubernetes' versioned API.
 func MarshalJSON(obj interface{}, version string) ([]byte, error) {
 	o, ok := obj.(runtime.Object)
 	if !ok {

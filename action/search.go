@@ -33,7 +33,7 @@ func sortedIndex(m map[string]*chart.Chartfile) []string {
 	ss := make(sort.StringSlice, len(m))
 
 	i := 0
-	for k, _ := range m {
+	for k := range m {
 		ss[i] = k
 		i++
 	}

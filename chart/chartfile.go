@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Chart describes a Helm Chart (e.g. Chart.yaml)
+// Chartfile describes a Helm Chart (e.g. Chart.yaml)
 type Chartfile struct {
 	Name         string            `yaml:"name"`
 	Home         string            `yaml:"home"`
@@ -25,7 +25,7 @@ type Dependency struct {
 	Version string `yaml:"version"`
 }
 
-// Load loads a Chart.yaml file into a *Chart.
+// LoadChartfile loads a Chart.yaml file into a *Chart.
 func LoadChartfile(filename string) (*Chartfile, error) {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {

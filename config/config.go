@@ -13,6 +13,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// DefaultConfigfile is the default Helm configuration.
 const DefaultConfigfile = `repos:
   default: charts
   tables:
@@ -21,7 +22,8 @@ const DefaultConfigfile = `repos:
 workspace:
 `
 
-var NotFound = errors.New("No local repository")
+// ErrNotFound indicates no local repository could be found.
+var ErrNotFound = errors.New("No local repository")
 
 // Configfile is the top-level conifguration object for Helm.
 type Configfile struct {
@@ -45,6 +47,8 @@ type Repos struct {
 	// Tables is a list of table items.
 	Tables []*Table `yaml:"tables"`
 }
+
+// Workspace describes a workspace location and configuration.
 type Workspace struct {
 	// Dir indicates where the workspace is.
 	// Currently, this is not exposed via configuration.
@@ -162,7 +166,7 @@ func (r *Repos) Update(name string) error {
 			return g.Update()
 		}
 	}
-	return NotFound
+	return ErrNotFound
 }
 
 func ensureRepo(repo, dir string) (*vcs.GitRepo, error) {
@@ -188,9 +192,7 @@ func ensureRepo(repo, dir string) (*vcs.GitRepo, error) {
 	return git, nil
 }
 
-// Update all remotes.
-//
-// This does a Git fast-forward pull from each remote repo.
+// UpdateAll does a git fast-forward pull from each remote repo.
 func (r *Repos) UpdateAll() error {
 	for _, table := range r.Tables {
 		log.Info("Updating %s", table.Name)

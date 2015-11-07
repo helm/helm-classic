@@ -15,7 +15,7 @@ Description: {{.Description}}
 Details: {{.Details}}
 `
 
-// Print information about a chart
+// Info prints information about a chart.
 //
 // - chartName to display
 // - homeDir is the helm home directory for the user

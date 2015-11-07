@@ -9,9 +9,13 @@ import (
 	pretty "github.com/deis/pkg/prettyprint"
 )
 
+// Stdout is the logging destination for normal messages.
 var Stdout io.Writer = os.Stdout
+
+// Stderr is the logging destination for error messages.
 var Stderr io.Writer = os.Stderr
 
+// IsDebugging toggles whether or not to enable debug output and behavior.
 var IsDebugging = false
 
 // New creates a *log.Logger that writes to this source.
@@ -48,12 +52,13 @@ func Err(format string, v ...interface{}) {
 	fmt.Fprintf(Stderr, appendNewLine(format), v...)
 }
 
-// Info prints a message.
+// Info prints a green-tinted message.
 func Info(format string, v ...interface{}) {
 	fmt.Fprint(Stderr, pretty.Colorize("{{.Green}}--->{{.Default}} "))
 	fmt.Fprintf(Stderr, appendNewLine(format), v...)
 }
 
+// Debug prints a cyan-tinted message if IsDebugging is true.
 func Debug(msg string, v ...interface{}) {
 	if IsDebugging {
 		fmt.Fprint(Stderr, pretty.Colorize("{{.Cyan}}[DEBUG]{{.Default}} "))
@@ -61,6 +66,7 @@ func Debug(msg string, v ...interface{}) {
 	}
 }
 
+// Warn prints a yellow-tinted warning message.
 func Warn(format string, v ...interface{}) {
 	fmt.Fprint(Stderr, pretty.Colorize("{{.Yellow}}[WARN]{{.Default}} "))
 	Msg(format, v...)

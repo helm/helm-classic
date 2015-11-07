@@ -9,13 +9,18 @@ import (
 
 // CachePath is the suffix for the cache.
 const CachePath = "cache"
+
+// CacheChartPath is the directory that contains a user's cached charts.
 const CacheChartPath = "cache/charts"
 
+// WorkspacePath is the user's workspace directory.
 const WorkspacePath = "workspace"
-const WorkspaceChartPath = "workspace/charts"
-const Configfile = "config.yaml"
 
-const DefaultNS = "default"
+// WorkspaceChartPath is the directory that contains a user's workspace charts.
+const WorkspaceChartPath = "workspace/charts"
+
+// Configfile is the file containing helm's YAML configuration data.
+const Configfile = "config.yaml"
 
 var helmpaths = []string{CachePath, WorkspacePath}
 

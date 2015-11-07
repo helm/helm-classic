@@ -1,4 +1,4 @@
-/* Package dependency provides dependency resolution.*/
+// Package dependency provides dependency resolution.
 package dependency
 
 import (
