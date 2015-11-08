@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/deis/helm.svg?branch=master)](https://travis-ci.org/deis/helm) [![Go Report Card](http://goreportcard.com/badge/deis/helm)](http://goreportcard.com/report/deis/helm)
 
-Helm bootstraps your Kubernetes cluster with **Charts** that provide ready-to-use workloads like:
+[Helm](https://helm.sh) bootstraps your Kubernetes cluster with **Charts** that provide ready-to-use workloads like:
 
 - A Redis cluster
 - A Postgres database

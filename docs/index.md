@@ -1,6 +1,6 @@
 # Helm: The Kubernetes Package Manager
 
-Helm helps you find and use software built for Kubernetes. The Helm CLI uses Charts which not only contain metadata about software packages but also Pod, ReplicationController and Service manifests for Kubernetes. With a few Helm commands you can quickly and easily deploy software packages like:
+[Helm](https://helm.sh) helps you find and use software built for Kubernetes. The Helm CLI uses Charts which not only contain metadata about software packages but also Pod, ReplicationController and Service manifests for Kubernetes. With a few Helm commands you can quickly and easily deploy software packages like:
 
 - Postgres
 - etcd
