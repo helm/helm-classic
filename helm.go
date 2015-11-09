@@ -51,6 +51,10 @@ ENVIRONMENT:
 	}
 
 	app.CommandNotFound = func(c *cli.Context, command string) {
+		if action.HasPlugin(command) {
+			action.Plugin(home(c), command, c.Args())
+			return
+		}
 		log.Err("No matching command '%s'", command)
 		cli.ShowAppHelp(c)
 		log.Die("")
