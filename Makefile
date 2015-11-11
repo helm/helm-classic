@@ -48,10 +48,10 @@ else
 endif
 
 quicktest:
-	go test -short ./. ./manifest ./action ./log ./chart ./dependency ./config ./release
+	go test -short ./ $(addprefix ./,$(GO_PACKAGES))
 
 test: test-style
-	go test -v ./. ./manifest ./action ./log ./chart ./dependency ./config ./release
+	go test -v ./ $(addprefix ./,$(GO_PACKAGES))
 
 test-charts:
 	@./_test/test-charts $(TEST_CHARTS)
