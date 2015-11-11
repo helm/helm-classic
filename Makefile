@@ -38,7 +38,7 @@ clean:
 dist: build-all
 	@cd $(DIST_DIR) && \
 	find * -type d -exec zip -jr helm-$(VERSION)-{}.zip {} \; && \
-	@cd -
+	cd -
 
 install: build
 	install -d ${DESTDIR}/usr/local/bin/
