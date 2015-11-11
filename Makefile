@@ -1,11 +1,7 @@
-VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null)+$(shell git rev-parse --short HEAD)
+VERSION := $(shell git describe --tags 2>/dev/null)
 DIST_DIRS := find * -type d -exec
 GO_PACKAGES := action chart config dependency log manifest release
 export GO15VENDOREXPERIMENT=1
-
-ifndef VERSION
-  VERSION := git-$(shell git rev-parse --short HEAD)
-endif
 
 bootstrap:
 	glide -y glide-full.yaml up
