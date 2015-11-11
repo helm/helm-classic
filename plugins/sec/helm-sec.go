@@ -171,7 +171,7 @@ type lenPWFunc func(l int) (string, error)
 
 func genPW(c *cli.Context, f lenPWFunc) string {
 	d, _ := f(c.Int("len"))
-	printOrQuiet(c, "Password: %s", d)
+	printOrQuiet(c, "Password: %q", d)
 	return d
 }
 

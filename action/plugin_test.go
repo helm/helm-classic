@@ -16,7 +16,7 @@ func TestPluginName(t *testing.T) {
 func TestPlugin(t *testing.T) {
 	f := "../testdata"
 	p := "plugin"
-	a := []string{"-a", "-b", "-c"}
+	a := []string{"myplugin", "-a", "-b", "-c"}
 
 	os.Setenv("PATH", os.ExpandEnv("$PATH:"+helmRoot+"/testdata"))
 
