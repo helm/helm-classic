@@ -1,11 +1,23 @@
-VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null)+$(shell git rev-parse --short HEAD)
-DIST_DIRS := find * -type d -exec
+ifndef GOPATH
+$(error No GOPATH set)
+endif
+
+BIN_DIR := bin
+DIST_DIR := _dist
 GO_PACKAGES := action chart config dependency log manifest release
+MAIN_GO := helm.go
+HELM_BIN := $(BIN_DIR)/helm
+
+VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null)+$(shell git rev-parse --short HEAD)
+
 export GO15VENDOREXPERIMENT=1
 
 ifndef VERSION
   VERSION := git-$(shell git rev-parse --short HEAD)
 endif
+
+build: $(MAIN_GO)
+	go build -o $(HELM_BIN) -ldflags "-X main.version=${VERSION}" $<
 
 bootstrap:
 	glide -y glide-full.yaml up
@@ -13,29 +25,24 @@ bootstrap:
 bootstrap-dist:
 	go get -u github.com/mitchellh/gox
 
-build:
-	go build -o bin/helm -ldflags "-X main.version=${VERSION}" helm.go
-
 build-all:
 	gox -verbose \
 	-ldflags "-X main.version=${VERSION}" \
 	-os="linux darwin " \
 	-arch="amd64 386" \
-	-output="_dist/{{.OS}}-{{.Arch}}/{{.Dir}}" . && \
-	cd ..
+	-output="$(DIST_DIR)/{{.OS}}-{{.Arch}}/{{.Dir}}" .
 
 clean:
-	rm -f ./bin/helm
+	rm -rf $(DIST_DIR) $(BIN_DIR)
 
 dist: build-all
-	@mkdir -p _dist
-	@cd _dist && \
-	$(DIST_DIRS) zip -jr helm-$(VERSION)-{}.zip {} \; && \
-	cd ..
+	@cd $(DIST_DIR) && \
+	find * -type d -exec zip -jr helm-$(VERSION)-{}.zip {} \; && \
+	@cd -
 
 install: build
 	install -d ${DESTDIR}/usr/local/bin/
-	install -m 755 bin/helm ${DESTDIR}/usr/local/bin/helm
+	install -m 755 $(HELM_BIN) ${DESTDIR}/usr/local/bin/helm
 
 prep-bintray-json:
 # TRAVIS_TAG is set to the tag name if the build is a tag
