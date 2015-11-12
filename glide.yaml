@@ -2,7 +2,7 @@ parent: null
 package: github.com/deis/helm
 import:
 - package: k8s.io/kubernetes
-  version: 2e5a3cfbc62e4a63423f43f2e6d5723806569b17
+  version: v1.1.1
   subpackages:
   - /pkg
 - package: github.com/google/go-github

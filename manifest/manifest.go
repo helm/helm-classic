@@ -13,7 +13,7 @@ import (
 	"github.com/deis/helm/log"
 	"k8s.io/kubernetes/pkg/api"
 	_ "k8s.io/kubernetes/pkg/api/v1" // side-effect imports required to enable k8s APIs
-	_ "k8s.io/kubernetes/pkg/apis/experimental"
+	_ "k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
 	"k8s.io/kubernetes/pkg/runtime"
 	"k8s.io/kubernetes/pkg/util/yaml"
 )
