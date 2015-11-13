@@ -1,15 +1,16 @@
 package action
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 
 	"github.com/deis/helm/chart"
+	"github.com/deis/helm/codec"
 	"github.com/deis/helm/dependency"
 	"github.com/deis/helm/log"
-	"github.com/deis/helm/manifest"
 )
 
 // Install loads a chart into Kubernetes.
@@ -132,60 +133,44 @@ func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
 	// TODO: Right now, we force version v1. We could probably make this more
 	// flexible if there is a use case.
 	for _, o := range c.Namespaces {
-		b, err := manifest.MarshalJSON(o, "v1")
-		if err != nil {
-			return err
-		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Secrets {
-		b, err := manifest.MarshalJSON(o, "v1")
-		if err != nil {
-			return err
-		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.PersistentVolumes {
-		b, err := manifest.MarshalJSON(o, "v1")
-		if err != nil {
-			return err
-		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Services {
-		b, err := manifest.MarshalJSON(o, "v1")
-		if err != nil {
-			return err
-		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Pods {
-		b, err := manifest.MarshalJSON(o, "v1")
-		if err != nil {
-			return err
-		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.ReplicationControllers {
-		b, err := manifest.MarshalJSON(o, "v1")
-		if err != nil {
-			return err
-		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func marshalAndCreate(o interface{}, ns string, dry bool) error {
+	var b bytes.Buffer
+	if err := codec.JSON.Encode(&b).One(o); err != nil {
+		return err
+	}
+	return kubectlCreate(b.Bytes(), ns, dry)
 }
 
 // Check by chart directory name whether a chart is fetched into the workspace.

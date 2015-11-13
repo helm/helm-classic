@@ -7,7 +7,6 @@ import (
 
 	"github.com/deis/helm/log"
 	"github.com/deis/helm/manifest"
-	//"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/v1"
 )
 
@@ -106,27 +105,45 @@ func sortManifests(chart *Chart, manifests []*manifest.Manifest) {
 		default:
 			log.Warn("No support for kind %s. Ignoring.", m.Kind)
 		case "Pod":
-			o := vo.(*v1.Pod)
+			o, err := vo.Pod()
+			if err != nil {
+				log.Warn("Failed conversion: %s", err)
+			}
 			o.Annotations = setOriginFile(o.Annotations, m.Source)
 			chart.Pods = append(chart.Pods, o)
 		case "ReplicationController":
-			o := vo.(*v1.ReplicationController)
+			o, err := vo.RC()
+			if err != nil {
+				log.Warn("Failed conversion: %s", err)
+			}
 			o.Annotations = setOriginFile(o.Annotations, m.Source)
 			chart.ReplicationControllers = append(chart.ReplicationControllers, o)
 		case "Service":
-			o := vo.(*v1.Service)
+			o, err := vo.Service()
+			if err != nil {
+				log.Warn("Failed conversion: %s", err)
+			}
 			o.Annotations = setOriginFile(o.Annotations, m.Source)
 			chart.Services = append(chart.Services, o)
 		case "Secret":
-			o := vo.(*v1.Secret)
+			o, err := vo.Secret()
+			if err != nil {
+				log.Warn("Failed conversion: %s", err)
+			}
 			o.Annotations = setOriginFile(o.Annotations, m.Source)
 			chart.Secrets = append(chart.Secrets, o)
 		case "PersistentVolume":
-			o := vo.(*v1.PersistentVolume)
+			o, err := vo.PersistentVolume()
+			if err != nil {
+				log.Warn("Failed conversion: %s", err)
+			}
 			o.Annotations = setOriginFile(o.Annotations, m.Source)
 			chart.PersistentVolumes = append(chart.PersistentVolumes, o)
 		case "Namespace":
-			o := vo.(*v1.Namespace)
+			o, err := vo.Namespace()
+			if err != nil {
+				log.Warn("Failed conversion: %s", err)
+			}
 			o.Annotations = setOriginFile(o.Annotations, m.Source)
 			chart.Namespaces = append(chart.Namespaces, o)
 		}
