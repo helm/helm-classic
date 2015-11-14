@@ -1,13 +1,12 @@
 package action
 
 import (
-	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/deis/helm/chart"
 	"github.com/deis/helm/dependency"
+	"github.com/deis/helm/kubectl"
 	"github.com/deis/helm/log"
 	"github.com/deis/helm/manifest"
 )
@@ -136,54 +135,66 @@ func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		out, err := kubectl.Create(b, namespace, dryRun)
+		if err != nil {
 			return err
 		}
+		log.Msg(out)
 	}
 	for _, o := range c.Secrets {
 		b, err := manifest.MarshalJSON(o, "v1")
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		out, err := kubectl.Create(b, namespace, dryRun)
+		if err != nil {
 			return err
 		}
+		log.Msg(out)
 	}
 	for _, o := range c.PersistentVolumes {
 		b, err := manifest.MarshalJSON(o, "v1")
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		out, err := kubectl.Create(b, namespace, dryRun)
+		if err != nil {
 			return err
 		}
+		log.Msg(out)
 	}
 	for _, o := range c.Services {
 		b, err := manifest.MarshalJSON(o, "v1")
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		out, err := kubectl.Create(b, namespace, dryRun)
+		if err != nil {
 			return err
 		}
+		log.Msg(out)
 	}
 	for _, o := range c.Pods {
 		b, err := manifest.MarshalJSON(o, "v1")
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		out, err := kubectl.Create(b, namespace, dryRun)
+		if err != nil {
 			return err
 		}
+		log.Msg(out)
 	}
 	for _, o := range c.ReplicationControllers {
 		b, err := manifest.MarshalJSON(o, "v1")
 		if err != nil {
 			return err
 		}
-		if err := kubectlCreate(b, namespace, dryRun); err != nil {
+		out, err := kubectl.Create(b, namespace, dryRun)
+		if err != nil {
 			return err
 		}
+		log.Msg(out)
 	}
 	return nil
 }
@@ -199,45 +210,4 @@ func chartFetched(chartName, home string) bool {
 		return false
 	}
 	return true
-}
-
-// kubectlCreate calls `kubectl create` and sends the data via Stdin.
-//
-// If dryRun is set to true, then we just output the command that was
-// going to be run to os.Stdout and return nil.
-func kubectlCreate(data []byte, ns string, dryRun bool) error {
-	a := []string{"create", "-f", "-"}
-
-	if ns != "" {
-		a = append([]string{"--namespace=" + ns}, a...)
-	}
-
-	if dryRun {
-		cmd := "kubectl"
-		for _, arg := range a {
-			cmd = fmt.Sprintf("%s %s", cmd, arg)
-		}
-		cmd = fmt.Sprintf("%s < %s", cmd, data)
-		log.Info(cmd)
-		return nil
-	}
-
-	c := exec.Command("kubectl", a...)
-	in, err := c.StdinPipe()
-	if err != nil {
-		return err
-	}
-
-	c.Stdout = os.Stdout
-	c.Stderr = os.Stderr
-
-	if err := c.Start(); err != nil {
-		return err
-	}
-
-	log.Debug("File: %s", string(data))
-	in.Write(data)
-	in.Close()
-
-	return c.Wait()
 }
