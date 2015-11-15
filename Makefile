@@ -20,7 +20,7 @@ build: $(MAIN_GO)
 	go build -o $(HELM_BIN) -ldflags "-X main.version=${VERSION}" $<
 
 bootstrap:
-	glide -y glide-full.yaml up
+	glide -y glide.yaml up
 
 bootstrap-dist:
 	go get -u github.com/mitchellh/gox
