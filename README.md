@@ -22,11 +22,21 @@ Please note that Helm is not a general-purpose tool for managing a Kubernetes cl
 
 ## Installing Helm
 
+From a Linux or Mac OS X client:
+```
+curl -s https://get.helm.sh | sh
+```
+
+*or*:
+
 1. Grab a prebuilt binary from:
   - the latest release: [ ![Download](https://api.bintray.com/packages/deis/helm/helm/images/download.svg) ](https://bintray.com/deis/helm/helm/_latestVersion#files)
   - the CI build pipeline: [ ![Download](https://api.bintray.com/packages/deis/helm-ci/helm/images/download.svg) ](https://bintray.com/deis/helm-ci/helm/_latestVersion#files)
 2. Unzip the package and make sure `helm` is available on the PATH.
-3. Install a `kubectl` client and configure it to speak with a running Kubernetes cluster.
+
+### Prerequisite
+
+Helm requires an appropriately wired `kubectl` client to speak with a running Kubernetes cluster.
 
 ## Using Helm
 
