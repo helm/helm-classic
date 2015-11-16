@@ -1,19 +1,21 @@
 parent: null
 package: github.com/deis/helm
 import:
+- package: github.com/codegangsta/cli
+  version: f445c894402839580d30de47551cedc152dad814
+- package: github.com/deis/pkg
+  subpackages:
+  - /prettyprint
+- package: github.com/Masterminds/vcs
+- package: github.com/Masterminds/semver
 - package: k8s.io/kubernetes
   version: v1.1.1
   subpackages:
   - /pkg
-- package: github.com/google/go-github
-- package: github.com/Masterminds/vcs
-- package: github.com/Masterminds/semver
-- package: gopkg.in/yaml.v2
-- package: golang.org/x/crypto
-- package: github.com/codegangsta/cli
-  version: f445c894402839580d30de47551cedc152dad814
 - package: speter.net/go/exp/math/dec/inf
+- package: golang.org/x/crypto
+- package: github.com/aokoli/goutils
+- package: github.com/pborman/uuid
+- package: gopkg.in/yaml.v2
 - package: github.com/google/go-querystring
-- package: github.com/deis/pkg
-  subpackages:
-  - /prettyprint
+- package: github.com/google/go-github
