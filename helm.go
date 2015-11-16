@@ -4,8 +4,8 @@ import (
 	"os"
 
 	"github.com/codegangsta/cli"
-	"github.com/deis/helm/action"
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/action"
+	"github.com/helm/helm/log"
 )
 
 var version = "0.0.1"

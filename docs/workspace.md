@@ -22,7 +22,7 @@ In this document, we focus on the `workspace` directory. We suggest some ways to
 
 ## The Cache Directory
 
-The `cache` directory is your local copy of the Helm repository. If you compare it to [github.com/deis/helm](github.com/deis/helm) they should look the same. And when you run a `helm update`, it will sync your local `cache` directory to the upstream.
+The `cache` directory is your local copy of the Helm repository. If you compare it to [github.com/helm/helm](github.com/helm/helm) they should look the same. And when you run a `helm update`, it will sync your local `cache` directory to the upstream.
 
 When you are developing Charts to be contributed upstream, you will interact with the `cache` directory directly. But in normal day-to-day usage, you do not need to worry about it.
 
@@ -79,7 +79,7 @@ Charts are edited in the workspace, giving you a place to edit, test, and tune w
 
 Once your chart is ready for submission, you can set up your `cache` directory and submit upstream:
 
-1. Fork the `github.com/deis/helm` repository
+1. Fork the `github.com/helm/helm` repository
 2. Set up your local cache to track the fork: `cd $HELM_HOME/cache && git remote add ...`
 3. Run `helm publish` to push your chart into your cache
 4. Commit, push, and issue your pull request.

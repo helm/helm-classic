@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/log"
 )
 
 const tmpConfigfile = `repos:
@@ -23,7 +23,7 @@ func init() {
 	// Turn on debug output, convert os.Exit(1) to panic()
 	log.IsDebugging = true
 
-	helmRoot = filepath.Join(os.Getenv("GOPATH"), "src/github.com/deis/helm/")
+	helmRoot = filepath.Join(os.Getenv("GOPATH"), "src/github.com/helm/helm/")
 }
 
 func createTmpHome() string {

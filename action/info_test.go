@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/log"
 )
 
 func TestInfo(t *testing.T) {
@@ -21,7 +21,7 @@ func TestInfo(t *testing.T) {
 	Info("kitchensink", tmpHome, format)
 
 	expected := `Name: kitchensink
-Home: http://github.com/deis/helm
+Home: http://github.com/helm/helm
 Version: 0.0.1
 Description: All the things, all semantically, none working
 Details: This package provides a sampling of all of the different manifest types. It can be used to test ordering and other properties of a chart.

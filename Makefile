@@ -4,7 +4,7 @@ endif
 
 BIN_DIR := bin
 DIST_DIR := _dist
-GO_PACKAGES := action chart config dependency log manifest release plugins/sec plugins/example
+GO_PACKAGES := action chart config dependency log manifest release plugins/sec plugins/example codec
 MAIN_GO := helm.go
 HELM_BIN := $(BIN_DIR)/helm
 
@@ -71,7 +71,7 @@ test-style:
 		golint $$i; \
 	done
 	@for i in . $(GO_PACKAGES); do \
-		go vet github.com/deis/helm/$$i; \
+		go vet github.com/helm/helm/$$i; \
 	done
 
 .PHONY: bootstrap \

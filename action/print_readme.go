@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/log"
 )
 
 // PrintREADME prints the README file (if it exists) to the console.

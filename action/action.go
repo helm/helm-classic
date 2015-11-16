@@ -3,8 +3,8 @@ package action
 import (
 	"path/filepath"
 
-	"github.com/deis/helm/config"
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/config"
+	"github.com/helm/helm/log"
 )
 
 // CachePath is the suffix for the cache.

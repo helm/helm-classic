@@ -9,9 +9,9 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/Masterminds/vcs"
 
-	"github.com/deis/helm/config"
-	"github.com/deis/helm/log"
-	"github.com/deis/helm/release"
+	"github.com/helm/helm/config"
+	"github.com/helm/helm/log"
+	"github.com/helm/helm/release"
 )
 
 // Update fetches the remote repo into the home directory.

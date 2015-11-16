@@ -7,10 +7,10 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/deis/helm/chart"
-	"github.com/deis/helm/codec"
-	"github.com/deis/helm/dependency"
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/chart"
+	"github.com/helm/helm/codec"
+	"github.com/helm/helm/dependency"
+	"github.com/helm/helm/log"
 )
 
 // Install loads a chart into Kubernetes.

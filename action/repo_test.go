@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/log"
 )
 
 func TestListRepos(t *testing.T) {

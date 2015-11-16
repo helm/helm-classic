@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/deis/helm/chart"
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/chart"
+	"github.com/helm/helm/log"
 )
 
 // readmeSkel is the template for the README.md

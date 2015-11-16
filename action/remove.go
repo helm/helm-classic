@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/log"
 )
 
 // Remove removes a chart from the workdir.
