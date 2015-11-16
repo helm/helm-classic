@@ -34,6 +34,7 @@ import:
   subpackages:
   - /pkg
 - package: github.com/google/go-github
+  version: 81d0490d8aa8400f6760a077f4a2039eb0296e86
 - package: github.com/prometheus/procfs
   version: 490cc6eb5fa45bf8a8b7b73c8bc82a8160e8531d
 - package: golang.org/x/oauth2
