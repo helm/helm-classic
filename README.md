@@ -93,7 +93,7 @@ For more detailed information on the project roadmap, see the [GitHub milestones
 
 - Make sure you have a `kubectl` client installed and configured to speak with a running Kubernetes cluster.
 - Helm requires Go 1.5
-- Install [glide](https://github.com/Masterminds/glide) >= 0.7.0
+- Install [glide](https://github.com/Masterminds/glide) >= 0.7.2
 - Run the following commands:
 
 ```console
