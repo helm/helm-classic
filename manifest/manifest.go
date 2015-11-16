@@ -2,20 +2,12 @@
 package manifest
 
 import (
-	"bufio"
-	"bytes"
-	"errors"
-	"fmt"
-	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
+	"github.com/deis/helm/codec"
 	"github.com/deis/helm/log"
-	"k8s.io/kubernetes/pkg/api"
-	_ "k8s.io/kubernetes/pkg/api/v1" // side-effect imports required to enable k8s APIs
-	_ "k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
-	"k8s.io/kubernetes/pkg/runtime"
-	"k8s.io/kubernetes/pkg/util/yaml"
 )
 
 // Files gets a list of all manifest files inside of a chart.
@@ -59,36 +51,30 @@ type Manifest struct {
 	Version, Kind string
 	// Filename of source, "" if no file
 	Source          string
-	VersionedObject interface{}
+	VersionedObject *codec.Object
 }
 
 // Parse takes a filename, loads the file, and parses it into one or more *Manifest objects.
 func Parse(filename string) ([]*Manifest, error) {
-	in, err := os.Open(filename)
+	d, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
 
 	ms := []*Manifest{}
 
-	docs, err := SplitYAML(in)
-	in.Close()
+	docs, err := codec.YAML.Decode(d).All()
 	if err != nil {
 		return ms, err
 	}
 
 	for _, doc := range docs {
-		data, err := yaml.ToJSON(doc)
+		ref, err := doc.Ref()
 		if err != nil {
-			return nil, fmt.Errorf("Failed to parse %s: %s", filename, err)
+			return nil, err
 		}
 
-		vo, version, kind, err := api.Scheme.Raw().DecodeToVersionedObject(data)
-		if err != nil {
-			return ms, err
-		}
-
-		m := &Manifest{Version: version, Kind: kind, VersionedObject: vo, Source: filename}
+		m := &Manifest{Version: ref.APIVersion, Kind: ref.Kind, VersionedObject: doc, Source: filename}
 		ms = append(ms, m)
 	}
 	return ms, nil
@@ -136,66 +122,4 @@ func ParseDir(chartDir string) ([]*Manifest, error) {
 	}
 
 	return files, filepath.Walk(dir, walker)
-}
-
-// SplitYAML splits a compount YAML file into an array of byte arrays.
-//
-// Each byte array contains an entire YAML "file".
-func SplitYAML(r io.Reader) ([][]byte, error) {
-	docs := [][]byte{}
-
-	scanner := bufio.NewScanner(r)
-	scanner.Split(SplitYAMLDocument)
-
-	for scanner.Scan() {
-		b := scanner.Bytes()
-		if len(b) > 0 {
-			docs = append(docs, b)
-		}
-	}
-	return docs, scanner.Err()
-}
-
-const yamlSeparator = "\n---"
-
-// SplitYAMLDocument is a bufio.SplitFunc for splitting a YAML document into individual documents.
-//
-// This is from Kubernetes' 'pkg/util/yaml'.splitYAMLDocument, which is unfortunately
-// not exported.
-func SplitYAMLDocument(data []byte, atEOF bool) (advance int, token []byte, err error) {
-	if atEOF && len(data) == 0 {
-		return 0, nil, nil
-	}
-	sep := len([]byte(yamlSeparator))
-	if i := bytes.Index(data, []byte(yamlSeparator)); i >= 0 {
-		// We have a potential document terminator
-		i += sep
-		after := data[i:]
-		if len(after) == 0 {
-			// we can't read any more characters
-			if atEOF {
-				return len(data), data[:len(data)-sep], nil
-			}
-			return 0, nil, nil
-		}
-		if j := bytes.IndexByte(after, '\n'); j >= 0 {
-			return i + j + 1, data[0 : i-sep], nil
-		}
-		return 0, nil, nil
-	}
-	// If we're at EOF, we have a final, non-terminated line. Return it.
-	if atEOF {
-		return len(data), data, nil
-	}
-	// Request more data.
-	return 0, nil, nil
-}
-
-// MarshalJSON encodes data with Kubernetes' versioned API.
-func MarshalJSON(obj interface{}, version string) ([]byte, error) {
-	o, ok := obj.(runtime.Object)
-	if !ok {
-		return nil, errors.New("Not an Object")
-	}
-	return api.Scheme.EncodeToVersion(o, version)
 }
