@@ -1,9 +1,24 @@
 package config
 
 import (
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 )
+
+func createTmpHome() string {
+	tmpHome, _ := ioutil.TempDir("", "helm_home")
+	defer os.Remove(tmpHome)
+	return tmpHome
+}
+
+func TestEnsureRepo(t *testing.T) {
+	tmpHome := createTmpHome()
+
+	repo := "https://github.com/helm/charts"
+	ensureRepo(repo, filepath.Join(tmpHome, "cache", "charts"))
+}
 
 func TestParseConfigfile(t *testing.T) {
 	cfg, err := Parse([]byte(DefaultConfigfile))
