@@ -1,5 +1,5 @@
 name: alpine-pod
-home: http://github.com/deis/helm
+home: http://github.com/helm/helm
 version: 0.0.1
 description: Simple pod running Alpine Linux.
 maintainers:

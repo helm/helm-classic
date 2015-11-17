@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/deis/helm/log"
-	"github.com/deis/helm/release"
 	"github.com/google/go-github/github"
+	"github.com/helm/helm/log"
+	"github.com/helm/helm/release"
 )
 
 func TestEnsurePrereqs(t *testing.T) {

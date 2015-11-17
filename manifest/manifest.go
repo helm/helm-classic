@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/deis/helm/codec"
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/codec"
+	"github.com/helm/helm/log"
 )
 
 // Files gets a list of all manifest files inside of a chart.

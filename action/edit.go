@@ -12,7 +12,7 @@ import (
 )
 
 import (
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/log"
 )
 
 // delimeterRegexp captures relative path and file content

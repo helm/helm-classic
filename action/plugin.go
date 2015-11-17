@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/log"
 )
 
 // Plugin attempts to execute a plugin.

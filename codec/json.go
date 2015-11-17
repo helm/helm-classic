@@ -61,7 +61,7 @@ func (d jsonDecoder) All() ([]*Object, error) {
 	var phony interface{}
 	if err := json.Unmarshal(d.data, &phony); err == nil {
 		// We have a single JSON document.
-		return []*Object{&Object{data: d.data, dec: jdec}}, nil
+		return []*Object{{data: d.data, dec: jdec}}, nil
 	}
 
 	lines := bytes.Split(d.data, []byte("\n"))

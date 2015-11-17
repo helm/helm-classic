@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/Masterminds/vcs"
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/log"
 	"gopkg.in/yaml.v2"
 )
 

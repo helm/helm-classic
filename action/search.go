@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"sort"
 
-	"github.com/deis/helm/chart"
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/chart"
+	"github.com/helm/helm/log"
 )
 
 // Search looks for packages with 'term' in their name.

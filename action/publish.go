@@ -6,7 +6,7 @@ import (
 )
 
 import (
-	"github.com/deis/helm/log"
+	"github.com/helm/helm/log"
 )
 
 // Publish a chart from the workspace to the cache directory
