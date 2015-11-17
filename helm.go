@@ -210,6 +210,7 @@ is the first stage of contributing a chart upstream.
 `,
 			ArgsUsage: "[chart-name]",
 			Action: func(c *cli.Context) {
+				minArgs(c, 1, "publish")
 				action.Publish(c.Args()[0], home(c), c.Bool("force"))
 			},
 			Flags: []cli.Flag{
