@@ -1,5 +1,5 @@
 name: dep3
-home: http://github.com/deis/helm
+home: http://github.com/helm/helm
 version: 5.2.3
 description: Example dependency
 maintainers:

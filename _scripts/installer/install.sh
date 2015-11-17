@@ -20,7 +20,7 @@ function check_platform_arch {
 
 ${PROGRAM} is not currently supported on ${PLATFORM}-${ARCH}.
 
-See https://github.com/deis/helm for more information.
+See https://github.com/helm/helm for more information.
 
 EOF
   fi
