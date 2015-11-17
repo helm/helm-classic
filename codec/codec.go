@@ -15,21 +15,35 @@ import (
 	"io"
 )
 
+// JSON is the default JSON encoder/decoder.
 var JSON jsonCodec
+
+// YAML is the default YAML encoder/decoder.
 var YAML yamlCodec
 
+// Encoder describes something capable of encoding to a given format.
+//
+// An Encoder should be able to encode one object to an output stream, or
+// many objects to an output stream.
+//
+// For example, a single YAML file can contain multiple YAML objects, and
+// a single JSONList file can contain many JSON objects.
 type Encoder interface {
-	// Write one manifest to one file
+	// Write one object to one file
 	One(interface{}) error
 	// Write all objects to one file
 	All(...interface{}) error
 }
 
+// Decoder decodes an encoded representation into one or many objects.
 type Decoder interface {
+	// Get one object from a file.
 	One() (*Object, error)
+	// Get all objects from a file.
 	All() ([]*Object, error)
 }
 
+// Codec has an encoder and a decoder for a particular encoding.
 type Codec interface {
 	Encode(io.Writer) Encoder
 	Decode([]byte) Decoder
