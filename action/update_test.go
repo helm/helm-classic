@@ -25,14 +25,6 @@ func TestEnsureHome(t *testing.T) {
 	ensureHome(tmpHome)
 }
 
-func TestEnsureRepo(t *testing.T) {
-	tmpHome := createTmpHome()
-	ensureHome(tmpHome)
-
-	repo := "https://github.com/deis/charts"
-	ensureRepo(repo, filepath.Join(tmpHome, "cache", "charts"))
-}
-
 func TestCheckLatest(t *testing.T) {
 	setupTestCheckLatest()
 	var b bytes.Buffer

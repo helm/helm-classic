@@ -86,29 +86,6 @@ func ensurePrereqs() {
 	}
 }
 
-// ensureRepo ensures that the repo exists and is checked out.
-// DEPRECATED: You should use the functions in package `repo` instead.
-func ensureRepo(repo, home string) *vcs.GitRepo {
-	if err := os.Chdir(home); err != nil {
-		log.Die("Could not change to directory %q: %s", home, err)
-	}
-	git, err := vcs.NewGitRepo(repo, home)
-	if err != nil {
-		log.Die("Could not get repository %q: %s", repo, err)
-	}
-
-	git.Logger = log.New()
-
-	if !git.CheckLocal() {
-		log.Debug("Cloning repo into %q. Please wait.", home)
-		if err := git.Get(); err != nil {
-			log.Die("Could not create repository in %q: %s", home, err)
-		}
-	}
-
-	return git
-}
-
 // ensureHome ensures that a HELM_HOME exists.
 func ensureHome(home string) {
 
