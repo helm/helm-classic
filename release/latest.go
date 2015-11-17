@@ -5,7 +5,7 @@ import (
 )
 
 // Owner is default Helm repository owner or organization.
-var Owner = "deis"
+var Owner = "helm"
 
 // Project is the default Helm repository name.
 var Project = "helm"
