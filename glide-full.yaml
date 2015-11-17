@@ -276,6 +276,7 @@ import:
   version: 907cca0f578a5316fb864ec6992dc3d9730ec58c
 - package: github.com/Masterminds/vcs
 - package: github.com/google/go-github
+  version: 81d0490d8aa8400f6760a077f4a2039eb0296e86
 - package: github.com/Sirupsen/logrus
   version: 51fe59aca108dc5680109e7b2051cbdcfa5a253c
 - package: github.com/kr/pty
