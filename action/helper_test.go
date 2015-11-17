@@ -14,7 +14,7 @@ const tmpConfigfile = `repos:
   default: charts
   tables:
     - name: charts
-      repo: https://github.com/deis/charts
+      repo: https://github.com/helm/charts
 `
 
 var helmRoot string

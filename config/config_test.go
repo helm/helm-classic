@@ -35,7 +35,7 @@ func TestParseConfigfile(t *testing.T) {
 		t.Errorf("Expected exactly 1 table.")
 	}
 
-	if r.Tables[0].Repo != "https://github.com/deis/charts" {
+	if r.Tables[0].Repo != "https://github.com/helm/charts" {
 		t.Errorf("Wrong URL")
 	}
 

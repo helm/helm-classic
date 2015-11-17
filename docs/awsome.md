@@ -69,7 +69,7 @@ Your README.md file _may_:
 
 Your README.md file _should not_:
 
-- Add a license constraint. All charts in `github.com/deis/charts` are Apache v2. (If you're using your own repository, you may add a license if you wish.)
+- Add a license constraint. All charts in `github.com/helm/charts` are Apache v2. (If you're using your own repository, you may add a license if you wish.)
 - Describe the project in detail
 
 In a nutshell, the README is intended as help text for your user: It gets the user from fetching your chart to using your chart. You may choose to start with [a README template](https://gist.github.com/elsonrodriguez/6e9afea8c0afbaf9cf59) and go from there.
@@ -136,7 +136,7 @@ The Helm chart reviewers expect that you have tested your chart, both for compat
 
 The suggested workflow for publishing a pull request goes like this:
 
-1. From GitHub, clone the `github.com/deis/charts` repository
+1. From GitHub, clone the `github.com/helm/charts` repository
 2. Add your fork to Helm: `helm repo add technosophos git@github.com:technosophos/charts.git`
 3. Copy your chart from your workspace to your new charts repo (see `helm publish`)
 4. Commit and push to your charts repo

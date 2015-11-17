@@ -7,7 +7,7 @@
 - HAProxy
 - redis
 
-All of the Helm charts live at [github.com/deis/charts](https://github.com/deis/charts). If you want to make your own charts we have a guide for [authoring charts](authoring_charts.md) as well.
+All of the Helm charts live at [github.com/helm/charts](https://github.com/helm/charts). If you want to make your own charts we have a guide for [authoring charts](authoring_charts.md) as well.
 
 ## Additional Information
 

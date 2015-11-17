@@ -18,7 +18,7 @@ const DefaultConfigfile = `repos:
   default: charts
   tables:
     - name: charts
-      repo: https://github.com/deis/charts
+      repo: https://github.com/helm/charts
 workspace:
 `
 
