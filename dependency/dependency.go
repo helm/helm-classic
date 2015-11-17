@@ -37,10 +37,19 @@ func Resolve(cf *chart.Chartfile, installdir string) ([]*chart.Dependency, error
 		resolved := false
 		for n, chart := range cache {
 			log.Debug("Checking if %s (%s) %s meets %s %s", chart.Name, n, chart.Version, check.Name, check.Version)
-			if chart.Name == check.Name && check.VersionOK(chart.Version) {
+			if chart.From != nil {
 				log.Debug("✔︎")
-				resolved = true
-				break
+				if satisfies(chart.From, check) {
+					resolved = true
+					break
+				}
+			} else {
+				log.Info("Chart %s is pre-0.2.0. Legacy mode enabled.", chart.Name)
+				if chart.Name == check.Name && check.VersionOK(chart.Version) {
+					log.Debug("✔︎")
+					resolved = true
+					break
+				}
 			}
 		}
 		if !resolved {
@@ -49,6 +58,27 @@ func Resolve(cf *chart.Chartfile, installdir string) ([]*chart.Dependency, error
 		}
 	}
 	return res, nil
+}
+
+// satisfies checks that this satisfies the dependency spec in that.
+func satisfies(this, that *chart.Dependency) bool {
+	if this.Name != that.Name {
+		return false
+	}
+	if !optRepoMatch(this, that) {
+		return false
+	}
+	return that.VersionOK(this.Version)
+}
+
+func optRepoMatch(from, req *chart.Dependency) bool {
+	// If no repo is set, this is treated as a match.
+	if req.Repo == "" {
+		return true
+	}
+	// Some day we might want to do some git-fu to match different forms of the
+	// same Git repo.
+	return req.Repo == from.Repo
 }
 
 // dependencyCache builds a map of chart and Chartfile.

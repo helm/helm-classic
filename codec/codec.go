@@ -13,6 +13,7 @@ package codec
 
 import (
 	"io"
+	"io/ioutil"
 )
 
 // JSON is the default JSON encoder/decoder.
@@ -47,4 +48,13 @@ type Decoder interface {
 type Codec interface {
 	Encode(io.Writer) Encoder
 	Decode([]byte) Decoder
+}
+
+// DecodeFile returns a decoder pre-populated with the file contents.
+func DecodeFile(filename string, c Codec) (Decoder, error) {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	return c.Decode(data), nil
 }
