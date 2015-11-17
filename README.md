@@ -1,6 +1,6 @@
 # Helm - The Kubernetes Package Manager
 
-[![Build Status](https://travis-ci.org/deis/helm.svg?branch=master)](https://travis-ci.org/deis/helm) [![Go Report Card](http://goreportcard.com/badge/deis/helm)](http://goreportcard.com/report/deis/helm)
+[![Build Status](https://travis-ci.org/helm/helm.svg?branch=master)](https://travis-ci.org/helm/helm) [![Go Report Card](http://goreportcard.com/badge/helm/helm)](http://goreportcard.com/report/helm/helm)
 
 [Helm](https://helm.sh) bootstraps your Kubernetes cluster with **Charts** that provide ready-to-use workloads like:
 
@@ -10,7 +10,7 @@
 
 A Chart is a unit of Kubernetes manifests that reflect best practices as determined by the Helm community.  Helm's [architecture](docs/architecture.md) is heavily influenced by [Homebrew](https://github.com/Homebrew/homebrew).
 
-To view or contribute Charts, head over to the [charts repo](https://github.com/deis/charts).
+To view or contribute Charts, head over to the [charts repo](https://github.com/helm/charts).
 
 ## Work in Progress
 
@@ -45,7 +45,7 @@ To quickly install a standalone etcd instance:
 ```
 $ helm update
 ---> Cloning into '$HOME/.helm/cache/charts'...
----> Updating cache from https://github.com/deis/charts
+---> Updating cache from https://github.com/helm/charts
 ---> Done
 $ helm search redis
 ---> 	redis-cluster (redis-cluster 0.0.5) - Highly available Redis cluster with multiple sentinels and standbys.
@@ -71,7 +71,7 @@ To fetch, modify and install a chart out of your local workspace:
 
 ```
 $ helm update
----> Updating cache from https://github.com/deis/charts
+---> Updating cache from https://github.com/helm/charts
 ---> Done
 $ helm fetch redis-standalone redis
 ---> Fetched chart into workspace $HOME/.helm/workspace/charts/redis
@@ -89,15 +89,15 @@ Helm provides package manager semantics for Kubernetes workloads.  This is a nov
 
 Some of the features we plan to tackle in the near future:
 
-- [ ] Working with External (or Private) Repositories [#118](https://github.com/deis/helm/issues/118)
-- [ ] Mandatory Group Labels [#80](https://github.com/deis/helm/issues/80)
-- [ ] Linting for Charts [#96](https://github.com/deis/helm/issues/96)
-- [ ] End-to-End Testing of Charts [#4](https://github.com/deis/helm/issues/4)
-- [x] Dry-Run Installs [#78](https://github.com/deis/helm/issues/78)
+- [ ] Working with External (or Private) Repositories [#118](https://github.com/helm/helm/issues/118)
+- [ ] Mandatory Group Labels [#80](https://github.com/helm/helm/issues/80)
+- [ ] Linting for Charts [#96](https://github.com/helm/helm/issues/96)
+- [ ] End-to-End Testing of Charts [#4](https://github.com/helm/helm/issues/4)
+- [x] Dry-Run Installs [#78](https://github.com/helm/helm/issues/78)
 - [ ] Improved Dependency Resolution (based on service provider)
 - [ ] Upgrading Charts
 
-For more detailed information on the project roadmap, see the [GitHub milestones](https://github.com/deis/helm/milestones).
+For more detailed information on the project roadmap, see the [GitHub milestones](https://github.com/helm/helm/milestones).
 
 ## Contributing to the Helm CLI
 
@@ -107,9 +107,9 @@ For more detailed information on the project roadmap, see the [GitHub milestones
 - Run the following commands:
 
 ```console
-git clone https://github.com/deis/helm.git $GOPATH/src/github.com/deis/helm
+git clone https://github.com/helm/helm.git $GOPATH/src/github.com/helm/helm
 
-cd $GOPATH/src/github.com/deis/helm
+cd $GOPATH/src/github.com/helm/helm
 
 make bootstrap # installs all of helm's dependencies
 
