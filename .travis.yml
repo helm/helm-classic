@@ -10,7 +10,7 @@ branches:
 
 cache:
   directories:
-    - $GOPATH/src/github.com/deis/helm/vendor
+    - $GOPATH/src/github.com/helm/helm/vendor
 
 go:
   - 1.5.1

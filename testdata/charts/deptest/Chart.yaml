@@ -1,5 +1,5 @@
 name: deptest
-home: http://github.com/deis/helm
+home: http://github.com/helm/helm
 version: 2.3.4
 description: Example dependency
 maintainers:

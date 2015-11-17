@@ -43,7 +43,7 @@ Use case: User is looking for a standalone etcd instance (one pod, no clustering
 ```
 $ helm update
 ---> Cloning into '$HOME/.helm/cache/charts'...
----> Updating cache from https://github.com/deis/charts
+---> Updating cache from https://github.com/helm/charts
 ---> Done
 $ helm search redis
 ---> 	redis-cluster (redis-cluster 0.0.5) - Highly available Redis cluster with multiple sentinels and standbys.
@@ -71,7 +71,7 @@ Use Case: User wants to get an NGINX chart, modify it, and then install the modi
 
 ```
 $ helm update
----> Updating cache from https://github.com/deis/charts
+---> Updating cache from https://github.com/helm/charts
 ---> Done
 $ helm fetch redis-standalone redis
 ---> Fetched chart into workspace $HOME/.helm/workspace/charts/redis

@@ -1,4 +1,4 @@
-package: github.com/deis/helm
+package: github.com/helm/helm
 import:
 - package: github.com/golang/protobuf
   version: 7f07925444bb51fa4cf9dfe6f7661876f8852275

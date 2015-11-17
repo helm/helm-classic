@@ -21,7 +21,7 @@ func TestListRepos(t *testing.T) {
 	ListRepos(homedir)
 
 	out := b.String()
-	if !strings.Contains(out, "charts*\thttps://github.com/deis/charts") {
+	if !strings.Contains(out, "charts*\thttps://github.com/helm/charts") {
 		t.Errorf("Unexpectedly got %s", out)
 	}
 }
