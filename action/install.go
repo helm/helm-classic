@@ -104,6 +104,11 @@ func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
 			return err
 		}
 	}
+	for _, o := range c.ServiceAccounts {
+		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+			return err
+		}
+	}
 	for _, o := range c.Services {
 		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
 			return err

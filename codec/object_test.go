@@ -26,3 +26,20 @@ func TestManifest(t *testing.T) {
 		t.Errorf("Expected name 'cassandra', got %q", pod.Name)
 	}
 }
+
+func TestServiceAccount(t *testing.T) {
+	d, err := ioutil.ReadFile(path.Join(testdata, "serviceaccount.yaml"))
+	if err != nil {
+		t.Error(err)
+	}
+
+	m, err := YAML.Decode(d).One()
+	if err != nil {
+		t.Errorf("Failed parse: %s", err)
+	}
+
+	_, err = m.ServiceAccount()
+	if err != nil {
+		t.Errorf("Failed to decode into pod: %s", err)
+	}
+}

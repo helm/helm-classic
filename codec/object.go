@@ -69,3 +69,9 @@ func (m *Object) Namespace() (*v1.Namespace, error) {
 	o := new(v1.Namespace)
 	return o, m.Object(o)
 }
+
+// ServiceAccount decodes a manifest into a ServiceAccount.
+func (m *Object) ServiceAccount() (*v1.ServiceAccount, error) {
+	o := new(v1.ServiceAccount)
+	return o, m.Object(o)
+}

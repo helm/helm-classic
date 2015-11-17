@@ -25,6 +25,7 @@ type Chart struct {
 	Chartfile              *Chartfile
 	Pods                   []*v1.Pod
 	ReplicationControllers []*v1.ReplicationController
+	ServiceAccounts        []*v1.ServiceAccount
 	Services               []*v1.Service
 	Namespaces             []*v1.Namespace
 	Secrets                []*v1.Secret
@@ -125,6 +126,13 @@ func sortManifests(chart *Chart, manifests []*manifest.Manifest) {
 			}
 			o.Annotations = setOriginFile(o.Annotations, m.Source)
 			chart.Services = append(chart.Services, o)
+		case "ServiceAccount":
+			o, err := vo.ServiceAccount()
+			if err != nil {
+				log.Warn("Failed conversion: %s", err)
+			}
+			o.Annotations = setOriginFile(o.Annotations, m.Source)
+			chart.ServiceAccounts = append(chart.ServiceAccounts, o)
 		case "Secret":
 			o, err := vo.Secret()
 			if err != nil {
