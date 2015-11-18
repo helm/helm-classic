@@ -72,6 +72,18 @@ func Install(chartName, home, namespace string, force bool, dryRun bool) {
 	PrintREADME(chartName, home)
 }
 
+func isSamePath(src, dst string) (bool, error) {
+	a, err := filepath.Abs(dst)
+	if err != nil {
+		return false, err
+	}
+	b, err := filepath.Abs(src)
+	if err != nil {
+		return false, err
+	}
+	return a == b, nil
+}
+
 // AltInstall allows loading a chart from the current directory.
 //
 // It does not directly support chart tables (repos).
@@ -87,9 +99,13 @@ func AltInstall(chartName, cachedir, home, namespace string, force bool, dryRun 
 		log.Die("Expected 'manifests/' to be a directory in %s: %s", cachedir, err)
 	}
 
+	dest := filepath.Join(home, WorkspaceChartPath, chartName)
+	if ok, err := isSamePath(dest, cachedir); err != nil || ok {
+		log.Die("Cannot read from and write to the same place: %s. %v", cachedir, err)
+	}
+
 	// Copy the source chart to the workspace. We ruthlessly overwrite in
 	// this case.
-	dest := filepath.Join(home, WorkspaceChartPath, chartName)
 	if err := copyDir(cachedir, dest); err != nil {
 		log.Die("Failed to copy %s to %s: %s", cachedir, dest, err)
 	}
