@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/helm/helm/log"
@@ -48,5 +49,11 @@ func fakeUpdate(home string) {
 func expect(t *testing.T, a interface{}, b interface{}) {
 	if a != b {
 		t.Errorf("\n[Expected] type: %v\n%v\n[Got] type: %v\n%v\n", reflect.TypeOf(b), b, reflect.TypeOf(a), a)
+	}
+}
+
+func containsStr(t *testing.T, a, b string) {
+	if !strings.Contains(a, b) {
+		t.Errorf("\n[Expected]\n%s\n[To Contain]\n%s\n", a, b)
 	}
 }

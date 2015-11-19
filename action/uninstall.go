@@ -1,9 +1,7 @@
 package action
 
 import (
-	"fmt"
 	"io"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -112,16 +110,15 @@ func deleteChart(c *chart.Chart, ns string, dry bool) error {
 	for _, o := range c.Services {
 		if dry {
 			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
+		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
 		}
 	}
 	ktype = "pod"
 	for _, o := range c.Pods {
-
 		if dry {
 			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
+		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
 		}
 	}
@@ -129,7 +126,7 @@ func deleteChart(c *chart.Chart, ns string, dry bool) error {
 	for _, o := range c.ReplicationControllers {
 		if dry {
 			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
+		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
 		}
 	}
@@ -137,7 +134,7 @@ func deleteChart(c *chart.Chart, ns string, dry bool) error {
 	for _, o := range c.Secrets {
 		if dry {
 			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
+		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
 		}
 	}
@@ -145,7 +142,7 @@ func deleteChart(c *chart.Chart, ns string, dry bool) error {
 	for _, o := range c.PersistentVolumes {
 		if dry {
 			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
+		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
 		}
 	}
@@ -153,25 +150,10 @@ func deleteChart(c *chart.Chart, ns string, dry bool) error {
 	for _, o := range c.Namespaces {
 		if dry {
 			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
+		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
 		}
 	}
 
-	return nil
-}
-
-func kubectlDelete(name, ktype, ns string) error {
-	log.Debug("Deleting %s (%s)", name, ktype)
-	a := []string{"delete", ktype, name}
-	if ns != "" {
-		a = append([]string{fmt.Sprintf("--namespace=%q", ns)}, a...)
-	}
-
-	cmd := exec.Command("kubectl", a...)
-
-	if d, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("%s: %s", string(d), err)
-	}
 	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/helm/helm/config"
+	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
 )
 
@@ -21,6 +22,9 @@ const WorkspaceChartPath = "workspace/charts"
 
 // Configfile is the file containing helm's YAML configuration data.
 const Configfile = "config.yaml"
+
+// Kubectl is the client for executing kubectl commands
+var Kubectl = kubectl.Client
 
 var helmpaths = []string{CachePath, WorkspacePath}
 

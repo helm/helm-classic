@@ -2,9 +2,7 @@ package action
 
 import (
 	"bytes"
-	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/helm/helm/chart"
@@ -25,7 +23,7 @@ import (
 // 	- Services
 // 	- Pods
 // 	- ReplicationControllers
-func Install(chartName, home, namespace string, force bool, dryRun bool) {
+func Install(chartName, home, namespace string, force, dryRun bool) {
 
 	ochart := chartName
 	r := mustConfig(home).Repos
@@ -181,12 +179,20 @@ func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
 	return nil
 }
 
-func marshalAndCreate(o interface{}, ns string, dry bool) error {
+func marshalAndCreate(o interface{}, ns string, dryRun bool) error {
 	var b bytes.Buffer
 	if err := codec.JSON.Encode(&b).One(o); err != nil {
 		return err
 	}
-	return kubectlCreate(b.Bytes(), ns, dry)
+
+	log.Debug("File: %s", b.String())
+
+	out, err := Kubectl.Create(b.Bytes(), ns, dryRun)
+	if err != nil {
+		return err
+	}
+	log.Msg(string(out))
+	return nil
 }
 
 // Check by chart directory name whether a chart is fetched into the workspace.
@@ -200,45 +206,4 @@ func chartFetched(chartName, home string) bool {
 		return false
 	}
 	return true
-}
-
-// kubectlCreate calls `kubectl create` and sends the data via Stdin.
-//
-// If dryRun is set to true, then we just output the command that was
-// going to be run to os.Stdout and return nil.
-func kubectlCreate(data []byte, ns string, dryRun bool) error {
-	a := []string{"create", "-f", "-"}
-
-	if ns != "" {
-		a = append([]string{"--namespace=" + ns}, a...)
-	}
-
-	if dryRun {
-		cmd := "kubectl"
-		for _, arg := range a {
-			cmd = fmt.Sprintf("%s %s", cmd, arg)
-		}
-		cmd = fmt.Sprintf("%s < %s", cmd, data)
-		log.Info(cmd)
-		return nil
-	}
-
-	c := exec.Command("kubectl", a...)
-	in, err := c.StdinPipe()
-	if err != nil {
-		return err
-	}
-
-	c.Stdout = os.Stdout
-	c.Stderr = os.Stderr
-
-	if err := c.Start(); err != nil {
-		return err
-	}
-
-	log.Debug("File: %s", string(data))
-	in.Write(data)
-	in.Close()
-
-	return c.Wait()
 }
