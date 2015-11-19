@@ -15,6 +15,9 @@ var Stdout io.Writer = os.Stdout
 // Stderr is the logging destination for error messages.
 var Stderr io.Writer = os.Stderr
 
+// Stdin is the input alternative for logging.
+//
+// Applications that take console-like input should use this.
 var Stdin io.Reader = os.Stdin
 
 // IsDebugging toggles whether or not to enable debug output and behavior.

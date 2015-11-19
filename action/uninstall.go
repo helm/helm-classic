@@ -23,7 +23,7 @@ import (
 // 	- Volumes
 // 	- Secrets
 //	- Namespaces
-func Uninstall(chartName, home, namespace string) {
+func Uninstall(chartName, home, namespace string, force bool) {
 	if !chartFetched(chartName, home) {
 		log.Info("No chart named %q in your workspace. Nothing to delete.", chartName)
 		return
@@ -37,7 +37,7 @@ func Uninstall(chartName, home, namespace string) {
 	if err := deleteChart(c, namespace, true); err != nil {
 		log.Die("Failed to list charts: %s", err)
 	}
-	if !promptConfirm("Uninstall the listed objects?") {
+	if !force && !promptConfirm("Uninstall the listed objects?") {
 		log.Info("Aborted uninstall")
 		return
 	}
@@ -71,7 +71,7 @@ func promptConfirm(msg string) bool {
 	defer terminal.Restore(0, oldState)
 
 	f := readerWriter(log.Stdin, log.Stdout)
-	t := terminal.NewTerminal(f, msg+" (y/N) >> ")
+	t := terminal.NewTerminal(f, msg+" (y/N) ")
 	res, err := t.ReadLine()
 	if err != nil {
 		log.Err("Could not read line: %s", err)
