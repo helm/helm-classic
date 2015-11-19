@@ -3,6 +3,7 @@ package kubectl
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os/exec"
 	"strings"
 )
@@ -13,13 +14,16 @@ var Path = "kubectl"
 // Runner is an interface to wrap kubectl convenience methods
 type Runner interface {
 	ClusterInfo() ([]byte, error)
-	Create([]byte, string, bool) ([]byte, error)
-	Delete(string, string, string, bool) ([]byte, error)
-	Get([]byte, string, bool) ([]byte, error)
+	Create([]byte, string) ([]byte, error)
+	Delete(string, string, string) ([]byte, error)
+	Get([]byte, string) ([]byte, error)
 }
 
 // RealRunner implements Runner to execute kubectl commands
 type RealRunner struct{}
+
+// PrintRunner implements Runner to return a []byte of the command to be executed
+type PrintRunner struct{}
 
 // Client stores the instance of Runner
 var Client Runner = RealRunner{}
@@ -32,10 +36,9 @@ func commandToString(cmd *exec.Cmd) string {
 	var stdin string
 
 	if cmd.Stdin != nil {
-		buf := new(bytes.Buffer)
-		buf.ReadFrom(cmd.Stdin)
-		stdin = fmt.Sprintf("< %s", buf.String())
+		b, _ := ioutil.ReadAll(cmd.Stdin)
+		stdin = fmt.Sprintf("< %s", string(b))
 	}
 
-	return fmt.Sprintf("%s %s", strings.Join(cmd.Args, " "), stdin)
+	return fmt.Sprintf("[CMD] %s %s", strings.Join(cmd.Args, " "), stdin)
 }

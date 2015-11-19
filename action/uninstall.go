@@ -103,56 +103,45 @@ func (x *rw) Write(b []byte) (int, error) {
 	return x.w.Write(b)
 }
 
+func deleteManifest(name, ktype, ns string, dry bool) {
+	if dry {
+		log.Msg("%s/%s", ktype, name)
+	} else {
+		out, err := Kubectl.Delete(name, ktype, ns)
+		if err != nil {
+			log.Warn("Could not delete %s %s (Skipping): %s", ktype, name, err)
+		}
+		// output is for --dry-run
+		log.Msg(string(out))
+	}
+}
+
 func deleteChart(c *chart.Chart, ns string, dry bool) error {
 	// We delete charts in the ALMOST reverse order that we created them. We
 	// start with services to effectively shut down traffic.
 	ktype := "service"
 	for _, o := range c.Services {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
+		deleteManifest(o.Name, ktype, ns, dry)
 	}
 	ktype = "pod"
 	for _, o := range c.Pods {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
+		deleteManifest(o.Name, ktype, ns, dry)
 	}
 	ktype = "rc"
 	for _, o := range c.ReplicationControllers {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
+		deleteManifest(o.Name, ktype, ns, dry)
 	}
 	ktype = "secret"
 	for _, o := range c.Secrets {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
+		deleteManifest(o.Name, ktype, ns, dry)
 	}
 	ktype = "persistentvolume"
 	for _, o := range c.PersistentVolumes {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
+		deleteManifest(o.Name, ktype, ns, dry)
 	}
 	ktype = "namespace"
 	for _, o := range c.Namespaces {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if _, err := Kubectl.Delete(o.Name, ktype, ns, false); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
+		deleteManifest(o.Name, ktype, ns, dry)
 	}
 
 	return nil

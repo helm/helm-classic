@@ -23,7 +23,7 @@ import (
 // 	- Services
 // 	- Pods
 // 	- ReplicationControllers
-func Install(chartName, home, namespace string, force, dryRun bool) {
+func Install(chartName, home, namespace string, force bool) {
 
 	ochart := chartName
 	r := mustConfig(home).Repos
@@ -57,12 +57,9 @@ func Install(chartName, home, namespace string, force, dryRun bool) {
 		}
 	}
 
-	msg := "Running `kubectl create -f` ..."
-	if dryRun {
-		msg = "Performing a dry run of `kubectl create -f` ..."
-	}
-	log.Info(msg)
-	if err := uploadManifests(c, namespace, dryRun); err != nil {
+	//@FIXME this output is confusing with --dry-run
+	log.Info("Running `kubectl create -f` ...")
+	if err := uploadManifests(c, namespace); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
 	log.Info("Done")
@@ -85,7 +82,7 @@ func isSamePath(src, dst string) (bool, error) {
 // AltInstall allows loading a chart from the current directory.
 //
 // It does not directly support chart tables (repos).
-func AltInstall(chartName, cachedir, home, namespace string, force bool, dryRun bool) {
+func AltInstall(chartName, cachedir, home, namespace string, force bool) {
 	// Make sure there is a chart in the cachedir.
 	if _, err := os.Stat(filepath.Join(cachedir, "Chart.yaml")); err != nil {
 		log.Die("Expected a Chart.yaml in %s: %s", cachedir, err)
@@ -131,55 +128,52 @@ func AltInstall(chartName, cachedir, home, namespace string, force bool, dryRun 
 		}
 	}
 
-	msg := "Running `kubectl create -f` ..."
-	if dryRun {
-		msg = "Performing a dry run of `kubectl create -f` ..."
-	}
-	log.Info(msg)
-	if err := uploadManifests(c, namespace, dryRun); err != nil {
+	//@FIXME this output is confusing with --dry-run
+	log.Info("Running `kubectl create -f` ...")
+	if err := uploadManifests(c, namespace); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
 }
 
 // uploadManifests sends manifests to Kubectl in a particular order.
-func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
+func uploadManifests(c *chart.Chart, namespace string) error {
 	// The ordering is significant.
 	// TODO: Right now, we force version v1. We could probably make this more
 	// flexible if there is a use case.
 	for _, o := range c.Namespaces {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Secrets {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.PersistentVolumes {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Services {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Pods {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.ReplicationControllers {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func marshalAndCreate(o interface{}, ns string, dryRun bool) error {
+func marshalAndCreate(o interface{}, ns string) error {
 	var b bytes.Buffer
 	if err := codec.JSON.Encode(&b).One(o); err != nil {
 		return err
@@ -187,7 +181,7 @@ func marshalAndCreate(o interface{}, ns string, dryRun bool) error {
 
 	log.Debug("File: %s", b.String())
 
-	out, err := Kubectl.Create(b.Bytes(), ns, dryRun)
+	out, err := Kubectl.Create(b.Bytes(), ns)
 	if err != nil {
 		return err
 	}

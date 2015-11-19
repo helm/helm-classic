@@ -11,13 +11,13 @@ import (
 	"github.com/helm/helm/log"
 )
 
-func captureInstallOut(chartName, home, ns string, force, dryRun bool) string {
+func captureInstallOut(chartName, home, ns string, force bool) string {
 	var output bytes.Buffer
 
 	log.Stdout = &output
 	log.Stderr = &output
 
-	Install(chartName, home, ns, force, dryRun)
+	Install(chartName, home, ns, force)
 
 	return strings.TrimSpace(output.String())
 }
@@ -26,13 +26,11 @@ func TestInstall(t *testing.T) {
 	tests := []struct {
 		chartName string
 		force     bool
-		dryRun    bool
 		expected  []string
 		runner    kubectl.Runner
 	}{
 		{
 			"redis",
-			false,
 			false,
 			[]string{"hello from redis"},
 			TestRunner{
@@ -40,17 +38,15 @@ func TestInstall(t *testing.T) {
 			},
 		},
 		// with dry-run set
-		{
-			"redis",
-			false,
-			true,
-			[]string{"Performing a dry run of `kubectl create -f`"},
-			TestRunner{},
-		},
+		//{
+		//"redis",
+		//false,
+		//[]string{"Performing a dry run of `kubectl create -f`"},
+		//TestRunner{},
+		//},
 		//  with unsatisfied dependencies
 		//{
 		//"kitchensink",
-		//false,
 		//false,
 		//"Performing a dry run of `kubectl create -f`",
 		//TestRunner{},
@@ -59,14 +55,12 @@ func TestInstall(t *testing.T) {
 		{
 			"kitchensink",
 			true,
-			false,
 			[]string{"Unsatisfied dependencies", "Running `kubectl create -f`"},
 			TestRunner{},
 		},
 		// with kubectl error
 		//{
 		//"redis",
-		//false,
 		//false,
 		//"Failed to upload manifests",
 		//TestRunner{
@@ -81,7 +75,7 @@ func TestInstall(t *testing.T) {
 
 	for _, tt := range tests {
 		Kubectl = tt.runner
-		actual := captureInstallOut(tt.chartName, tmpHome, "", tt.force, tt.dryRun)
+		actual := captureInstallOut(tt.chartName, tmpHome, "", tt.force)
 
 		for _, exp := range tt.expected {
 			containsStr(t, actual, exp)

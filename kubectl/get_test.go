@@ -10,7 +10,7 @@ func TestGet(t *testing.T) {
 	}
 
 	expects := "running the get command"
-	out, _ := Client.Get([]byte{}, "", false)
+	out, _ := Client.Get([]byte{}, "")
 	if string(out) != expects {
 		t.Errorf("%s != %s", string(out), expects)
 	}
