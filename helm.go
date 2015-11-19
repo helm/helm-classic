@@ -145,11 +145,6 @@ chart if found. In this case, you may not specify multiple charts at once.
 			Action:    install,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "chart-path,p",
-					Value: "",
-					Usage: "An alternate path to fetch a chart. If specified, Helm will ignore the cache.",
-				},
-				cli.StringFlag{
 					Name:  "namespace, n",
 					Value: "",
 					Usage: "The Kubernetes destination namespace.",
@@ -375,15 +370,6 @@ func install(c *cli.Context) {
 	h := home(c)
 	force := c.Bool("force")
 	dryRun := c.Bool("dry-run")
-
-	// If chart-path is specified, we do an alternative install.
-	//
-	// This version will only install one chart at a time, since the
-	// chart-path can only point to one chart.
-	if alt := c.String("chart-path"); alt != "" {
-		action.AltInstall(c.Args()[0], alt, h, c.String("namespace"), force, dryRun)
-		return
-	}
 
 	for _, chart := range c.Args() {
 		action.Install(chart, h, c.String("namespace"), force, dryRun)
