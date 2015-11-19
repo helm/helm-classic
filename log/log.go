@@ -15,6 +15,8 @@ var Stdout io.Writer = os.Stdout
 // Stderr is the logging destination for error messages.
 var Stderr io.Writer = os.Stderr
 
+var Stdin io.Reader = os.Stdin
+
 // IsDebugging toggles whether or not to enable debug output and behavior.
 var IsDebugging = false
 
