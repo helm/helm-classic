@@ -8,7 +8,12 @@ import (
 	"github.com/helm/helm/log"
 )
 
-var version = "0.0.1"
+// version is the version of the app.
+//
+// This value is overwritten by the linker during build. The default version
+// here is SemVer 2, but basically indicates that this was a one-off build
+// and should not be trusted.
+var version = "0.1.0-unstable"
 
 func main() {
 	app := cli.NewApp()
