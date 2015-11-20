@@ -8,6 +8,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/helm/helm/chart"
+	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
 )
 
@@ -21,7 +22,7 @@ import (
 // 	- Volumes
 // 	- Secrets
 //	- Namespaces
-func Uninstall(chartName, home, namespace string, force bool) {
+func Uninstall(chartName, home, namespace string, force bool, client kubectl.Runner) {
 	if !chartFetched(chartName, home) {
 		log.Info("No chart named %q in your workspace. Nothing to delete.", chartName)
 		return
@@ -32,7 +33,7 @@ func Uninstall(chartName, home, namespace string, force bool) {
 	if err != nil {
 		log.Die("Failed to load chart: %s", err)
 	}
-	if err := deleteChart(c, namespace, true); err != nil {
+	if err := deleteChart(c, namespace, true, client); err != nil {
 		log.Die("Failed to list charts: %s", err)
 	}
 	if !force && !promptConfirm("Uninstall the listed objects?") {
@@ -40,8 +41,9 @@ func Uninstall(chartName, home, namespace string, force bool) {
 		return
 	}
 
+	//@FIXME this output is confusing with --dry-run
 	log.Info("Running `kubectl delete` ...")
-	if err := deleteChart(c, namespace, false); err != nil {
+	if err := deleteChart(c, namespace, false, client); err != nil {
 		log.Die("Failed to completely delete chart: %s", err)
 	}
 	log.Info("Done")
@@ -103,11 +105,11 @@ func (x *rw) Write(b []byte) (int, error) {
 	return x.w.Write(b)
 }
 
-func deleteManifest(name, ktype, ns string, dry bool) {
+func deleteManifest(name, ktype, ns string, dry bool, client kubectl.Runner) {
 	if dry {
 		log.Msg("%s/%s", ktype, name)
 	} else {
-		out, err := Kubectl.Delete(name, ktype, ns)
+		out, err := client.Delete(name, ktype, ns)
 		if err != nil {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, name, err)
 		}
@@ -116,32 +118,32 @@ func deleteManifest(name, ktype, ns string, dry bool) {
 	}
 }
 
-func deleteChart(c *chart.Chart, ns string, dry bool) error {
+func deleteChart(c *chart.Chart, ns string, dry bool, client kubectl.Runner) error {
 	// We delete charts in the ALMOST reverse order that we created them. We
 	// start with services to effectively shut down traffic.
 	ktype := "service"
 	for _, o := range c.Services {
-		deleteManifest(o.Name, ktype, ns, dry)
+		deleteManifest(o.Name, ktype, ns, dry, client)
 	}
 	ktype = "pod"
 	for _, o := range c.Pods {
-		deleteManifest(o.Name, ktype, ns, dry)
+		deleteManifest(o.Name, ktype, ns, dry, client)
 	}
 	ktype = "rc"
 	for _, o := range c.ReplicationControllers {
-		deleteManifest(o.Name, ktype, ns, dry)
+		deleteManifest(o.Name, ktype, ns, dry, client)
 	}
 	ktype = "secret"
 	for _, o := range c.Secrets {
-		deleteManifest(o.Name, ktype, ns, dry)
+		deleteManifest(o.Name, ktype, ns, dry, client)
 	}
 	ktype = "persistentvolume"
 	for _, o := range c.PersistentVolumes {
-		deleteManifest(o.Name, ktype, ns, dry)
+		deleteManifest(o.Name, ktype, ns, dry, client)
 	}
 	ktype = "namespace"
 	for _, o := range c.Namespaces {
-		deleteManifest(o.Name, ktype, ns, dry)
+		deleteManifest(o.Name, ktype, ns, dry, client)
 	}
 
 	return nil

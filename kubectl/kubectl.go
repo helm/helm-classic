@@ -13,9 +13,13 @@ var Path = "kubectl"
 
 // Runner is an interface to wrap kubectl convenience methods
 type Runner interface {
+	// ClusterInfo returns Kubernetes cluster info
 	ClusterInfo() ([]byte, error)
+	// Create uploads a chart to Kubernetes
 	Create([]byte, string) ([]byte, error)
+	// Delete removes a chart from Kubernetes.
 	Delete(string, string, string) ([]byte, error)
+	// Get returns Kubernetes resources
 	Get([]byte, string) ([]byte, error)
 }
 

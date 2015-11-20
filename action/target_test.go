@@ -5,27 +5,28 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
 )
 
-func captureTargetOut() string {
+func captureTargetOut(client kubectl.Runner) string {
 	var output bytes.Buffer
 
 	log.Stdout = &output
 	log.Stderr = &output
 
-	Target()
+	Target(client)
 
 	return strings.TrimSpace(output.String())
 }
 
 func TestTarget(t *testing.T) {
-	Kubectl = TestRunner{
+	client := TestRunner{
 		out: []byte("lookin good"),
 	}
 
 	expected := "lookin good"
-	actual := captureTargetOut()
+	actual := captureTargetOut(client)
 
 	expect(t, actual, expected)
 }

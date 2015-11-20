@@ -11,13 +11,13 @@ import (
 	"github.com/helm/helm/log"
 )
 
-func captureInstallOut(chartName, home, ns string, force bool) string {
+func captureInstallOut(chartName, home, ns string, force bool, client kubectl.Runner) string {
 	var output bytes.Buffer
 
 	log.Stdout = &output
 	log.Stderr = &output
 
-	Install(chartName, home, ns, force)
+	Install(chartName, home, ns, force, client)
 
 	return strings.TrimSpace(output.String())
 }
@@ -27,7 +27,7 @@ func TestInstall(t *testing.T) {
 		chartName string
 		force     bool
 		expected  []string
-		runner    kubectl.Runner
+		client    kubectl.Runner
 	}{
 		{
 			"redis",
@@ -74,8 +74,7 @@ func TestInstall(t *testing.T) {
 	fakeUpdate(tmpHome)
 
 	for _, tt := range tests {
-		Kubectl = tt.runner
-		actual := captureInstallOut(tt.chartName, tmpHome, "", tt.force)
+		actual := captureInstallOut(tt.chartName, tmpHome, "", tt.force, tt.client)
 
 		for _, exp := range tt.expected {
 			containsStr(t, actual, exp)
