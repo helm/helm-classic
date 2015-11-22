@@ -2,71 +2,66 @@ package action
 
 import (
 	"bytes"
-	_ "errors"
+	"errors"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
 )
 
-func captureInstallOut(chartName, home, ns string, force bool, client kubectl.Runner) string {
+func TestInstall(t *testing.T) {
 	var output bytes.Buffer
-
 	log.Stdout = &output
 	log.Stderr = &output
 
-	Install(chartName, home, ns, force, client)
-
-	return strings.TrimSpace(output.String())
-}
-
-func TestInstall(t *testing.T) {
+	// Todo: add tests
+	// - with an invalid chart name
+	// - with failure to check dependencies
+	// - with failure to check dependencies and force option
+	// - with chart in current directly
 	tests := []struct {
-		chartName string
-		force     bool
-		expected  []string
-		client    kubectl.Runner
+		name     string // Todo: print name on fail
+		chart    string
+		force    bool
+		expected []string
+		client   kubectl.Runner
 	}{
 		{
-			"redis",
-			false,
-			[]string{"hello from redis"},
-			TestRunner{
+			name:     "with valid input",
+			chart:    "redis",
+			expected: []string{"hello from redis"},
+			client: TestRunner{
 				out: []byte("hello from redis"),
 			},
 		},
-		// with dry-run set
-		//{
-		//"redis",
-		//false,
-		//[]string{"Performing a dry run of `kubectl create -f`"},
-		//TestRunner{},
-		//},
-		//  with unsatisfied dependencies
-		//{
-		//"kitchensink",
-		//false,
-		//"Performing a dry run of `kubectl create -f`",
-		//TestRunner{},
-		//},
-		//  with unsatisfied dependencies and force set
 		{
-			"kitchensink",
-			true,
-			[]string{"Unsatisfied dependencies", "Running `kubectl create -f`"},
-			TestRunner{},
+			name:     "with dry-run option",
+			chart:    "redis",
+			expected: []string{"[CMD] kubectl create -f -"},
+			client:   kubectl.PrintRunner{},
 		},
-		// with kubectl error
-		//{
-		//"redis",
-		//false,
-		//"Failed to upload manifests",
-		//TestRunner{
-		//err: errors.New("oh snap"),
-		//},
-		//},
+		{
+			name:     "with unsatisfied dependencies",
+			chart:    "kitchensink",
+			expected: []string{"Stopping install. Re-run with --force to install anyway."},
+			client:   TestRunner{},
+		},
+		{
+			name:     "with unsatisfied dependencies and force option",
+			chart:    "kitchensink",
+			force:    true,
+			expected: []string{"Unsatisfied dependencies", "Running `kubectl create -f`"},
+			client:   TestRunner{},
+		},
+		{
+			name:     "with a kubectl error",
+			chart:    "redis",
+			expected: []string{"Failed to upload manifests: oh snap"},
+			client: TestRunner{
+				err: errors.New("oh snap"),
+			},
+		},
 	}
 
 	tmpHome := createTmpHome()
@@ -74,7 +69,8 @@ func TestInstall(t *testing.T) {
 	fakeUpdate(tmpHome)
 
 	for _, tt := range tests {
-		actual := captureInstallOut(tt.chartName, tmpHome, "", tt.force, tt.client)
+		Install(tt.chart, tmpHome, "", tt.force, tt.client)
+		actual := output.String()
 
 		for _, exp := range tt.expected {
 			containsStr(t, actual, exp)

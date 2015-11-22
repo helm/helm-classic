@@ -2,6 +2,7 @@ package action
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -41,12 +42,22 @@ func Install(chartName, home, namespace string, force bool, client kubectl.Runne
 		log.Die("Failed to load chart: %s", err)
 	}
 
+	if err := installChart(c, home, namespace, force, client); err != nil {
+		log.Err(err.Error())
+	}
+
+	PrintREADME(chartName, home)
+
+}
+
+func installChart(chart *chart.Chart, home, namespace string, force bool, client kubectl.Runner) error {
+
 	// Give user the option to bale if dependencies are not satisfied.
-	nope, err := dependency.Resolve(c.Chartfile, filepath.Join(home, WorkspaceChartPath))
+	nope, err := dependency.Resolve(chart.Chartfile, filepath.Join(home, WorkspaceChartPath))
 	if err != nil {
 		log.Warn("Failed to check dependencies: %s", err)
 		if !force {
-			log.Die("Re-run with --force to install anyway.")
+			return fmt.Errorf("Re-run with --force to install anyway.")
 		}
 	} else if len(nope) > 0 {
 		log.Warn("Unsatisfied dependencies:")
@@ -54,18 +65,19 @@ func Install(chartName, home, namespace string, force bool, client kubectl.Runne
 			log.Msg("\t%s %s", d.Name, d.Version)
 		}
 		if !force {
-			log.Die("Stopping install. Re-run with --force to install anyway.")
+			return fmt.Errorf("Stopping install. Re-run with --force to install anyway.")
 		}
 	}
 
 	//@FIXME this output is confusing with --dry-run
 	log.Info("Running `kubectl create -f` ...")
-	if err := uploadManifests(c, namespace, client); err != nil {
-		log.Die("Failed to upload manifests: %s", err)
+	if err := uploadManifests(chart, namespace, client); err != nil {
+		return fmt.Errorf("Failed to upload manifests: %s", err)
 	}
+
 	log.Info("Done")
 
-	PrintREADME(chartName, home)
+	return nil
 }
 
 func isSamePath(src, dst string) (bool, error) {
