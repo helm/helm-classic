@@ -119,6 +119,12 @@ the 'nginx' chart into a directory named 'www' in your workspace.
 			Usage:     "Removes a Chart from your working directory.",
 			ArgsUsage: "[chart-name]",
 			Action:    remove,
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "force",
+					Usage: "Remove Chart from working directory and leave packages installed.",
+				},
+			},
 		},
 		{
 			Name:  "install",
@@ -170,7 +176,7 @@ This will not alter the charts in your workspace.
 			Action: func(c *cli.Context) {
 				minArgs(c, 1, "uninstall")
 				for _, chart := range c.Args() {
-					action.Uninstall(chart, home(c), c.String("namespace"))
+					action.Uninstall(chart, home(c), c.String("namespace"), c.Bool("force"))
 				}
 			},
 			Flags: []cli.Flag{
@@ -178,6 +184,10 @@ This will not alter the charts in your workspace.
 					Name:  "namespace, n",
 					Value: "",
 					Usage: "The Kubernetes destination namespace.",
+				},
+				cli.BoolFlag{
+					Name:  "force, aye-aye, y",
+					Usage: "Do not ask for confirmation.",
 				},
 			},
 		},
@@ -349,13 +359,11 @@ func fetch(c *cli.Context) {
 }
 
 func remove(c *cli.Context) {
-	home := home(c)
 	minArgs(c, 1, "remove")
+	h := home(c)
+	force := c.Bool("force")
 
-	a := c.Args()
-	chart := a[0]
-
-	action.Remove(chart, home)
+	action.Remove(c.Args()[0], h, force)
 }
 
 func install(c *cli.Context) {

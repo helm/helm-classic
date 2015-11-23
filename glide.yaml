@@ -1,4 +1,3 @@
-parent: null
 package: github.com/helm/helm
 import:
 - package: github.com/codegangsta/cli
