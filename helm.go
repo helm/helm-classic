@@ -116,8 +116,8 @@ the 'nginx' chart into a directory named 'www' in your workspace.
 		{
 			Name:      "remove",
 			Aliases:   []string{"rm"},
-			Usage:     "Removes a Chart from your working directory.",
-			ArgsUsage: "[chart-name]",
+			Usage:     "Remove one or more Charts from your working directory.",
+			ArgsUsage: "[chart-name] [...]",
 			Action:    remove,
 			Flags: []cli.Flag{
 				cli.BoolFlag{
@@ -363,7 +363,11 @@ func remove(c *cli.Context) {
 	h := home(c)
 	force := c.Bool("force")
 
-	action.Remove(c.Args()[0], h, force)
+	a := c.Args()
+	for _, chart := range a {
+		action.Remove(chart, h, force)
+	}
+
 }
 
 func install(c *cli.Context) {
