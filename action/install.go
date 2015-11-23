@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/helm/helm/chart"
 	"github.com/helm/helm/codec"
 	"github.com/helm/helm/dependency"
+	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
 )
 
@@ -25,7 +25,7 @@ import (
 // 	- Services
 // 	- Pods
 // 	- ReplicationControllers
-func Install(chartName, home, namespace string, force bool, dryRun bool) {
+func Install(chartName, home, namespace string, force bool, client kubectl.Runner) {
 
 	ochart := chartName
 	r := mustConfig(home).Repos
@@ -42,12 +42,22 @@ func Install(chartName, home, namespace string, force bool, dryRun bool) {
 		log.Die("Failed to load chart: %s", err)
 	}
 
+	if err := installChart(c, home, namespace, force, client); err != nil {
+		log.Err(err.Error())
+	}
+
+	PrintREADME(chartName, home)
+
+}
+
+func installChart(chart *chart.Chart, home, namespace string, force bool, client kubectl.Runner) error {
+
 	// Give user the option to bale if dependencies are not satisfied.
-	nope, err := dependency.Resolve(c.Chartfile, filepath.Join(home, WorkspaceChartPath))
+	nope, err := dependency.Resolve(chart.Chartfile, filepath.Join(home, WorkspaceChartPath))
 	if err != nil {
 		log.Warn("Failed to check dependencies: %s", err)
 		if !force {
-			log.Die("Re-run with --force to install anyway.")
+			return fmt.Errorf("Re-run with --force to install anyway.")
 		}
 	} else if len(nope) > 0 {
 		log.Warn("Unsatisfied dependencies:")
@@ -55,21 +65,19 @@ func Install(chartName, home, namespace string, force bool, dryRun bool) {
 			log.Msg("\t%s %s", d.Name, d.Version)
 		}
 		if !force {
-			log.Die("Stopping install. Re-run with --force to install anyway.")
+			return fmt.Errorf("Stopping install. Re-run with --force to install anyway.")
 		}
 	}
 
-	msg := "Running `kubectl create -f` ..."
-	if dryRun {
-		msg = "Performing a dry run of `kubectl create -f` ..."
+	//@FIXME this output is confusing with --dry-run
+	log.Info("Running `kubectl create -f` ...")
+	if err := uploadManifests(chart, namespace, client); err != nil {
+		return fmt.Errorf("Failed to upload manifests: %s", err)
 	}
-	log.Info(msg)
-	if err := uploadManifests(c, namespace, dryRun); err != nil {
-		log.Die("Failed to upload manifests: %s", err)
-	}
+
 	log.Info("Done")
 
-	PrintREADME(chartName, home)
+	return nil
 }
 
 func isSamePath(src, dst string) (bool, error) {
@@ -87,7 +95,7 @@ func isSamePath(src, dst string) (bool, error) {
 // AltInstall allows loading a chart from the current directory.
 //
 // It does not directly support chart tables (repos).
-func AltInstall(chartName, cachedir, home, namespace string, force bool, dryRun bool) {
+func AltInstall(chartName, cachedir, home, namespace string, force bool, client kubectl.Runner) {
 	// Make sure there is a chart in the cachedir.
 	if _, err := os.Stat(filepath.Join(cachedir, "Chart.yaml")); err != nil {
 		log.Die("Expected a Chart.yaml in %s: %s", cachedir, err)
@@ -133,60 +141,65 @@ func AltInstall(chartName, cachedir, home, namespace string, force bool, dryRun 
 		}
 	}
 
-	msg := "Running `kubectl create -f` ..."
-	if dryRun {
-		msg = "Performing a dry run of `kubectl create -f` ..."
-	}
-	log.Info(msg)
-	if err := uploadManifests(c, namespace, dryRun); err != nil {
+	//@FIXME this output is confusing with --dry-run
+	log.Info("Running `kubectl create -f` ...")
+	if err := uploadManifests(c, namespace, client); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
 }
 
 // uploadManifests sends manifests to Kubectl in a particular order.
-func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
+func uploadManifests(c *chart.Chart, namespace string, client kubectl.Runner) error {
 	// The ordering is significant.
 	// TODO: Right now, we force version v1. We could probably make this more
 	// flexible if there is a use case.
 	for _, o := range c.Namespaces {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, client); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Secrets {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, client); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.PersistentVolumes {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, client); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Services {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, client); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Pods {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, client); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.ReplicationControllers {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndCreate(o, namespace, client); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func marshalAndCreate(o interface{}, ns string, dry bool) error {
+func marshalAndCreate(o interface{}, ns string, client kubectl.Runner) error {
 	var b bytes.Buffer
 	if err := codec.JSON.Encode(&b).One(o); err != nil {
 		return err
 	}
-	return kubectlCreate(b.Bytes(), ns, dry)
+
+	log.Debug("File: %s", b.String())
+
+	out, err := client.Create(b.Bytes(), ns)
+	if err != nil {
+		return err
+	}
+	log.Msg(string(out))
+	return nil
 }
 
 // Check by chart directory name whether a chart is fetched into the workspace.
@@ -200,45 +213,4 @@ func chartFetched(chartName, home string) bool {
 		return false
 	}
 	return true
-}
-
-// kubectlCreate calls `kubectl create` and sends the data via Stdin.
-//
-// If dryRun is set to true, then we just output the command that was
-// going to be run to os.Stdout and return nil.
-func kubectlCreate(data []byte, ns string, dryRun bool) error {
-	a := []string{"create", "-f", "-"}
-
-	if ns != "" {
-		a = append([]string{"--namespace=" + ns}, a...)
-	}
-
-	if dryRun {
-		cmd := "kubectl"
-		for _, arg := range a {
-			cmd = fmt.Sprintf("%s %s", cmd, arg)
-		}
-		cmd = fmt.Sprintf("%s < %s", cmd, data)
-		log.Info(cmd)
-		return nil
-	}
-
-	c := exec.Command("kubectl", a...)
-	in, err := c.StdinPipe()
-	if err != nil {
-		return err
-	}
-
-	c.Stdout = os.Stdout
-	c.Stderr = os.Stderr
-
-	if err := c.Start(); err != nil {
-		return err
-	}
-
-	log.Debug("File: %s", string(data))
-	in.Write(data)
-	in.Close()
-
-	return c.Wait()
 }

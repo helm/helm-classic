@@ -5,6 +5,7 @@ import (
 
 	"github.com/codegangsta/cli"
 	"github.com/helm/helm/action"
+	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
 )
 
@@ -175,8 +176,12 @@ This will not alter the charts in your workspace.
 			ArgsUsage: "[chart-name...]",
 			Action: func(c *cli.Context) {
 				minArgs(c, 1, "uninstall")
+				client := kubectl.Client
+				if c.Bool("dry-run") {
+					client = kubectl.PrintRunner{}
+				}
 				for _, chart := range c.Args() {
-					action.Uninstall(chart, home(c), c.String("namespace"), c.Bool("force"))
+					action.Uninstall(chart, home(c), c.String("namespace"), c.Bool("force"), client)
 				}
 			},
 			Flags: []cli.Flag{
@@ -278,7 +283,17 @@ list all available charts.
 			Usage:     "Displays information about cluster.",
 			ArgsUsage: "",
 			Action: func(c *cli.Context) {
-				action.Target()
+				client := kubectl.Client
+				if c.Bool("dry-run") {
+					client = kubectl.PrintRunner{}
+				}
+				action.Target(client)
+			},
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "dry-run",
+					Usage: "Only display the underlying kubectl commands.",
+				},
 			},
 		},
 		{
@@ -374,19 +389,23 @@ func install(c *cli.Context) {
 	minArgs(c, 1, "install")
 	h := home(c)
 	force := c.Bool("force")
-	dryRun := c.Bool("dry-run")
+
+	client := kubectl.Client
+	if c.Bool("dry-run") {
+		client = kubectl.PrintRunner{}
+	}
 
 	// If chart-path is specified, we do an alternative install.
 	//
 	// This version will only install one chart at a time, since the
 	// chart-path can only point to one chart.
 	if alt := c.String("chart-path"); alt != "" {
-		action.AltInstall(c.Args()[0], alt, h, c.String("namespace"), force, dryRun)
+		action.AltInstall(c.Args()[0], alt, h, c.String("namespace"), force, client)
 		return
 	}
 
 	for _, chart := range c.Args() {
-		action.Install(chart, h, c.String("namespace"), force, dryRun)
+		action.Install(chart, h, c.String("namespace"), force, client)
 	}
 }
 

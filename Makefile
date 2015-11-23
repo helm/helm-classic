@@ -4,7 +4,7 @@ endif
 
 BIN_DIR := bin
 DIST_DIR := _dist
-GO_PACKAGES := action chart config dependency log manifest release plugins/sec plugins/example codec
+GO_PACKAGES := action chart config dependency kubectl log manifest release plugins/sec plugins/example codec
 MAIN_GO := helm.go
 HELM_BIN := $(BIN_DIR)/helm
 

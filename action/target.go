@@ -1,18 +1,15 @@
 package action
 
 import (
-	"fmt"
-	"os/exec"
-
+	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
 )
 
 // Target displays information about the cluster
-func Target() {
-	if _, err := exec.LookPath("kubectl"); err != nil {
-		log.Die("Could not find 'kubectl' on $PATH: %s", err)
+func Target(client kubectl.Runner) {
+	out, err := client.ClusterInfo()
+	if err != nil {
+		log.Err(err.Error())
 	}
-
-	c, _ := exec.Command("kubectl", "cluster-info").Output()
-	fmt.Println(string(c))
+	log.Msg(string(out))
 }
