@@ -20,6 +20,20 @@ Helm is changing quickly. Your feedback and participation are more than welcome,
 
 Please note that Helm is not a general-purpose tool for managing a Kubernetes cluster.  For that, we recommend using [kubectl](http://kubernetes.io/v1.0/docs/user-guide/kubectl/kubectl.html).
 
+### Updating from Helm 0.1
+
+**If you are a Helm 0.1 user** you will need to do an extra step when
+you upgrade to Helm 0.2 or later. We changed our GitHub org from `deis` to
+`helm`, which means the new default charts repository is now
+`github.com/helm/charts`.
+
+To fix quickly, simply run a couple helm commands:
+
+```
+$ helm repo rm
+$ helm repo add charts https://github.com/helm/charts
+```
+
 ## Installing Helm
 
 From a Linux or Mac OS X client:
@@ -89,7 +103,7 @@ Helm provides package manager semantics for Kubernetes workloads.  This is a nov
 
 Some of the features we plan to tackle in the near future:
 
-- [ ] Working with External (or Private) Repositories [#118](https://github.com/helm/helm/issues/118)
+- [x] Working with External (or Private) Repositories [#118](https://github.com/helm/helm/issues/118)
 - [ ] Mandatory Group Labels [#80](https://github.com/helm/helm/issues/80)
 - [ ] Linting for Charts [#96](https://github.com/helm/helm/issues/96)
 - [ ] End-to-End Testing of Charts [#4](https://github.com/helm/helm/issues/4)
