@@ -67,6 +67,31 @@ func fetch(chartName, lname, homedir, chartpath string) {
 	if err := copyDir(src, dest); err != nil {
 		log.Die("Failed copying %s to %s", src, dest)
 	}
+
+	if err := updateChartfile(src, dest, lname); err != nil {
+		log.Die("Failed to update Chart.yaml: %s", err)
+	}
+}
+
+func updateChartfile(src, dest, lname string) error {
+	sc, err := chart.LoadChartfile(filepath.Join(src, "Chart.yaml"))
+	if err != nil {
+		return err
+	}
+
+	dc, err := chart.LoadChartfile(filepath.Join(dest, "Chart.yaml"))
+	if err != nil {
+		return err
+	}
+
+	dc.Name = lname
+	dc.From = &chart.Dependency{
+		Name:    sc.Name,
+		Version: sc.Version,
+		Repo:    chart.RepoName(src),
+	}
+
+	return dc.Save(filepath.Join(dest, "Chart.yaml"))
 }
 
 // Copy a directory and its subdirectories.

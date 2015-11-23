@@ -2,14 +2,19 @@ package chart
 
 import (
 	"io/ioutil"
+	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/Masterminds/semver"
+	"github.com/helm/helm/log"
 	"gopkg.in/yaml.v2"
 )
 
 // Chartfile describes a Helm Chart (e.g. Chart.yaml)
 type Chartfile struct {
 	Name         string            `yaml:"name"`
+	From         *Dependency       `yaml:"from,omitempty"`
 	Home         string            `yaml:"home"`
 	Version      string            `yaml:"version"`
 	Description  string            `yaml:"description"`
@@ -23,6 +28,7 @@ type Chartfile struct {
 type Dependency struct {
 	Name    string `yaml:"name"`
 	Version string `yaml:"version"`
+	Repo    string `yaml:"repo,omitempty"`
 }
 
 // LoadChartfile loads a Chart.yaml file into a *Chart.
@@ -43,6 +49,33 @@ func (c *Chartfile) Save(filename string) error {
 	}
 
 	return ioutil.WriteFile(filename, b, 0644)
+}
+
+// RepoName gets the name of the Git repo, or an empty string if none is found.
+func RepoName(chartpath string) string {
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Err("Could not get working directory: %s", err)
+		return ""
+	}
+	defer func() {
+		if err := os.Chdir(wd); err != nil {
+			log.Die("Unrecoverable error: %s", err)
+		}
+	}()
+
+	if err := os.Chdir(chartpath); err != nil {
+		log.Err("Could not find chartpath %s: %s", chartpath, err)
+		return ""
+	}
+
+	out, err := exec.Command("git", "config", "--get", "remote.origin.url").CombinedOutput()
+	if err != nil {
+		log.Err("Git failed to get the origin name: %s %s", err, string(out))
+		return ""
+	}
+
+	return strings.TrimSpace(string(out))
 }
 
 // VersionOK returns true if the given version meets the constraints.
