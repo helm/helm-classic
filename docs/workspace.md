@@ -34,6 +34,33 @@ At its simplest, the workspace is the place where your Charts go. When you run t
 
 The `helm install` command also copies a chart into your workspace (if you don't already have it there) so that even your quick builds are reproducible. And the mention of reproducibility leads us to the main topic at hand: _the workspace describes your infrastructure_.
 
+### Dependencies, Naming, and Copying
+
+When `helm fetch` or `helm install` fetches a chart into the workspace,
+it automatically adds the `from:` section to a chart. For example,
+running `helm fetch alpine myalpine` will create a `Chart.yaml` in
+`$HELM_HOME/workspace/charts/myalpine`. That chart will look like this:
+
+```
+name: myalpine
+from:
+  name: alpine
+  version: 0.1.1
+  repo: https://github.com/deis/charts
+# ...
+```
+
+The `from:` section contains information about the base chart that was
+fetched into the workspace. This information is important because it is
+used during dependency resolution.
+
+- `name` is the name of the base chart
+- `version` is the version of the base chart that was fetched
+- `repo` is the Git repository from which the base chart was fetched
+
+These fields match one-to-one with the fields that can be specified in
+the `dependency` section of a chart.
+
 ## Best Practice for your Workspace
 
 Most Helm users spend at least a little bit of time experimenting with Helm. They run a few installs, edit a few charts, and see what they can do. But we hope that at some point users transition from experimentation to real-world usage.

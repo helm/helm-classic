@@ -37,6 +37,7 @@ version: VERSION
 description: SHORT DESCRIPTION
 dependencies:
   - name: CHART
+    from: GIT URL
     version: SEMVER FILTER
 maintainers:
   - YOUR NAME <YOUR EMAIL>
@@ -50,11 +51,31 @@ details:
 - description: A short (several word) description of this chart.
 - dependencies: A set of name/filter pairs
 	- name: The name of the chart this chart depends upon
+  - repo: A Git-flavor URL pointing to the repository of origin (e.g. `https://github.com/foo/bar.git`)
 	- version: A filter indicating what version of the chart is required. Example: `~1.2` (greater than or equal to 1.2.0, and less than 1.3.0)
 - maintainers: A set of maintainer names, together with an email
 - details: A single paragraph describing the chart
 
 Except for `dependencies`, all fields are required.
+
+### Dependency Resolution
+
+When a chart fetched or installed, Helm will perform dependency
+resolution and alert the user if the chart dependencies are not
+satisfied.
+
+When just a `name` is provided, Helm will verify that a chart by that
+name exists in the same Git repo, and that it is fetched into the
+workspace.
+
+When `name` and `repo` is provided, Helm will verify that a chart by
+that name exists in the given repo, and is fetched into the current
+workspace.
+
+When `version` is added (in either case), Helm will additionally verify
+that the chart in the workspace has a version within the bounds of the
+specified version. Remember that the `version` section can us version
+ranges, fuzzy versions, and [so on](https://github.com/Masterminds/semver#hyphen-range-comparisons).
 
 ## The README.md File
 
