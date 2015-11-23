@@ -149,6 +149,12 @@ func deleteChart(c *chart.Chart, ns string, dry bool) error {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
 		}
 	}
+	ktype = "serviceaccount"
+	for _, o := range c.ServiceAccounts {
+		if err := kubectlDelete(o.Name, ktype, ns); err != nil {
+			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
+		}
+	}
 	ktype = "namespace"
 	for _, o := range c.Namespaces {
 		if dry {
