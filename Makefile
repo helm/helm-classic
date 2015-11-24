@@ -60,9 +60,6 @@ quicktest:
 test: test-style
 	go test -v ./ $(addprefix ./,$(GO_PACKAGES))
 
-test-charts:
-	@./_test/test-charts $(TEST_CHARTS)
-
 test-style:
 	@if [ $(shell gofmt -e -l -s *.go $(GO_PACKAGES)) ]; then \
 		echo "gofmt check failed:"; gofmt -e -l -s *.go $(GO_PACKAGES); exit 1; \
