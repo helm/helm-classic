@@ -54,7 +54,7 @@ Helm requires an appropriately wired `kubectl` client to speak with a running Ku
 
 ## Using Helm
 
-To quickly install a standalone etcd instance:
+To quickly install a redis cluster:
 
 ```
 $ helm update
