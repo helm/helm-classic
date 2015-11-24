@@ -50,7 +50,7 @@ func TestTRemove(t *testing.T) {
 		{"kitchensink", mockNotFoundGetter, false, "All clear! You have successfully removed kitchensink from your workspace."},
 
 		// when manifests are installed
-		{"kitchensink", mockFoundGetter, false, "Found 8 installed manifests for kitchensink.  To remove a chart that has been installed the --force flag must be set."},
+		{"kitchensink", mockFoundGetter, false, "Found 9 installed manifests for kitchensink.  To remove a chart that has been installed the --force flag must be set."},
 
 		// when manifests are installed and force is set
 		{"kitchensink", mockNotFoundGetter, true, "All clear! You have successfully removed kitchensink from your workspace."},

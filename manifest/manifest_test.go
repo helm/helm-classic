@@ -52,5 +52,8 @@ func TestParseDir(t *testing.T) {
 		if man.Kind == "" {
 			t.Error("Expected kind")
 		}
+		if man.Name == "" {
+			t.Error("Expected name")
+		}
 	}
 }

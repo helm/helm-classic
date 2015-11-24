@@ -21,47 +21,27 @@ func TestLoad(t *testing.T) {
 		t.Errorf("Expected dependency 0 to have version '~10.21'. Got '%s'.", d)
 	}
 
-	if len(c.Pods) != 3 {
-		t.Errorf("Expected 3 pods, got %d", len(c.Pods))
+	if len(c.Kind["Pod"]) != 3 {
+		t.Errorf("Expected 3 pods, got %d", len(c.Kind["Pod"]))
 	}
 
-	if _, ok := c.Pods[0].Annotations[OriginFile]; !ok {
-		t.Error("Failed to get origin file from pod 0")
-	}
-
-	if len(c.ReplicationControllers) == 0 {
+	if len(c.Kind["ReplicationController"]) == 0 {
 		t.Error("No RCs found")
 	}
-	if _, ok := c.ReplicationControllers[0].Annotations[OriginFile]; !ok {
-		t.Error("Failed to get origin file from pod 0")
-	}
-
-	if len(c.Namespaces) == 0 {
+	if len(c.Kind["Namespace"]) == 0 {
 		t.Errorf("No namespaces found")
 	}
-	if _, ok := c.Namespaces[0].Annotations[OriginFile]; !ok {
-		t.Error("Failed to get origin file from pod 0")
-	}
 
-	if len(c.Secrets) == 0 {
+	if len(c.Kind["Secret"]) == 0 {
 		t.Error("Is it secret? Is it safe? NO!")
 	}
-	if _, ok := c.Secrets[0].Annotations[OriginFile]; !ok {
-		t.Error("Failed to get origin file from pod 0")
-	}
 
-	if len(c.PersistentVolumes) == 0 {
+	if len(c.Kind["PersistentVolume"]) == 0 {
 		t.Errorf("No volumes.")
 	}
-	if _, ok := c.PersistentVolumes[0].Annotations[OriginFile]; !ok {
-		t.Error("Failed to get origin file from pod 0")
-	}
 
-	if len(c.Services) == 0 {
+	if len(c.Kind["Service"]) == 0 {
 		t.Error("No service. Just like [insert mobile provider name here]")
-	}
-	if _, ok := c.Services[0].Annotations[OriginFile]; !ok {
-		t.Error("Failed to get origin file from pod 0")
 	}
 }
 
@@ -111,4 +91,23 @@ func TestVersionOK(t *testing.T) {
 		t.Errorf("Version 1.2.3 should have been marked in-range")
 	}
 
+}
+
+func TestUnknownKinds(t *testing.T) {
+	known := []string{"Pod"}
+	c, err := Load(testchart)
+	if err != nil {
+		t.Errorf("Failed to load chart: %s", err)
+	}
+
+	unknown := c.UnknownKinds(known)
+	if len(unknown) < 5 {
+		t.Errorf("Expected at least 5 unknown chart types, got %d.", len(unknown))
+	}
+
+	for _, k := range unknown {
+		if k == "Pod" {
+			t.Errorf("Pod is not an unknown kind.")
+		}
+	}
 }

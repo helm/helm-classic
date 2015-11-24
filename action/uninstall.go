@@ -11,18 +11,14 @@ import (
 
 	"github.com/helm/helm/chart"
 	"github.com/helm/helm/log"
+	"github.com/helm/helm/manifest"
 )
 
 // Uninstall removes a chart from Kubernetes.
 //
-// Manifests are removed from Kubernetes in the following order:
-//
-// 	- Services (to shut down traffic)
-// 	- Pods (which can be part of RCs)
-// 	- ReplicationControllers
-// 	- Volumes
-// 	- Secrets
-//	- Namespaces
+// Manifests are removed from Kubernetes in the order specified by
+// chart.UninstallOrder. Any unknown types are removed before that sequence
+// is run.
 func Uninstall(chartName, home, namespace string, force bool) {
 	if !chartFetched(chartName, home) {
 		log.Info("No chart named %q in your workspace. Nothing to delete.", chartName)
@@ -105,66 +101,30 @@ func (x *rw) Write(b []byte) (int, error) {
 	return x.w.Write(b)
 }
 
+// deleteChart deletes all of the Kubernetes manifests associated with this chart.
 func deleteChart(c *chart.Chart, ns string, dry bool) error {
-	// We delete charts in the ALMOST reverse order that we created them. We
-	// start with services to effectively shut down traffic.
-	ktype := "service"
-	for _, o := range c.Services {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
+	// Unknown kinds get uninstalled first because we know that core kinds
+	// do not depend on them.
+	for _, kind := range c.UnknownKinds(UninstallOrder) {
+		uninstallKind(c.Kind[kind], ns, kind, dry)
 	}
-	ktype = "pod"
-	for _, o := range c.Pods {
 
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
-	}
-	ktype = "rc"
-	for _, o := range c.ReplicationControllers {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
-	}
-	ktype = "secret"
-	for _, o := range c.Secrets {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
-	}
-	ktype = "persistentvolume"
-	for _, o := range c.PersistentVolumes {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
-	}
-	ktype = "serviceaccount"
-	for _, o := range c.ServiceAccounts {
-		if err := kubectlDelete(o.Name, ktype, ns); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
-	}
-	ktype = "namespace"
-	for _, o := range c.Namespaces {
-		if dry {
-			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
-		}
+	// Uninstall all of the known kinds in a particular order.
+	for _, kind := range UninstallOrder {
+		uninstallKind(c.Kind[kind], ns, kind, dry)
 	}
 
 	return nil
+}
+
+func uninstallKind(kind []*manifest.Manifest, ns, ktype string, dry bool) {
+	for _, o := range kind {
+		if dry {
+			log.Msg("%s/%s", ktype, o.Name)
+		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
+			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
+		}
+	}
 }
 
 func kubectlDelete(name, ktype, ns string) error {

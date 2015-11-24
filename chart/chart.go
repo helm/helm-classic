@@ -5,9 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/helm/helm/log"
 	"github.com/helm/helm/manifest"
-	"k8s.io/kubernetes/pkg/api/v1"
 )
 
 // Chart represents a complete chart.
@@ -22,15 +20,14 @@ import (
 //
 // TODO: Investigate treating these as unversioned.
 type Chart struct {
-	Chartfile              *Chartfile
-	Pods                   []*v1.Pod
-	ReplicationControllers []*v1.ReplicationController
-	ServiceAccounts        []*v1.ServiceAccount
-	Services               []*v1.Service
-	Namespaces             []*v1.Namespace
-	Secrets                []*v1.Secret
-	PersistentVolumes      []*v1.PersistentVolume
+	Chartfile *Chartfile
 
+	// Kind is a map of Kind to an array of manifests.
+	//
+	// For example, Kind["Pod"] has an array of Pod manifests.
+	Kind map[string][]*manifest.Manifest
+
+	// Manifests is an array of Manifest objects.
 	Manifests []*manifest.Manifest
 }
 
@@ -54,6 +51,7 @@ func Load(chart string) (*Chart, error) {
 
 	c := &Chart{
 		Chartfile: cf,
+		Kind:      map[string][]*manifest.Manifest{},
 	}
 
 	ms, err := manifest.ParseDir(chart)
@@ -61,107 +59,57 @@ func Load(chart string) (*Chart, error) {
 		return c, err
 	}
 
-	c.Manifests = ms
-	sortManifests(c, ms)
+	c.attachManifests(ms)
 
 	return c, nil
 }
 
-// Save writes an entire chart to disk.
-//
-// It will overwrite any files that it finds in the way.
-//
-// This writes a `Chart.yaml`, and then writes manifests into a `manifests`
-// directory, creating the directory if it needs to.
-/*
-func (c *Chart) Save(dir string) error {
-	if fi, err := os.Stat(dir); err != nil {
-		return fmt.Errorf("Could not save Chart.yaml: %s", err)
-	} else if !fi.IsDir() {
-		return fmt.Errorf("Not a directory: %s", dir)
-	}
+const (
+	// AnnFile is the annotation key for a file's origin.
+	AnnFile = "chart.helm.sh/file"
 
-	if err := c.Chartfile.Save(filepath.Join(dir, "Chart.yaml")); err != nil {
-		return err
-	}
+	// AnnChartVersion is the annotation key for a chart's version.
+	AnnChartVersion = "chart.helm.sh/version"
 
-	mdir := filepath.Join(dir, "manifests")
-}
-*/
+	// AnnChartDesc is the annotation key for a chart's description.
+	AnnChartDesc = "chart.helm.sh/description"
 
-// OriginFile is the annotation key for a file's origin.
-const OriginFile = "HelmOriginFile"
+	// AnnChartName is the annotation key for a chart name.
+	AnnChartName = "chart.helm.sh/name"
+)
 
-// sortManifests sorts manifests into their respective categories, adding to the Chart.
-func sortManifests(chart *Chart, manifests []*manifest.Manifest) {
+// attachManifests sorts manifests into their respective categories, adding to the Chart.
+func (c *Chart) attachManifests(manifests []*manifest.Manifest) {
+	c.Manifests = manifests
 	for _, m := range manifests {
-		vo := m.VersionedObject
+		c.Kind[m.Kind] = append(c.Kind[m.Kind], m)
+	}
+}
 
-		if m.Version != "v1" {
-			log.Warn("Unsupported version %q", m.Version)
-			continue
-		}
+// UnknownKinds returns a list of kinds that this chart contains, but which were not in the passed in array.
+//
+// A Chart will store all kinds that are given to it. This makes it possible to get a list of kinds that are not
+// known beforehand.
+func (c *Chart) UnknownKinds(known []string) []string {
+	lookup := make(map[string]bool, len(known))
+	for _, k := range known {
+		lookup[k] = true
+	}
 
-		switch m.Kind {
-		default:
-			log.Warn("No support for kind %s. Ignoring.", m.Kind)
-		case "Pod":
-			o, err := vo.Pod()
-			if err != nil {
-				log.Warn("Failed conversion: %s", err)
-			}
-			o.Annotations = setOriginFile(o.Annotations, m.Source)
-			chart.Pods = append(chart.Pods, o)
-		case "ReplicationController":
-			o, err := vo.RC()
-			if err != nil {
-				log.Warn("Failed conversion: %s", err)
-			}
-			o.Annotations = setOriginFile(o.Annotations, m.Source)
-			chart.ReplicationControllers = append(chart.ReplicationControllers, o)
-		case "Service":
-			o, err := vo.Service()
-			if err != nil {
-				log.Warn("Failed conversion: %s", err)
-			}
-			o.Annotations = setOriginFile(o.Annotations, m.Source)
-			chart.Services = append(chart.Services, o)
-		case "ServiceAccount":
-			o, err := vo.ServiceAccount()
-			if err != nil {
-				log.Warn("Failed conversion: %s", err)
-			}
-			o.Annotations = setOriginFile(o.Annotations, m.Source)
-			chart.ServiceAccounts = append(chart.ServiceAccounts, o)
-		case "Secret":
-			o, err := vo.Secret()
-			if err != nil {
-				log.Warn("Failed conversion: %s", err)
-			}
-			o.Annotations = setOriginFile(o.Annotations, m.Source)
-			chart.Secrets = append(chart.Secrets, o)
-		case "PersistentVolume":
-			o, err := vo.PersistentVolume()
-			if err != nil {
-				log.Warn("Failed conversion: %s", err)
-			}
-			o.Annotations = setOriginFile(o.Annotations, m.Source)
-			chart.PersistentVolumes = append(chart.PersistentVolumes, o)
-		case "Namespace":
-			o, err := vo.Namespace()
-			if err != nil {
-				log.Warn("Failed conversion: %s", err)
-			}
-			o.Annotations = setOriginFile(o.Annotations, m.Source)
-			chart.Namespaces = append(chart.Namespaces, o)
+	u := []string{}
+	for n := range c.Kind {
+		if _, ok := lookup[n]; !ok {
+			u = append(u, n)
 		}
 	}
+
+	return u
 }
 
 func setOriginFile(ann map[string]string, source string) map[string]string {
 	if len(ann) == 0 {
-		return map[string]string{OriginFile: source}
+		return map[string]string{AnnFile: source}
 	}
-	ann[OriginFile] = source
+	ann[AnnFile] = source
 	return ann
 }
