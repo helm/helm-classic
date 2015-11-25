@@ -8,6 +8,7 @@ import (
 	"github.com/helm/helm/log"
 	"github.com/helm/helm/manifest"
 	"k8s.io/kubernetes/pkg/api/v1"
+	oapi "github.com/openshift/origin/pkg/template/api/v1"
 )
 
 // Chart represents a complete chart.
@@ -30,6 +31,12 @@ type Chart struct {
 	Namespaces             []*v1.Namespace
 	Secrets                []*v1.Secret
 	PersistentVolumes      []*v1.PersistentVolume
+
+	// TODO these should be replaced by Kubernetes Templates whenever this
+	// goes upstream:
+	// 	https://github.com/kubernetes/kubernetes/pull/14918#issuecomment-153954995
+	//  https://github.com/kubernetes/kubernetes/issues/10408
+	Templates              []*oapi.Template
 
 	Manifests []*manifest.Manifest
 }
@@ -62,7 +69,7 @@ func Load(chart string) (*Chart, error) {
 	}
 
 	c.Manifests = ms
-	sortManifests(c, ms)
+	SortManifests(c, ms)
 
 	return c, nil
 }
@@ -92,8 +99,8 @@ func (c *Chart) Save(dir string) error {
 // OriginFile is the annotation key for a file's origin.
 const OriginFile = "HelmOriginFile"
 
-// sortManifests sorts manifests into their respective categories, adding to the Chart.
-func sortManifests(chart *Chart, manifests []*manifest.Manifest) {
+// SortManifests sorts manifests into their respective categories, adding to the Chart.
+func SortManifests(chart *Chart, manifests []*manifest.Manifest) {
 	for _, m := range manifests {
 		vo := m.VersionedObject
 
@@ -105,6 +112,13 @@ func sortManifests(chart *Chart, manifests []*manifest.Manifest) {
 		switch m.Kind {
 		default:
 			log.Warn("No support for kind %s. Ignoring.", m.Kind)
+		case "Template":
+			o, err := vo.Template()
+			if err != nil {
+				log.Warn("Failed conversion: %s", err)
+			}
+			o.Annotations = setOriginFile(o.Annotations, m.Source)
+			chart.Templates = append(chart.Templates, o)
 		case "Pod":
 			o, err := vo.Pod()
 			if err != nil {
