@@ -233,3 +233,15 @@ func (m *Object) HorizontalPodAutoscaler() (*v1beta1.HorizontalPodAutoscaler, er
 	o := new(v1beta1.HorizontalPodAutoscaler)
 	return o, m.Object(o)
 }
+
+// List decodes a manifest into a List
+func (m *Object) List() (*v1.List, error) {
+	o := new(v1.List)
+	return o, m.Object(o)
+}
+
+// Template decodes a manifest into a Template
+func (m *Object) Template() (*oapi.Template, error) {
+	o := new(oapi.Template)
+	return o, m.Object(o)
+}

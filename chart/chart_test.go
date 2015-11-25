@@ -6,6 +6,7 @@ import (
 
 const testfile = "../testdata/test-Chart.yaml"
 const testchart = "../testdata/charts/kitchensink"
+const testtemplatechart = "../testdata/charts/template"
 
 func TestLoad(t *testing.T) {
 	c, err := Load(testchart)
@@ -90,7 +91,32 @@ func TestVersionOK(t *testing.T) {
 	if !d.VersionOK("1.2.3") {
 		t.Errorf("Version 1.2.3 should have been marked in-range")
 	}
+}
 
+func TestLoadTemplate(t *testing.T) {
+	c, err := Load(testtemplatechart)
+	if err != nil {
+		t.Errorf("Failed to load chart: %s", err)
+	}
+
+	if c.Chartfile.Name != "template" {
+		t.Errorf("Expected chart name to be 'template'. Got '%s'.", c.Chartfile.Name)
+	}
+
+	if len(c.Templates) != 1 {
+		t.Errorf("Expected 1 templates, got %d", len(c.Templates))
+	} else {
+		temp := c.Templates[0];
+		objects := temp.Objects;
+		params := temp.Parameters;
+
+		if len(objects) < 1 {
+			t.Errorf("Expected some Objects in the template, got %d", len(objects))
+		}
+		if len(params) < 1 {
+			t.Errorf("Expected some Parameters in the template, got %d", len(params))
+		}
+	}
 }
 
 func TestUnknownKinds(t *testing.T) {
