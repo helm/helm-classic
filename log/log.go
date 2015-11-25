@@ -23,6 +23,9 @@ var Stdin io.Reader = os.Stdin
 // IsDebugging toggles whether or not to enable debug output and behavior.
 var IsDebugging = false
 
+// ErrorState denotes if application is in an error state.
+var ErrorState = false
+
 // New creates a *log.Logger that writes to this source.
 func New() *log.Logger {
 	ll := log.New(Stdout, pretty.Colorize("{{.Yellow}}--->{{.Default}} "), 0)
@@ -55,6 +58,7 @@ func CleanExit(format string, v ...interface{}) {
 func Err(format string, v ...interface{}) {
 	fmt.Fprint(Stderr, pretty.Colorize("{{.Red}}[ERROR]{{.Default}} "))
 	fmt.Fprintf(Stderr, appendNewLine(format), v...)
+	ErrorState = true
 }
 
 // Info prints a green-tinted message.

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 
 	"github.com/codegangsta/cli"
@@ -41,6 +42,13 @@ ENVIRONMENT:
 `
 	app.Version = version
 	app.EnableBashCompletion = true
+	app.After = func(c *cli.Context) error {
+		if log.ErrorState {
+			return errors.New("Exiting with errors")
+		}
+
+		return nil
+	}
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -344,7 +352,7 @@ experience with helm is trouble-free.
 		return nil
 	}
 
-	app.Run(os.Args)
+	app.RunAndExitOnError()
 }
 
 // home runs the --home flag through os.ExpandEnv.

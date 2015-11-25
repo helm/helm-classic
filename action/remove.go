@@ -30,7 +30,8 @@ var kubeGet kubeGetter = func(m string) string {
 func Remove(chart, homedir string, force bool) {
 	chartPath := filepath.Join(homedir, WorkspaceChartPath, chart)
 	if _, err := os.Stat(chartPath); err != nil {
-		log.Die("Chart not found. %s", err)
+		log.Err("Chart not found. %s", err)
+		return
 	}
 
 	if !force {
