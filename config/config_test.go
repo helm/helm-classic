@@ -1,10 +1,13 @@
 package config
 
 import (
+	"bytes"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/helm/helm/log"
 )
 
 func createTmpHome() string {
@@ -71,5 +74,30 @@ func TestSave(t *testing.T) {
 
 	if err := os.Remove("../testdata/Configfile-SAVE.yaml"); err != nil {
 		t.Fatalf("Could not remove file: %s", err)
+	}
+}
+
+func TestPrintSummary(t *testing.T) {
+	var b bytes.Buffer
+
+	log.Stdout = &b
+	log.Stderr = &b
+	defer func() {
+		log.Stdout = os.Stdout
+		log.Stderr = os.Stderr
+	}()
+
+	diff := `M	README.md
+M	cassandra
+A	jenkins
+M	mysql
+M	owncloud`
+
+	expected := "Updated 3 charts\ncassandra                    mysql                        owncloud                     \nAdded 1 charts\njenkins                      \n"
+	printSummary(diff)
+	actual := b.String()
+
+	if actual != expected {
+		t.Errorf("Expected %q to eq %q", actual, expected)
 	}
 }

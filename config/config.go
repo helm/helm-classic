@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/Masterminds/vcs"
 	"github.com/helm/helm/log"
+	"golang.org/x/crypto/ssh/terminal"
 	"gopkg.in/yaml.v2"
 )
 
@@ -205,17 +207,103 @@ func ensureRepo(repo, dir string) (*vcs.GitRepo, error) {
 // UpdateAll does a git fast-forward pull from each remote repo.
 func (r *Repos) UpdateAll() error {
 	for _, table := range r.Tables {
-		log.Info("Updating %s", table.Name)
+		log.Info("Checking repo %s", table.Name)
 		rpath := filepath.Join(r.Dir, table.Name)
 		g, err := ensureRepo(table.Repo, rpath)
 		if err != nil {
 			return err
 		}
+
+		initialVersion, _ := g.Version()
 		if err := g.Update(); err != nil {
 			return err
 		}
+		diff, err := repoChartDiff(rpath, initialVersion)
+		if err != nil {
+			return err
+		}
+		printSummary(diff)
 	}
 	return nil
+}
+
+func repoChartDiff(rpath, initialVersion string) (string, error) {
+	// build git diff-tree command
+	cmd := exec.Command("git", "-C", rpath, "diff-tree", "--name-status", fmt.Sprintf("%s..HEAD", initialVersion))
+
+	log.Debug("git diff cmd: %s", cmd.Args)
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", err
+	}
+
+	// cleanup any trailing whitespace
+	return strings.TrimSpace(string(out)), nil
+}
+
+type repoSummary map[string][]string
+
+func (s repoSummary) add(status, chart string) {
+	ignores := []string{"README.md", ".gitignore", ".travis.yml", "Makefile", "_test"}
+	for _, i := range ignores {
+		if chart == i {
+			return
+		}
+	}
+	s[status] = append(s[status], chart)
+}
+
+// printSummary prints a diff of charts after upate
+func printSummary(diff string) {
+	if len(diff) == 0 {
+		log.Msg("Already up-to-date.")
+		return
+	}
+
+	s := make(repoSummary)
+
+	// parse git diff-tree
+	for _, line := range strings.Split(diff, "\n") {
+		kv := strings.Split(line, "\t")
+		st, chart := kv[0], kv[1]
+
+		s.add(st, chart)
+	}
+
+	// width of columns
+	colwidth := 29
+
+	// get console width
+	maxwidth := 118
+	if w, _, err := terminal.GetSize(int(os.Stdout.Fd())); err == nil {
+		maxwidth = w
+	}
+
+	// print results
+	for st, charts := range s {
+		switch st {
+		case "A":
+			log.Msg("Added %d charts", len(charts))
+		case "D":
+			log.Msg("Sent %d charts to the depths", len(charts))
+		case "M":
+			log.Msg("Updated %d charts", len(charts))
+		}
+
+		line := ""
+		for _, ch := range charts {
+			// if adding this column passes the max
+			// print and reset to zero
+			if len(line)+colwidth > maxwidth {
+				log.Msg(line)
+				line = ""
+			}
+			// append to line with padding
+			line = fmt.Sprintf("%s%-29s", line, ch)
+		}
+		log.Msg(line)
+	}
 }
 
 // Delete removes a local copy of a remote.
