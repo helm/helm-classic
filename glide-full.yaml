@@ -373,3 +373,9 @@ import:
   version: 20b71e5b60d756d3d2f80def009790325acc2b23
 - package: github.com/gedex/inflector
   version: 8c0e57904488c554ab26caec525db5c92b23f051
+- package: github.com/openshift/origin
+  version: v1.1
+  subpackages:
+  - pkg/oauth
+  - pkg/template
+
