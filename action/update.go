@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/Masterminds/semver"
-	"github.com/Masterminds/vcs"
 
 	"github.com/helm/helm/config"
 	"github.com/helm/helm/log"
@@ -30,16 +29,6 @@ func Update(home string) {
 		log.Die("Not all repos could be updated: %s", err)
 	}
 	log.Info("Done")
-}
-
-// gitUpdate updates a Git repo.
-func gitUpdate(git *vcs.GitRepo) error {
-	if err := git.Update(); err != nil {
-		return err
-	}
-
-	log.Debug("Updated %s from %s", git.LocalPath(), git.Remote())
-	return nil
 }
 
 // CheckLatest checks whether this version of Helm is the latest version.
