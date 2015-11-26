@@ -15,6 +15,7 @@ import (
 	"github.com/helm/helm/dependency"
 	"github.com/helm/helm/log"
 	"github.com/helm/helm/manifest"
+	"github.com/helm/helm/parameters"
 
 	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/errors"
@@ -47,7 +48,7 @@ var UninstallOrder = []string{"Service", "Pod", "ReplicationController", "Daemon
 // If the chart is not found in the workspace, it is fetched and then installed.
 //
 // During install, manifests are sent to Kubernetes in the ordered specified by InstallOrder.
-func Install(chartName, home, namespace string, force bool, dryRun bool, valueFlag string) {
+func Install(chartName, home, namespace string, force bool, dryRun bool, valueFlag string, paramFolder string) {
 	ochart := chartName
 	r := mustConfig(home).Repos
 	table, chartName := r.RepoChart(chartName)
@@ -62,7 +63,7 @@ func Install(chartName, home, namespace string, force bool, dryRun bool, valueFl
 	if err != nil {
 		log.Die("Failed to load chart: %s", err)
 	}
-	c, err := processTemplates(cTemplates, valueFlag)
+	c, err := processTemplates(cTemplates, valueFlag, paramFolder)
 
 	// Give user the option to bale if dependencies are not satisfied.
 	nope, err := dependency.Resolve(c.Chartfile, filepath.Join(home, WorkspaceChartPath))
@@ -110,7 +111,7 @@ func isSamePath(src, dst string) (bool, error) {
 
 // Processes any OpenShift templates inside the chart and
 // removes a new chart without any OpenShift templates
-func processTemplates(c *chart.Chart, valueFlag string) (*chart.Chart, error) {
+func processTemplates(c *chart.Chart, valueFlag string, paramFolder string) (*chart.Chart, error) {
 	if len(c.Templates) == 0 {
 		return c, nil
 	}
@@ -135,19 +136,32 @@ func processTemplates(c *chart.Chart, valueFlag string) (*chart.Chart, error) {
 			log.Die("Failed to convert template %s with %d parameters as has %d runtime parameters", tpl.Name, len(t.Parameters), len(tpl.Parameters))
 		}
 
-		values := strings.Split(valueFlag, ",")
-		for _, keypair := range values {
-			p := strings.SplitN(keypair, "=", 2)
-			if len(p) != 2 {
-				log.Die("invalid parameter assignment in %q: %q\n", t.Name, keypair)
-				continue
+		chartName := c.Chartfile.Name
+		customParams, err := parameters.LoadChartParameters(paramFolder, chartName)
+		if err != nil {
+			log.Die("Failed to load previous chart parameter values %s\n", err)
+		}
+		customized := false
+		if len(valueFlag) > 0 {
+			values := strings.Split(valueFlag, ",")
+			for _, keypair := range values {
+				p := strings.SplitN(keypair, "=", 2)
+				if len(p) != 2 {
+					log.Die("invalid parameter assignment in %q: %q\n", t.Name, keypair)
+					continue
+				}
+				customized = true;
+				customParams.Values[p[0]] = p[1]
 			}
-			if v := template.GetParameterByName(tpl, p[0]); v != nil {
-				v.Value = p[1]
+		}
+
+		for key, value := range customParams.Values {
+			if v := template.GetParameterByName(tpl, key); v != nil {
+				v.Value = value
 				v.Generate = ""
 				template.AddParameter(tpl, *v)
 			} else {
-				log.Die("unknown parameter name %q\n", p[0])
+				log.Die("unknown parameter name %q\n", key)
 			}
 		}
 
@@ -194,8 +208,14 @@ func processTemplates(c *chart.Chart, valueFlag string) (*chart.Chart, error) {
 				ms = append(ms, m)
 			}
 		}
-	}
 
+		if customized {
+			err := parameters.SaveChartParameters(paramFolder, chartName, customParams)
+			if err != nil {
+				log.Die("Failed to save chart parameters: %s", err)
+			}
+		}
+	}
 	chart.SortManifests(nc, ms)
 	return nc, nil
 }
