@@ -123,7 +123,6 @@ func processTemplates(c *chart.Chart, valueFlag string) (*chart.Chart, error) {
 		if len(t.Parameters) != len(tpl.Parameters) {
 			for _, p := range t.Parameters {
 				p2 := tapi.Parameter{Name: p.Name, Value: p.Value, Generate: p.Generate, From: p.From, DisplayName: p.DisplayName, Description: p.Description}
-				log.Info("Parameter %s = %s", p2.Name, p2.Value)
 				tpl.Parameters = append(tpl.Parameters, p2)
 			}
 		}
@@ -156,9 +155,6 @@ func processTemplates(c *chart.Chart, valueFlag string) (*chart.Chart, error) {
 			tpl.Objects = append(tpl.Objects, o2)
 		}
 
-		log.Debug("Now has generated template with name %s and %d objects", tpl.Name, len(tpl.Objects))
-		log.Debug("Replacing template %d parameters with converted %d parameters", len(t.Parameters), len(tpl.Parameters))
-
 		if errs := templatevalidation.ValidateProcessedTemplate(tpl); len(errs) > 0 {
 			err := errors.NewInvalid("template", tpl.Name, errs)
 			log.Die("Failed to validate template: %s", err)
@@ -181,7 +177,6 @@ func processTemplates(c *chart.Chart, valueFlag string) (*chart.Chart, error) {
 				log.Die("Failed to encode codec: %s", err)
 			}
 			json := buffer.String()
-			log.Info("Processing template JSON: %s", json)
 			doc, err := codec.YAML.Decode(buffer.Bytes()).One()
 			if err != nil {
 				log.Die("Failed parse RC: %s", err)
