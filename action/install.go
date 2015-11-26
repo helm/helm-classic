@@ -90,49 +90,66 @@ func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
 	// TODO: Right now, we force version v1. We could probably make this more
 	// flexible if there is a use case.
 	for _, o := range c.Namespaces {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndKubeCtlCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Secrets {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndKubeCtlCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.PersistentVolumes {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndKubeCtlCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.ServiceAccounts {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndKubeCtlCreate(o, namespace, dryRun); err != nil {
+			return err
+		}
+	}
+	for _, o := range c.OAuthClients {
+		if err := marshalAndOcCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Services {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndKubeCtlCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.Pods {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndKubeCtlCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	for _, o := range c.ReplicationControllers {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
+		if err := marshalAndKubeCtlCreate(o, namespace, dryRun); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func marshalAndCreate(o interface{}, ns string, dry bool) error {
+func marshalAndKubeCtlCreate(o interface{}, ns string, dry bool) error {
 	var b bytes.Buffer
 	if err := codec.JSON.Encode(&b).One(o); err != nil {
 		return err
 	}
 	return kubectlCreate(b.Bytes(), ns, dry)
+}
+
+func marshalAndOcCreate(o interface{}, ns string, dry bool) error {
+	var b bytes.Buffer
+	if err := codec.JSON.Encode(&b).One(o); err != nil {
+		return err
+	}
+	err := ocCreate(b.Bytes(), ns, dry)
+	if err != nil {
+		log.Warn("Failed to process OpenShift extension. Might not be on OpenShift? %s", err)
+	}
+	return nil
 }
 
 // Check by chart directory name whether a chart is fetched into the workspace.
@@ -153,6 +170,18 @@ func chartFetched(chartName, home string) bool {
 // If dryRun is set to true, then we just output the command that was
 // going to be run to os.Stdout and return nil.
 func kubectlCreate(data []byte, ns string, dryRun bool) error {
+	return commandCreate(data, ns, dryRun, "kubectl")
+}
+
+// ocCreate calls `oc create` and sends the data via Stdin to OpenShift.
+//
+// If dryRun is set to true, then we just output the command that was
+// going to be run to os.Stdout and return nil.
+func ocCreate(data []byte, ns string, dryRun bool) error {
+	return commandCreate(data, ns, dryRun, "oc")
+}
+
+func commandCreate(data []byte, ns string, dryRun bool, cmd string) error {
 	a := []string{"create", "-f", "-"}
 
 	if ns != "" {
@@ -160,7 +189,6 @@ func kubectlCreate(data []byte, ns string, dryRun bool) error {
 	}
 
 	if dryRun {
-		cmd := "kubectl"
 		for _, arg := range a {
 			cmd = fmt.Sprintf("%s %s", cmd, arg)
 		}
@@ -169,7 +197,7 @@ func kubectlCreate(data []byte, ns string, dryRun bool) error {
 		return nil
 	}
 
-	c := exec.Command("kubectl", a...)
+	c := exec.Command(cmd, a...)
 	in, err := c.StdinPipe()
 	if err != nil {
 		return err
