@@ -154,6 +154,11 @@ chart if found. In this case, you may not specify multiple charts at once.
 					Value: "",
 					Usage: "Specify a list of key-value pairs (eg. -v FOO=BAR,BAR=FOO) to set/override parameter values in Templates or Config Data.",
 				},
+				cli.StringFlag{
+					Name:  "value-folder",
+					Value: "chart-config",
+					Usage: "Specify the folder to load and save any overridden parameter values for Templates or Config Data so that they can be reused across install/update commands.",
+				},
 				cli.BoolFlag{
 					Name:  "force, aye-aye",
 					Usage: "Perform install even if dependencies are unsatisfied.",
@@ -377,7 +382,7 @@ func install(c *cli.Context) {
 	dryRun := c.Bool("dry-run")
 
 	for _, chart := range c.Args() {
-		action.Install(chart, h, c.String("namespace"), force, dryRun, c.String("value"))
+		action.Install(chart, h, c.String("namespace"), force, dryRun, c.String("value"), c.String("value-folder"))
 	}
 }
 
