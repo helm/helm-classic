@@ -1,0 +1,8 @@
+name: template
+home: http://github.com/helm/helm
+version: 0.0.1
+description: All the things, all semantically, none working
+maintainers:
+  - Helm <helm@deis.com>
+details:
+  An example of using an OpenShift Template in a manifest

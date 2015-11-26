@@ -2,7 +2,9 @@ package codec
 
 import (
 	"k8s.io/kubernetes/pkg/api/v1"
+	// initialise the extensions scheme
 	_ "k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
+	oapi "github.com/openshift/origin/pkg/template/api/v1"
 )
 
 // Object describes some discrete thing decoded from YAML or JSON.
@@ -73,5 +75,17 @@ func (m *Object) Namespace() (*v1.Namespace, error) {
 // ServiceAccount decodes a manifest into a ServiceAccount.
 func (m *Object) ServiceAccount() (*v1.ServiceAccount, error) {
 	o := new(v1.ServiceAccount)
+	return o, m.Object(o)
+}
+
+// List decodes a manifest into a List
+func (m *Object) List() (*v1.List, error) {
+	o := new(v1.List)
+	return o, m.Object(o)
+}
+
+// Template decodes a manifest into a Template
+func (m *Object) Template() (*oapi.Template, error) {
+	o := new(oapi.Template)
 	return o, m.Object(o)
 }

@@ -19,3 +19,7 @@ import:
 - package: github.com/google/go-querystring
 - package: github.com/google/go-github
   version: 81d0490d8aa8400f6760a077f4a2039eb0296e86
+- package: github.com/openshift/origin
+  version: v1.1
+  subpackages:
+  - /pkg
