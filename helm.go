@@ -163,6 +163,11 @@ chart if found. In this case, you may not specify multiple charts at once.
 					Value: "",
 					Usage: "The Kubernetes destination namespace.",
 				},
+				cli.StringFlag{
+					Name:  "value, v",
+					Value: "",
+					Usage: "Specify a list of key-value pairs (eg. -v FOO=BAR,BAR=FOO) to set/override parameter values in Templates or Config Data.",
+				},
 				cli.BoolFlag{
 					Name:  "force, aye-aye",
 					Usage: "Perform install even if dependencies are unsatisfied.",
@@ -419,7 +424,7 @@ func install(c *cli.Context) {
 	dryRun := c.Bool("dry-run")
 
 	for _, chart := range c.Args() {
-		action.Install(chart, h, c.String("namespace"), force, dryRun)
+		action.Install(chart, h, c.String("namespace"), force, dryRun, c.String("value"))
 	}
 }
 

@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/helm/helm/chart"
@@ -18,12 +19,10 @@ import (
 	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/errors"
 	"k8s.io/kubernetes/pkg/runtime"
+	utilerr "k8s.io/kubernetes/pkg/util/errors"
 
 	"github.com/openshift/origin/pkg/template"
 	"github.com/openshift/origin/pkg/template/generator"
-
-	// lets force the initialisation of the OAuthClient scheme
-	_ "github.com/openshift/origin/pkg/oauth/api/v1"
 	tapi "github.com/openshift/origin/pkg/template/api"
 	templatevalidation "github.com/openshift/origin/pkg/template/api/validation"
 	utilerr "k8s.io/kubernetes/pkg/util/errors"
@@ -48,7 +47,7 @@ var UninstallOrder = []string{"Service", "Pod", "ReplicationController", "Daemon
 // If the chart is not found in the workspace, it is fetched and then installed.
 //
 // During install, manifests are sent to Kubernetes in the ordered specified by InstallOrder.
-func Install(chartName, home, namespace string, force bool, dryRun bool) {
+func Install(chartName, home, namespace string, force bool, dryRun bool, valueFlag string) {
 	ochart := chartName
 	r := mustConfig(home).Repos
 	table, chartName := r.RepoChart(chartName)
@@ -63,7 +62,7 @@ func Install(chartName, home, namespace string, force bool, dryRun bool) {
 	if err != nil {
 		log.Die("Failed to load chart: %s", err)
 	}
-	c, err := processTemplates(cTemplates)
+	c, err := processTemplates(cTemplates, valueFlag)
 
 	// Give user the option to bale if dependencies are not satisfied.
 	nope, err := dependency.Resolve(c.Chartfile, filepath.Join(home, WorkspaceChartPath))
@@ -111,7 +110,7 @@ func isSamePath(src, dst string) (bool, error) {
 
 // Processes any OpenShift templates inside the chart and
 // removes a new chart without any OpenShift templates
-func processTemplates(c *chart.Chart) (*chart.Chart, error) {
+func processTemplates(c *chart.Chart, valueFlag string) (*chart.Chart, error) {
 	if len(c.Templates) == 0 {
 		return c, nil
 	}
@@ -135,6 +134,22 @@ func processTemplates(c *chart.Chart) (*chart.Chart, error) {
 		}
 		if len(t.Parameters) != len(tpl.Parameters) {
 			log.Die("Failed to convert template %s with %d parameters as has %d runtime parameters", tpl.Name, len(t.Parameters), len(tpl.Parameters))
+		}
+
+		values := strings.Split(valueFlag, ",")
+		for _, keypair := range values {
+			p := strings.SplitN(keypair, "=", 2)
+			if len(p) != 2 {
+				log.Die("invalid parameter assignment in %q: %q\n", t.Name, keypair)
+				continue
+			}
+			if v := template.GetParameterByName(tpl, p[0]); v != nil {
+				v.Value = p[1]
+				v.Generate = ""
+				template.AddParameter(tpl, *v)
+			} else {
+				log.Die("unknown parameter name %q\n", p[0])
+			}
 		}
 
 		kubeCodec := runtime.CodecFor(api.Scheme, t.APIVersion)
