@@ -8,6 +8,10 @@ import (
 	"k8s.io/kubernetes/pkg/api/unversioned"
 	"k8s.io/kubernetes/pkg/api/v1"
 	"k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
+	// initialise the extensions scheme
+	_ "k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
+	oapi "github.com/openshift/origin/pkg/template/api/v1"
+	oauth "github.com/openshift/origin/pkg/oauth/api/v1"
 )
 
 // Object describes some discrete instance of a Kind.
@@ -243,5 +247,11 @@ func (m *Object) List() (*v1.List, error) {
 // Template decodes a manifest into a Template
 func (m *Object) Template() (*oapi.Template, error) {
 	o := new(oapi.Template)
+	return o, m.Object(o)
+}
+
+// OAuthClient decodes a manifest into a OAuthClient
+func (m *Object) OAuthClient() (*oauth.OAuthClient, error) {
+	o := new(oauth.OAuthClient)
 	return o, m.Object(o)
 }
