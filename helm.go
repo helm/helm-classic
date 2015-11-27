@@ -196,6 +196,70 @@ chart if found. In this case, you may not specify multiple charts at once.
 			},
 		},
 		{
+			Name:  "upgrade",
+			Usage: "Upgrades a named package which has previously been installed in Kubernetes.",
+			Description: `If the given 'chart-name' is present in your workspace, it
+will be uploaded into Kubernetes. If no chart named 'chart-name' is found in
+your workspace, Helm will look for a chart with that name, install it into the
+workspace, and then immediately upload it to Kubernetes.
+
+When multiple charts are specified, Helm will attempt to install all of them,
+following the resolution process described above.
+
+As a special case, if the flag --chart-path is specified, Helm will look for a
+Chart.yaml file and manifests/ directory at that path, and will install that
+chart if found. In this case, you may not specify multiple charts at once.
+`,
+			ArgsUsage: "[chart-name...]",
+			Action:    upgrade,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "namespace, n",
+					Value: "",
+					Usage: "The Kubernetes destination namespace.",
+				},
+/*
+	TODO we should support rolling updates too
+
+				cli.StringFlag{
+					Name:  "mode, m",
+					Value: "update",
+					Usage: "The upgrade mode. Values are: rolling, update or replace and map to the kubectl verbs.",
+				},
+*/
+				cli.StringFlag{
+					Name:  "value, v",
+					Value: "",
+					Usage: "Specify a list of key-value pairs (eg. -v FOO=BAR,BAR=FOO) to set/override parameter values in Templates or Config Data.",
+				},
+				cli.StringFlag{
+					Name:  "value-folder",
+					Value: "chart-config",
+					Usage: "Specify the folder to load and save any overridden parameter values for Templates or Config Data so that they can be reused across install/update commands.",
+				},
+				cli.BoolFlag{
+					Name:  "print-import-folders",
+					Usage: "Prints the folder structures that are being used by the template annotations to import secrets.",
+				},
+				cli.BoolFlag{
+					Name:  "write-generated-keys",
+					Usage: "Write generated secrets to the local filesystem.",
+				},
+				cli.BoolFlag{
+					Name:  "no-secret-generate",
+					Usage: "Disables the generation of the secrets if the secrets cannot be found to import from the local filesystem.",
+				},
+				cli.BoolFlag{
+					Name:  "force, aye-aye",
+					Usage: "Perform install even if dependencies are unsatisfied.",
+				},
+				cli.BoolFlag{
+					Name:  "dry-run",
+					Usage: "Fetch the chart, but only display the underlying kubectl commands.",
+				},
+			},
+		},
+		{
 			Name:  "uninstall",
 			Usage: "Uninstall a named package from Kubernetes.",
 			Description: `For each supplied 'chart-name', this will connect to Kubernetes
@@ -436,12 +500,23 @@ func remove(c *cli.Context) {
 
 func install(c *cli.Context) {
 	minArgs(c, 1, "install")
+	installWithMode(c, "create")
+}
+
+func upgrade(c *cli.Context) {
+	minArgs(c, 1, "upgrade")
+	// TODO when we add support for rolling updates
+	//installWithMode(c, c.String("mode"))
+	installWithMode(c, "apply")
+}
+
+func installWithMode(c *cli.Context, mode string) {
 	h := home(c)
 	force := c.Bool("force")
 	dryRun := c.Bool("dry-run")
 
 	for _, chart := range c.Args() {
-		action.Install(chart, h, c.String("namespace"), force, dryRun, c.String("value"), c.String("value-folder"), c.Bool("print-import-folders"), c.Bool("write-generated-keys"), !c.Bool("no-secret-generate"))
+		action.Install(chart, h, c.String("namespace"), mode, force, dryRun, c.String("value"), c.String("value-folder"), c.Bool("print-import-folders"), c.Bool("write-generated-keys"), !c.Bool("no-secret-generate"))
 	}
 }
 

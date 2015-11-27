@@ -14,15 +14,17 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/unversioned"
 	"k8s.io/kubernetes/pkg/api/v1"
 )
 
+
+const defaultAPIVersion = "v1"
+
 // secretSettings contains the flags to determine how the Secret generation works
 type secretSettings struct {
-	PrintImportFolders bool
-	WriteGeneratedKeys bool
+	PrintImportFolders  bool
+	WriteGeneratedKeys  bool
 	GenerateSecretsData bool
 }
 
@@ -32,20 +34,19 @@ type keypair struct {
 	priv []byte
 }
 
-
 // createSecretsFromAnnotations creates all the secrets referenced in the ReplicationController's annotations
 // using these annotations and rules:
 // 	https://github.com/fabric8io/fabric8/blob/master/docs/secretAnnotations.md
-func createSecretsFromAnnotations(rc *v1.ReplicationController, namespace string, dry bool, secretFlags *secretSettings) error {
+func createSecretsFromAnnotations(rc *v1.ReplicationController, namespace string, mode string, dry bool, secretFlags *secretSettings) error {
 	for secretType, secretDataIdentifiers := range rc.Spec.Template.Annotations {
-		if err := createSecretsFromAnnotation(secretDataIdentifiers, secretType, namespace, dry, secretFlags); err != nil {
+		if err := createSecretsFromAnnotation(secretDataIdentifiers, secretType, namespace, mode, dry, secretFlags); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func createSecretsFromAnnotation(secretDataIdentifiers string, secretType string, namespace string, dry bool, secretFlags *secretSettings) error {
+func createSecretsFromAnnotation(secretDataIdentifiers string, secretType string, namespace string, mode string, dry bool, secretFlags *secretSettings) error {
 	var dataType = strings.Split(secretType, "/")
 	if len(dataType) == 2 && dataType[0] == "fabric8.io" {
 		switch dataType[1] {
@@ -54,7 +55,7 @@ func createSecretsFromAnnotation(secretDataIdentifiers string, secretType string
 			items := strings.Split(secretDataIdentifiers, ",")
 			for i := range items {
 				var name = items[i]
-				if err := marshalAndCreateSecret(namespace, name, secretType, nil, dry, secretFlags); err != nil {
+				if err := marshalAndCreateSecret(namespace, mode, name, secretType, nil, dry, secretFlags); err != nil {
 					return err
 				}
 			}
@@ -77,12 +78,12 @@ func createSecretsFromAnnotation(secretDataIdentifiers string, secretType string
 				keysNames[0] = "ssh-key.pub"
 			}
 
-			if err := marshalAndCreateSecret(namespace, secrets[0], secretType, keysNames, dry, secretFlags); err != nil {
+			if err := marshalAndCreateSecret(namespace, mode, secrets[0], secretType, keysNames, dry, secretFlags); err != nil {
 				return err
 			}
 		case "secret-gpg-key:":
 			gpgKeyName := []string{"gpg.conf", "secring.gpg", "pubring.gpg", "trustdb.gpg"}
-			if err := marshalAndCreateSecret(namespace, secretDataIdentifiers, secretType, gpgKeyName, dry, secretFlags); err != nil {
+			if err := marshalAndCreateSecret(namespace, mode, secretDataIdentifiers, secretType, gpgKeyName, dry, secretFlags); err != nil {
 				return err
 			}
 		}
@@ -90,19 +91,19 @@ func createSecretsFromAnnotation(secretDataIdentifiers string, secretType string
 	return nil
 }
 
-func marshalAndCreateSecret(namespace string, name string, secretType string, keysNames []string, dry bool, secretFlags *secretSettings) error {
-	secret := api.Secret{
+func marshalAndCreateSecret(namespace string, mode string, name string, secretType string, keysNames []string, dry bool, secretFlags *secretSettings) error {
+	secret := v1.Secret{
 		TypeMeta: unversioned.TypeMeta{
-			Kind: "Secret",
-			APIVersion: "v1",
+			Kind:       "Secret",
+			APIVersion: defaultAPIVersion,
 		},
-		ObjectMeta: api.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name: name,
 		},
-		Type: api.SecretType(secretType),
+		Type: v1.SecretType(secretType),
 		Data: getSecretData(secretType, name, keysNames, secretFlags),
 	}
-	return marshalAndKubeCtlCreate(secret, namespace, dry)
+	return marshalAndKubeCtlCreate(secret, namespace, "Secret", &secret.ObjectMeta, mode, dry)
 }
 
 func getSecretData(secretType string, name string, keysNames []string, secretFlags *secretSettings) map[string][]byte {

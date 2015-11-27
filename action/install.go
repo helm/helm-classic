@@ -18,6 +18,7 @@ import (
 	"github.com/helm/helm/parameters"
 
 	"k8s.io/kubernetes/pkg/api"
+	"k8s.io/kubernetes/pkg/api/v1"
 	"k8s.io/kubernetes/pkg/api/errors"
 	"k8s.io/kubernetes/pkg/runtime"
 	utilerr "k8s.io/kubernetes/pkg/util/errors"
@@ -48,7 +49,7 @@ var UninstallOrder = []string{"Service", "Pod", "ReplicationController", "Daemon
 // If the chart is not found in the workspace, it is fetched and then installed.
 //
 // During install, manifests are sent to Kubernetes in the ordered specified by InstallOrder.
-func Install(chartName, home, namespace string, force bool, dryRun bool, valueFlag string, paramFolder string, printImportFolders bool, writeGeneratedKeys bool, generateSecretsData bool) {
+func Install(chartName, home, namespace string, mode string, force bool, dryRun bool, valueFlag string, paramFolder string, printImportFolders bool, writeGeneratedKeys bool, generateSecretsData bool) {
 	secretFlags := &secretSettings{PrintImportFolders: printImportFolders, WriteGeneratedKeys: writeGeneratedKeys, GenerateSecretsData: generateSecretsData}
 	ochart := chartName
 	r := mustConfig(home).Repos
@@ -90,7 +91,7 @@ func Install(chartName, home, namespace string, force bool, dryRun bool, valueFl
 		msg = "Performing a dry run of `kubectl create -f` ..."
 	}
 	log.Info(msg)
-	if err := uploadManifests(c, namespace, dryRun, secretFlags); err != nil {
+	if err := uploadManifests(c, namespace, mode, dryRun, secretFlags); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
 	log.Info("Done")
@@ -222,7 +223,7 @@ func processTemplates(c *chart.Chart, valueFlag string, paramFolder string) (*ch
 }
 
 // uploadManifests sends manifests to Kubectl in a particular order.
-func uploadManifests(c *chart.Chart, namespace string, dryRun bool, secretFlags *secretSettings) error {
+func uploadManifests(c *chart.Chart, namespace string, mode string, dryRun bool, secretFlags *secretSettings) error {
 
 	// Install known kinds in a predictable order.
 	for _, k := range InstallOrder {
@@ -264,7 +265,7 @@ func marshalAndCreate(o interface{}, ns string, dry bool) error {
 	if err := codec.JSON.Encode(&b).One(o); err != nil {
 		return err
 	}
-	return kubectlCreate(b.Bytes(), ns, dry)
+	return kubectlCreate(b.Bytes(), ns, mode, dry)
 }
 
 // Check by chart directory name whether a chart is fetched into the workspace.
@@ -319,4 +320,27 @@ func kubectlCreate(data []byte, ns string, dryRun bool) error {
 	in.Close()
 
 	return c.Wait()
+}
+
+func kubeCtlGetResourceVersion(ns string, kind string, name string) (string, error) {
+	b, err := kubeCtlGetJson(ns, kind, name)
+	if err != nil {
+		return "", err
+	}
+	kubeCodec := runtime.CodecFor(api.Scheme, defaultAPIVersion)
+	o, err := kubeCodec.Decode(b)
+	if err != nil {
+		return "", err
+	}
+	objectMeta, err := api.ObjectMetaFor(o)
+	if err != nil {
+		return "", err
+	}
+	return objectMeta.ResourceVersion, nil
+}
+
+func kubeCtlGetJson(ns string, kind string, name string) ([]byte, error) {
+	cmd := "kubectl"
+	a := []string{"--namespace=" + ns, "get", strings.ToLower(kind), name, "-ojson"}
+	return exec.Command(cmd, a...).Output()
 }
