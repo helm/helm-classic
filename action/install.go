@@ -341,6 +341,11 @@ func kubeCtlGetResourceVersion(ns string, kind string, name string) (string, err
 
 func kubeCtlGetJson(ns string, kind string, name string) ([]byte, error) {
 	cmd := "kubectl"
-	a := []string{"--namespace=" + ns, "get", strings.ToLower(kind), name, "-ojson"}
+	a := []string{}
+	if ns != "" {
+		a = append([]string{"--namespace=" + ns}, a...)
+	}
+	a = append([]string{"get", strings.ToLower(kind), name, "-ojson"}, a...)
+	log.Info("About to invoke command %s %s", cmd, strings.Join(a, " "))
 	return exec.Command(cmd, a...).Output()
 }
