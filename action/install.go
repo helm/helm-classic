@@ -422,13 +422,17 @@ func commandForKind(kind string) string {
 // If dryRun is set to true, then we just output the command that was
 // going to be run to os.Stdout and return nil.
 func kubectlCreate(data []byte, ns string, kind string, mode string, dryRun bool) error {
+	cmd := commandForKind(kind)
+	// openshift doesn't support 'apply' right now
+	if cmd == "oc" && mode == "apply" {
+		mode = "replace"
+	}
 	a := []string{mode, "-f", "-"}
 
 	if ns != "" {
 		a = append([]string{"--namespace=" + ns}, a...)
 	}
 
-	cmd := commandForKind(kind)
 	if dryRun {
 		for _, arg := range a {
 			cmd = fmt.Sprintf("%s %s", cmd, arg)
