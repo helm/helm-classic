@@ -323,9 +323,12 @@ func kubectlCreate(data []byte, ns string, dryRun bool) error {
 }
 
 func kubeCtlGetResourceVersion(ns string, kind string, name string) (string, error) {
-	b, err := kubeCtlGetJson(ns, kind, name)
+	b, err := kubeCtlGetJSON(ns, kind, name)
 	if err != nil {
 		return "", err
+	}
+	if len(b) == 0 {
+		return "", nil
 	}
 	kubeCodec := runtime.CodecFor(api.Scheme, defaultAPIVersion)
 	o, err := kubeCodec.Decode(b)
@@ -339,7 +342,7 @@ func kubeCtlGetResourceVersion(ns string, kind string, name string) (string, err
 	return objectMeta.ResourceVersion, nil
 }
 
-func kubeCtlGetJson(ns string, kind string, name string) ([]byte, error) {
+func kubeCtlGetJSON(ns string, kind string, name string) ([]byte, error) {
 	cmd := "kubectl"
 	a := []string{}
 	if ns != "" {
