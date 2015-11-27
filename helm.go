@@ -174,6 +174,18 @@ chart if found. In this case, you may not specify multiple charts at once.
 					Usage: "Specify the folder to load and save any overridden parameter values for Templates or Config Data so that they can be reused across install/update commands.",
 				},
 				cli.BoolFlag{
+					Name:  "print-import-folders",
+					Usage: "Prints the folder structures that are being used by the template annotations to import secrets.",
+				},
+				cli.BoolFlag{
+					Name:  "write-generated-keys",
+					Usage: "Write generated secrets to the local filesystem.",
+				},
+				cli.BoolFlag{
+					Name:  "no-secret-generate",
+					Usage: "Disables the generation of the secrets if the secrets cannot be found to import from the local filesystem.",
+				},
+				cli.BoolFlag{
 					Name:  "force, aye-aye",
 					Usage: "Perform install even if dependencies are unsatisfied.",
 				},
@@ -429,7 +441,7 @@ func install(c *cli.Context) {
 	dryRun := c.Bool("dry-run")
 
 	for _, chart := range c.Args() {
-		action.Install(chart, h, c.String("namespace"), force, dryRun, c.String("value"), c.String("value-folder"))
+		action.Install(chart, h, c.String("namespace"), force, dryRun, c.String("value"), c.String("value-folder"), c.Bool("print-import-folders"), c.Bool("write-generated-keys"), !c.Bool("no-secret-generate"))
 	}
 }
 
