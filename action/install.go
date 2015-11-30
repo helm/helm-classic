@@ -18,17 +18,17 @@ import (
 	"github.com/helm/helm/parameters"
 
 	"k8s.io/kubernetes/pkg/api"
-	"k8s.io/kubernetes/pkg/api/v1"
 	"k8s.io/kubernetes/pkg/api/errors"
+	"k8s.io/kubernetes/pkg/api/v1"
 	"k8s.io/kubernetes/pkg/runtime"
 	utilerr "k8s.io/kubernetes/pkg/util/errors"
 
 	"github.com/openshift/origin/pkg/template"
-	"github.com/openshift/origin/pkg/template/generator"
 	tapi "github.com/openshift/origin/pkg/template/api"
 	templatevalidation "github.com/openshift/origin/pkg/template/api/validation"
 	utilerr "k8s.io/kubernetes/pkg/util/errors"
 
+	"github.com/openshift/origin/pkg/template/generator"
 )
 
 // InstallOrder defines the order in which manifests should be installed, by Kind.
@@ -152,7 +152,7 @@ func processTemplates(c *chart.Chart, valueFlag string, paramFolder string) (*ch
 					log.Die("invalid parameter assignment in %q: %q\n", t.Name, keypair)
 					continue
 				}
-				customized = true;
+				customized = true
 				customParams.Values[p[0]] = p[1]
 			}
 		}

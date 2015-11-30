@@ -12,7 +12,6 @@ import (
 	_ "github.com/openshift/origin/pkg/oauth/api/v1"
 )
 
-
 var initialisedOpenShiftFlag = false
 var openshiftCluster = false
 var openshiftProject = ""
@@ -31,7 +30,7 @@ func isOpenShift() bool {
 			log.Info("got project info: %s", text)
 			prefix := "Using project \""
 			remaining := strings.TrimPrefix(text, prefix)
-			if len(remaining) != len(text)  {
+			if len(remaining) != len(text) {
 				openshiftCluster = true
 				idx := strings.Index(remaining, "\"")
 				if idx > 0 {
