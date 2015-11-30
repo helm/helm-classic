@@ -13,18 +13,24 @@ import (
 	"github.com/helm/helm/log"
 )
 
+// The order in which manifests should be installed, by Kind.
+//
+// Anything not on the list will be installed after the last listed item, in
+// an indeterminate order.
+var InstallOrder = []string{"Namespace", "Secret", "PersistentVolume", "ServiceAccount", "Service", "Pod", "ReplicationController", "DaemonSet", "Ingress", "Job"}
+
+// The order in which manifests are uninstalled.
+//
+// Unknown manifest types (those not explicitly referenced in this list) will
+// be uninstalled before any of these, since we know that none of the core
+// types depend on non-core types.
+var UninstallOrder = []string{"Service", "Pod", "ReplicationController", "DaemonSet", "Secret", "PersistentVolume", "ServiceAccount", "Ingress", "Job", "Namespace"}
+
 // Install loads a chart into Kubernetes.
 //
 // If the chart is not found in the workspace, it is fetched and then installed.
 //
-// During install, manifests are sent to Kubernetes in the following order:
-//
-//	- Namespaces
-// 	- Secrets
-// 	- Volumes
-// 	- Services
-// 	- Pods
-// 	- ReplicationControllers
+// During install, manifests are sent to Kubernetes in the ordered specified by InstallOrder.
 func Install(chartName, home, namespace string, force bool, dryRun bool) {
 
 	ochart := chartName
@@ -86,44 +92,39 @@ func isSamePath(src, dst string) (bool, error) {
 
 // uploadManifests sends manifests to Kubectl in a particular order.
 func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
-	// The ordering is significant.
-	// TODO: Right now, we force version v1. We could probably make this more
-	// flexible if there is a use case.
-	for _, o := range c.Namespaces {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
-			return err
+
+	// Install known kinds in a predictable order.
+	for _, k := range InstallOrder {
+		for _, m := range c.Kind[k] {
+			o := m.VersionedObject
+			o.AddAnnotations(map[string]string{
+				chart.AnnFile:         m.Source,
+				chart.AnnChartVersion: c.Chartfile.Version,
+				chart.AnnChartDesc:    c.Chartfile.Description,
+				chart.AnnChartName:    c.Chartfile.Name,
+			})
+			var data []byte
+			var err error
+			if data, err = o.JSON(); err != nil {
+				return err
+			}
+			log.Info("Data: %s", data)
+			if err := kubectlCreate(data, namespace, dryRun); err != nil {
+				return err
+			}
 		}
 	}
-	for _, o := range c.Secrets {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
-			return err
+
+	// Install unknown kinds afterward. Order here is not predictable.
+	for _, k := range c.UnknownKinds(InstallOrder) {
+		for _, o := range c.Kind[k] {
+			o.VersionedObject.AddAnnotations(map[string]string{chart.AnnFile: o.Source})
+			if err := marshalAndCreate(o.VersionedObject, namespace, dryRun); err != nil {
+				return err
+			}
 		}
 	}
-	for _, o := range c.PersistentVolumes {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
-			return err
-		}
-	}
-	for _, o := range c.ServiceAccounts {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
-			return err
-		}
-	}
-	for _, o := range c.Services {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
-			return err
-		}
-	}
-	for _, o := range c.Pods {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
-			return err
-		}
-	}
-	for _, o := range c.ReplicationControllers {
-		if err := marshalAndCreate(o, namespace, dryRun); err != nil {
-			return err
-		}
-	}
+
 	return nil
 }
 
