@@ -349,6 +349,5 @@ func kubeCtlGetJSON(ns string, kind string, name string) ([]byte, error) {
 		a = append([]string{"--namespace=" + ns}, a...)
 	}
 	a = append([]string{"get", strings.ToLower(kind), name, "-ojson"}, a...)
-	log.Info("About to invoke command %s %s", cmd, strings.Join(a, " "))
 	return exec.Command(cmd, a...).Output()
 }
