@@ -22,7 +22,7 @@ install:
   - export PATH="$HOME/bin:$PATH" GLIDE_HOME="$HOME/.glide"
   - go get github.com/golang/lint/golint
 
-script: make bootstrap build test test-charts
+script: make bootstrap build test
 
 before_deploy: make bootstrap-dist dist prep-bintray-json
 
