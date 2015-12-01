@@ -326,6 +326,17 @@ list all available charts.
 				},
 			},
 		},
+		{
+			Name:  "doctor",
+			Usage: "Run a series of checks to surface possible problems",
+			Description: `This will run a series of checks to ensure that your
+experience with helm is trouble-free.
+`,
+			ArgsUsage: "",
+			Action: func(c *cli.Context) {
+				action.Doctor(home(c))
+			},
+		},
 	}
 
 	app.Before = func(c *cli.Context) error {

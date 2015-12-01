@@ -3,7 +3,6 @@ package action
 import (
 	"bytes"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -11,19 +10,6 @@ import (
 	"github.com/helm/helm/log"
 	"github.com/helm/helm/release"
 )
-
-func TestEnsurePrereqs(t *testing.T) {
-	pp := os.Getenv("PATH")
-	defer os.Setenv("PATH", pp)
-
-	os.Setenv("PATH", filepath.Join(helmRoot, "testdata")+":"+pp)
-	ensurePrereqs()
-}
-
-func TestEnsureHome(t *testing.T) {
-	tmpHome := createTmpHome()
-	ensureHome(tmpHome)
-}
 
 func TestCheckLatest(t *testing.T) {
 	setupTestCheckLatest()

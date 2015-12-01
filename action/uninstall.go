@@ -38,6 +38,8 @@ func Uninstall(chartName, home, namespace string, force bool) {
 		return
 	}
 
+	CheckKubePrereqs()
+
 	log.Info("Running `kubectl delete` ...")
 	if err := deleteChart(c, namespace, false); err != nil {
 		log.Die("Failed to completely delete chart: %s", err)
