@@ -64,17 +64,17 @@ func Info(format string, v ...interface{}) {
 }
 
 // Debug prints a cyan-tinted message if IsDebugging is true.
-func Debug(msg string, v ...interface{}) {
+func Debug(format string, v ...interface{}) {
 	if IsDebugging {
 		fmt.Fprint(Stderr, pretty.Colorize("{{.Cyan}}[DEBUG]{{.Default}} "))
-		Msg(msg, v...)
+		fmt.Fprintf(Stderr, appendNewLine(format), v...)
 	}
 }
 
 // Warn prints a yellow-tinted warning message.
 func Warn(format string, v ...interface{}) {
 	fmt.Fprint(Stderr, pretty.Colorize("{{.Yellow}}[WARN]{{.Default}} "))
-	Msg(format, v...)
+	fmt.Fprintf(Stderr, appendNewLine(format), v...)
 }
 
 func appendNewLine(format string) string {

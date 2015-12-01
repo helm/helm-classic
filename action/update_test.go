@@ -30,11 +30,13 @@ func TestCheckLatest(t *testing.T) {
 	var b bytes.Buffer
 	defer func() {
 		log.Stdout = os.Stdout
+		log.Stderr = os.Stderr
 		release.RepoService = nil
 	}()
 
 	log.IsDebugging = true
 	log.Stdout = &b
+	log.Stderr = &b
 
 	CheckLatest("0.0.1")
 
