@@ -231,8 +231,9 @@ is the first stage of contributing a chart upstream.
 			},
 		},
 		{
-			Name:  "list",
-			Usage: "List all fetched packages.",
+			Name:    "list",
+			Aliases: []string{"ls"},
+			Usage:   "List all fetched packages.",
 			Description: `This prints all of the packages that are currently installed in
 the workspace. Packages are printed by the local name.
 `,
@@ -285,8 +286,8 @@ list all available charts.
 			},
 		},
 		{
-			Name:    "repo",
-			Aliases: []string{"repository"},
+			Name:    "repository",
+			Aliases: []string{"repo"},
 			Usage:   "Work with other Chart repositories.",
 			Subcommands: []cli.Command{
 				{
@@ -300,8 +301,9 @@ list all available charts.
 					},
 				},
 				{
-					Name:  "list",
-					Usage: "List all remote chart repositories.",
+					Name:    "list",
+					Aliases: []string{"ls"},
+					Usage:   "List all remote chart repositories.",
 					Action: func(c *cli.Context) {
 						action.ListRepos(home(c))
 					},
