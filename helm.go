@@ -114,6 +114,12 @@ the 'nginx' chart into a directory named 'www' in your workspace.
 			},
 		},
 		{
+			Name:      "lint",
+			Usage:     "Validates given chart",
+			ArgsUsage: "[chart-name]",
+			Action:    lint,
+		},
+		{
 			Name:      "remove",
 			Aliases:   []string{"rm"},
 			Usage:     "Remove one or more Charts from your working directory.",
@@ -353,6 +359,16 @@ func fetch(c *cli.Context) {
 	}
 
 	action.Fetch(chart, lname, home)
+}
+
+func lint(c *cli.Context) {
+	home := home(c)
+	minArgs(c, 1, "lint")
+
+	a := c.Args()
+	chart := a[0]
+
+	action.Lint(chart, home)
 }
 
 func remove(c *cli.Context) {
