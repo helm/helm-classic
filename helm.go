@@ -286,8 +286,8 @@ list all available charts.
 			},
 		},
 		{
-			Name:    "repo",
-			Aliases: []string{"repository"},
+			Name:    "repository",
+			Aliases: []string{"repo"},
 			Usage:   "Work with other Chart repositories.",
 			Subcommands: []cli.Command{
 				{
