@@ -1,15 +1,16 @@
 package action
 
 import (
+	"io"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
 	"github.com/google/go-github/github"
 	"github.com/helm/helm/chart"
 	"github.com/helm/helm/log"
 	"github.com/helm/helm/manifest"
 	"gopkg.in/yaml.v2"
-	"io"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 )
 
 // Owner is default Helm repository owner or organization.
@@ -42,7 +43,7 @@ func Lint(chartName, homedir string) {
 	//checks to see if chart name is unique
 	nameErr := verifyChartNameUnique(chartName)
 	if nameErr == nil {
-		log.Warn("Chart name %s already exists in charts repository [github.com/helm/charts]. \nYou might like to change it before continuing", chartName)
+		log.Warn("Chart name %s already exists in charts repository [github.com/helm/charts]. If you're planning on submitting this chart to the charts repo, please consider changing the chart name.", chartName)
 	}
 
 	verifyMetadata(chartPath)
