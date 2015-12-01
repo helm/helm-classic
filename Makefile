@@ -20,10 +20,8 @@ build: $(MAIN_GO)
 	go build -o $(HELM_BIN) -ldflags "-X main.version=${VERSION}" $<
 
 bootstrap:
+	go get -u github.com/golang/lint/golint github.com/mitchellh/gox
 	glide -y glide-full.yaml up
-
-bootstrap-dist:
-	go get -u github.com/mitchellh/gox
 
 build-all:
 	gox -verbose \
@@ -72,7 +70,6 @@ test-style:
 	done
 
 .PHONY: bootstrap \
-				bootstrap-dist \
 				build \
 				build-all \
 				clean \
