@@ -20,11 +20,10 @@ install:
   - mkdir -p $HOME/bin
   - tar -vxz -C $HOME/bin --strip=1 -f glide-0.7.2-linux-amd64.tar.gz
   - export PATH="$HOME/bin:$PATH" GLIDE_HOME="$HOME/.glide"
-  - go get github.com/golang/lint/golint
 
 script: make bootstrap build test
 
-before_deploy: make bootstrap-dist dist prep-bintray-json
+before_deploy: make dist prep-bintray-json
 
 deploy:
 - provider: bintray
