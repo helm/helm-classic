@@ -1,3 +1,4 @@
+*.swp
 vendor/
 bin/
 _dist/
