@@ -152,6 +152,16 @@ func (r *Repos) Add(name, repo string) error {
 	return nil
 }
 
+// Exists checks if a repo exists by name
+func (r *Repos) Exists(name string) bool {
+	for _, r := range r.Tables {
+		if r.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
 // Update performs an update of the local copy.
 //
 // This does a Git fast-forward pull from the remote repo.
