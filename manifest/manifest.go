@@ -35,7 +35,7 @@ func Files(chartDir string) ([]string, error) {
 			return nil
 		}
 
-		if filepath.Ext(fname) == ".yaml" {
+		if filepath.Ext(fname) == ".yaml" || filepath.Ext(fname) == ".yml" {
 			files = append(files, fname)
 		}
 
@@ -106,7 +106,7 @@ func ParseDir(chartDir string) ([]*Manifest, error) {
 			return nil
 		}
 
-		if filepath.Ext(fname) != ".yaml" {
+		if filepath.Ext(fname) != ".yaml" && filepath.Ext(fname) != ".yml" {
 			log.Debug("Skipping %s. Not a YAML file.", fname)
 			return nil
 		}
