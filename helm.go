@@ -267,6 +267,12 @@ list all available charts.
 `,
 			ArgsUsage: "[string]",
 			Action:    search,
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "regexp,r",
+					Usage: "Use a regular expression instead of a substring match.",
+				},
+			},
 		},
 		{
 			Name:      "info",
@@ -418,7 +424,7 @@ func search(c *cli.Context) {
 	if len(c.Args()) > 0 {
 		term = c.Args()[0]
 	}
-	action.Search(term, home(c))
+	action.Search(term, home(c), c.Bool("regexp"))
 }
 
 // minArgs checks to see if the right number of args are passed.
