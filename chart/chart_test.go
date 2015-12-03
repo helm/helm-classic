@@ -22,7 +22,7 @@ func TestLoad(t *testing.T) {
 	}
 
 	if len(c.Kind["Pod"]) != 3 {
-		t.Errorf("Expected 3 pods, got %d", len(c.Kind["Pod"]))
+		t.Fatalf("Expected 3 pods, got %d", len(c.Kind["Pod"]))
 	}
 
 	if len(c.Kind["ReplicationController"]) == 0 {

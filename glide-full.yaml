@@ -32,6 +32,10 @@ import:
   version: v1.1.1
   subpackages:
   - /pkg
+  - /pkg/api
+  - /pkg/api/v1
+  - /pkg/api/unversioned
+  - /pkg/apis/extensions/v1beta1
 - package: github.com/aokoli/goutils
 - package: github.com/codegangsta/negroni
   version: 8d75e11374a1928608c906fe745b538483e7aeb2
