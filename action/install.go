@@ -18,10 +18,11 @@ import (
 	"github.com/helm/helm/parameters"
 
 	"k8s.io/kubernetes/pkg/api"
-	"k8s.io/kubernetes/pkg/api/errors"
 	"k8s.io/kubernetes/pkg/api/v1"
+	"k8s.io/kubernetes/pkg/api/errors"
+	"k8s.io/kubernetes/pkg/api/unversioned"
+	"k8s.io/kubernetes/pkg/conversion"
 	"k8s.io/kubernetes/pkg/runtime"
-	utilerr "k8s.io/kubernetes/pkg/util/errors"
 
 	"github.com/openshift/origin/pkg/template"
 	tapi "github.com/openshift/origin/pkg/template/api"
@@ -35,7 +36,7 @@ import (
 //
 // Anything not on the list will be installed after the last listed item, in
 // an indeterminate order.
-var InstallOrder = []string{"Namespace", "Secret", "PersistentVolume", "ServiceAccount", "Service", "Pod", "ReplicationController", "DaemonSet", "Ingress", "Job"}
+var InstallOrder = []string{"Namespace", "Secret", "PersistentVolume", "ServiceAccount", "OAuthClient", "Service", "Pod", "ReplicationController", "DaemonSet", "Ingress", "Job"}
 
 // UninstallOrder defines the order in which manifests are uninstalled.
 //
@@ -43,6 +44,11 @@ var InstallOrder = []string{"Namespace", "Secret", "PersistentVolume", "ServiceA
 // be uninstalled before any of these, since we know that none of the core
 // types depend on non-core types.
 var UninstallOrder = []string{"Service", "Pod", "ReplicationController", "DaemonSet", "Secret", "PersistentVolume", "ServiceAccount", "Ingress", "Job", "Namespace"}
+
+// OpenShiftKinds defines the list of kinds which only exist in OpenShift
+//
+// These kinds require the `oc` command line tool for create and apply
+var OpenShiftKinds = []string{"OAuthClient", "Route", "Template"}
 
 // Install loads a chart into Kubernetes.
 //
@@ -114,15 +120,17 @@ func isSamePath(src, dst string) (bool, error) {
 // Processes any OpenShift templates inside the chart and
 // removes a new chart without any OpenShift templates
 func processTemplates(c *chart.Chart, valueFlag string, paramFolder string) (*chart.Chart, error) {
-	if len(c.Templates) == 0 {
+	templates := c.Kind["Template"]
+	if len(templates) == 0 {
 		return c, nil
 	}
-	nc := &chart.Chart{
-		Chartfile: c.Chartfile,
-	}
-
+	kmap := make(map[string][]*manifest.Manifest)
 	ms := []*manifest.Manifest{}
-	for _, t := range c.Templates {
+	for _, o := range templates {
+		t, err := o.VersionedObject.Template()
+		if err != nil {
+			log.Die("Could not convert template %s", err)
+		}
 		log.Debug("Replacing templates in %s with %d objects", t.Name, len(t.Objects))
 		tpl := &tapi.Template{}
 		scheme := runtime.NewScheme()
@@ -206,8 +214,16 @@ func processTemplates(c *chart.Chart, valueFlag string, paramFolder string) (*ch
 			if err != nil {
 				log.Die("Failed parsing Ref of template object: %s", err)
 			} else {
-				m := &manifest.Manifest{Version: ref.APIVersion, Kind: ref.Kind, VersionedObject: doc, Source: json}
+				kind := ref.Kind
+				m := &manifest.Manifest{Version: ref.APIVersion, Kind: kind, VersionedObject: doc, Source: json}
 				ms = append(ms, m)
+
+				kms, ok := kmap[kind]
+				if !ok {
+					kms = []*manifest.Manifest{}
+				}
+				kms = append(kms, m)
+				kmap[kind] = kms
 			}
 		}
 
@@ -218,7 +234,11 @@ func processTemplates(c *chart.Chart, valueFlag string, paramFolder string) (*ch
 			}
 		}
 	}
-	chart.SortManifests(nc, ms)
+	nc := &chart.Chart{
+		Chartfile: c.Chartfile,
+		Kind: kmap,
+		Manifests: ms,
+	}
 	return nc, nil
 }
 
@@ -229,19 +249,27 @@ func uploadManifests(c *chart.Chart, namespace string, mode string, dryRun bool,
 	for _, k := range InstallOrder {
 		for _, m := range c.Kind[k] {
 			o := m.VersionedObject
+
+			// lets check if we need to create secrets for an RC
+			if k == "ReplicationController" {
+				rc, err := o.RC()
+				if rc != nil && err == nil {
+					err = createSecretsFromAnnotations(rc, namespace, mode, dryRun, secretFlags)
+					if err != nil {
+						return err
+					}
+				}
+			}
+
 			o.AddAnnotations(map[string]string{
 				chart.AnnFile:         m.Source,
 				chart.AnnChartVersion: c.Chartfile.Version,
 				chart.AnnChartDesc:    c.Chartfile.Description,
 				chart.AnnChartName:    c.Chartfile.Name,
 			})
-			var data []byte
-			var err error
-			if data, err = o.JSON(); err != nil {
-				return err
-			}
-			log.Info("Data: %s", data)
-			if err := kubectlCreate(data, namespace, dryRun); err != nil {
+
+			err := marshalAndCreateObject(o, namespace, k, m.Version, mode, dryRun)
+			if err != nil {
 				return err
 			}
 		}
@@ -250,8 +278,19 @@ func uploadManifests(c *chart.Chart, namespace string, mode string, dryRun bool,
 	// Install unknown kinds afterward. Order here is not predictable.
 	for _, k := range c.UnknownKinds(InstallOrder) {
 		for _, o := range c.Kind[k] {
-			o.VersionedObject.AddAnnotations(map[string]string{chart.AnnFile: o.Source})
-			if err := marshalAndCreate(o.VersionedObject, namespace, dryRun); err != nil {
+			log.Info("Processing %s", k)
+			vo := o.VersionedObject
+			vo.AddAnnotations(map[string]string{chart.AnnFile: o.Source})
+
+			var data []byte
+			var err error
+			if data, err = vo.JSON(); err != nil {
+				return err
+			}
+			log.Debug("Data: %s", data)
+
+			err = marshalAndCreateObject(vo, namespace, k, o.Version, mode, dryRun)
+			if err != nil {
 				return err
 			}
 		}
@@ -260,12 +299,99 @@ func uploadManifests(c *chart.Chart, namespace string, mode string, dryRun bool,
 	return nil
 }
 
-func marshalAndCreate(o interface{}, ns string, dry bool) error {
-	var b bytes.Buffer
-	if err := codec.JSON.Encode(&b).One(o); err != nil {
+func typeMetaFor(obj runtime.Object) (*unversioned.TypeMeta, error) {
+	v, err := conversion.EnforcePtr(obj)
+	if err != nil {
+		return nil, err
+	}
+	var meta *unversioned.TypeMeta
+	err = runtime.FieldPtr(v, "TypeMeta", &meta)
+	return meta, err
+}
+
+func v1ObjectMetaFor(obj runtime.Object) (*v1.ObjectMeta, error) {
+	v, err := conversion.EnforcePtr(obj)
+	if err != nil {
+		return nil, err
+	}
+	var meta *v1.ObjectMeta
+	err = runtime.FieldPtr(v, "ObjectMeta", &meta)
+	return meta, err
+}
+
+// marshalAndCreateObject lets decode the data as we may have to update the ResourceVersion if the mode is not create
+func marshalAndCreateObject(o *codec.Object, namespace string, k string, version string, mode string, dryRun bool) error {
+	var data []byte
+	var err error
+	if data, err = o.JSON(); err != nil {
 		return err
 	}
-	return kubectlCreate(b.Bytes(), ns, mode, dry)
+	log.Debug("Data: %s", data)
+
+	kubeCodec := runtime.CodecFor(api.Scheme, version)
+	ko, err := kubeCodec.Decode(data)
+	if err != nil {
+		log.Die("Failed to unmarshal JSON with error: %s", err)
+	}
+
+	metadata, err := v1ObjectMetaFor(ko)
+	if err != nil {
+		return err
+	}
+	tm, err := typeMetaFor(ko)
+	if err != nil {
+		return err
+	}
+	tm.APIVersion = defaultAPIVersion
+	tm.Kind = k
+	if err := marshalAndCreate(ko, metadata, namespace, k, mode, dryRun); err != nil {
+		return err
+	}
+	if k == "Service" {
+		service, err := o.Service()
+		if err == nil {
+			if err := createOpenShiftRouteIfRequired(service, namespace, mode, dryRun); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func marshalAndCreate(o interface{}, metadata *v1.ObjectMeta, ns string, kind string, mode string, dry bool) error {
+	if mode != "create" {
+		// lets get the current ResourceVersion of the entity so we can use "apply"
+		name := metadata.Name
+		resourceVersion, _ :=  kubeCtlGetResourceVersion(ns, kind, name)
+		if resourceVersion != "" {
+			metadata.ResourceVersion = resourceVersion;
+			mode = "apply"
+		} else {
+			mode = "create"
+		}
+	}
+
+	version := defaultAPIVersion
+	kubeCodec := runtime.CodecFor(api.Scheme, version)
+
+	switch ro := o.(type) {
+	case runtime.Object:
+		// lets try use the kubernetes codec to avoid marshalling issues on things like SecurityContext
+		b, err := kubeCodec.Encode(ro)
+		if err != nil {
+			return err
+		}
+		return kubectlCreate(b, ns, kind, mode, dry)
+
+	default:
+		log.Debug("Cannot cast to a runtime.Object!")
+		var b bytes.Buffer
+		if err := codec.JSON.Encode(&b).One(o); err != nil {
+			return err
+		}
+		log.Debug("Data: %s", b)
+		return kubectlCreate(b.Bytes(), ns, kind, mode, dry)
+	}
 }
 
 // Check by chart directory name whether a chart is fetched into the workspace.
@@ -281,19 +407,29 @@ func chartFetched(chartName, home string) bool {
 	return true
 }
 
+func commandForKind(kind string) string {
+	cmd := "kubectl"
+	for _, okind := range OpenShiftKinds {
+		if kind == okind {
+			cmd = "oc"
+		}
+	}
+	return cmd
+}
+
 // kubectlCreate calls `kubectl create` and sends the data via Stdin.
 //
 // If dryRun is set to true, then we just output the command that was
 // going to be run to os.Stdout and return nil.
-func kubectlCreate(data []byte, ns string, dryRun bool) error {
-	a := []string{"create", "-f", "-"}
+func kubectlCreate(data []byte, ns string, kind string, mode string, dryRun bool) error {
+	a := []string{mode, "-f", "-"}
 
 	if ns != "" {
 		a = append([]string{"--namespace=" + ns}, a...)
 	}
 
+	cmd := commandForKind(kind)
 	if dryRun {
-		cmd := "kubectl"
 		for _, arg := range a {
 			cmd = fmt.Sprintf("%s %s", cmd, arg)
 		}
@@ -302,7 +438,7 @@ func kubectlCreate(data []byte, ns string, dryRun bool) error {
 		return nil
 	}
 
-	c := exec.Command("kubectl", a...)
+	c := exec.Command(cmd, a...)
 	in, err := c.StdinPipe()
 	if err != nil {
 		return err
@@ -343,7 +479,7 @@ func kubeCtlGetResourceVersion(ns string, kind string, name string) (string, err
 }
 
 func kubeCtlGetJSON(ns string, kind string, name string) ([]byte, error) {
-	cmd := "kubectl"
+	cmd := commandForKind(kind)
 	a := []string{}
 	if ns != "" {
 		a = append([]string{"--namespace=" + ns}, a...)

@@ -123,20 +123,21 @@ func uninstallKind(kind []*manifest.Manifest, ns, ktype string, dry bool) {
 	for _, o := range kind {
 		if dry {
 			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
+		} else if err := kubectlDelete(o.Name, ktype, ns, o.Kind); err != nil {
 			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
 		}
 	}
 }
 
-func kubectlDelete(name, ktype, ns string) error {
+func kubectlDelete(name, ktype, ns string, kind string) error {
 	log.Debug("Deleting %s (%s)", name, ktype)
 	a := []string{"delete", ktype, name}
 	if ns != "" {
 		a = append([]string{fmt.Sprintf("--namespace=%q", ns)}, a...)
 	}
 
-	cmd := exec.Command("kubectl", a...)
+	binary := commandForKind(kind)
+	cmd := exec.Command(binary, a...)
 
 	if d, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("%s: %s", string(d), err)

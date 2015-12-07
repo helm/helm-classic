@@ -103,10 +103,14 @@ func TestLoadTemplate(t *testing.T) {
 		t.Errorf("Expected chart name to be 'template'. Got '%s'.", c.Chartfile.Name)
 	}
 
-	if len(c.Templates) != 1 {
-		t.Errorf("Expected 1 templates, got %d", len(c.Templates))
+	templates := c.Kind["Template"]
+	if len(templates) != 1 {
+		t.Errorf("Expected 1 templates, got %d", len(templates))
 	} else {
-		temp := c.Templates[0];
+		temp, err := templates[0].VersionedObject.Template();
+		if err != nil {
+			t.Errorf("Failed to convert template %s", err)
+		}
 		objects := temp.Objects;
 		params := temp.Parameters;
 
