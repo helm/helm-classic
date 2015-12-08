@@ -1,14 +1,15 @@
 package action
 
 import (
-	"fmt"
-	"os/exec"
+	"github.com/helm/helm/kubectl"
+	"github.com/helm/helm/log"
 )
 
 // Target displays information about the cluster
-func Target() {
-	CheckKubePrereqs()
-
-	c, _ := exec.Command("kubectl", "cluster-info").Output()
-	fmt.Println(string(c))
+func Target(client kubectl.Runner) {
+	out, err := client.ClusterInfo()
+	if err != nil {
+		log.Err(err.Error())
+	}
+	log.Msg(string(out))
 }
