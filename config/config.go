@@ -207,14 +207,22 @@ func ensureRepo(repo, dir string) (*vcs.GitRepo, error) {
 // UpdateAll does a git fast-forward pull from each remote repo.
 func (r *Repos) UpdateAll() error {
 	for _, table := range r.Tables {
-		log.Info("Checking repo %s", table.Name)
+		log.Info("Checking repository %s", table.Name)
 		rpath := filepath.Join(r.Dir, table.Name)
 		g, err := ensureRepo(table.Repo, rpath)
 		if err != nil {
 			return err
 		}
 
-		initialVersion, _ := g.Version()
+		if g.IsDirty() {
+			return fmt.Errorf("Repository '%s' is dirty.  Commit changes before updating", table.Name)
+		}
+
+		initialVersion, err := g.Version()
+		if err != nil {
+			return fmt.Errorf("Could not get current sha of repository '%s'.", table.Name)
+		}
+
 		if err := g.Update(); err != nil {
 			return err
 		}
