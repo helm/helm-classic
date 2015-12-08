@@ -103,7 +103,7 @@ func marshalAndCreateSecret(namespace string, mode string, name string, secretTy
 		Type: v1.SecretType(secretType),
 		Data: getSecretData(secretType, name, keysNames, secretFlags),
 	}
-	return marshalAndKubeCtlCreate(secret, namespace, "Secret", &secret.ObjectMeta, mode, dry)
+	return marshalAndCreate(secret, &secret.ObjectMeta, namespace, "Secret", mode, dry)
 }
 
 func getSecretData(secretType string, name string, keysNames []string, secretFlags *secretSettings) map[string][]byte {
