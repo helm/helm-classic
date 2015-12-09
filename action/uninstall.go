@@ -1,15 +1,14 @@
 package action
 
 import (
-	"fmt"
 	"io"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/helm/helm/chart"
+	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
 	"github.com/helm/helm/manifest"
 )
@@ -19,7 +18,7 @@ import (
 // Manifests are removed from Kubernetes in the order specified by
 // chart.UninstallOrder. Any unknown types are removed before that sequence
 // is run.
-func Uninstall(chartName, home, namespace string, force bool) {
+func Uninstall(chartName, home, namespace string, force bool, client kubectl.Runner) {
 	if !chartFetched(chartName, home) {
 		log.Info("No chart named %q in your workspace. Nothing to delete.", chartName)
 		return
@@ -30,7 +29,7 @@ func Uninstall(chartName, home, namespace string, force bool) {
 	if err != nil {
 		log.Die("Failed to load chart: %s", err)
 	}
-	if err := deleteChart(c, namespace, true); err != nil {
+	if err := deleteChart(c, namespace, true, client); err != nil {
 		log.Die("Failed to list charts: %s", err)
 	}
 	if !force && !promptConfirm("Uninstall the listed objects?") {
@@ -41,7 +40,7 @@ func Uninstall(chartName, home, namespace string, force bool) {
 	CheckKubePrereqs()
 
 	log.Info("Running `kubectl delete` ...")
-	if err := deleteChart(c, namespace, false); err != nil {
+	if err := deleteChart(c, namespace, false, client); err != nil {
 		log.Die("Failed to completely delete chart: %s", err)
 	}
 	log.Info("Done")
@@ -104,42 +103,31 @@ func (x *rw) Write(b []byte) (int, error) {
 }
 
 // deleteChart deletes all of the Kubernetes manifests associated with this chart.
-func deleteChart(c *chart.Chart, ns string, dry bool) error {
+func deleteChart(c *chart.Chart, ns string, dry bool, client kubectl.Runner) error {
 	// Unknown kinds get uninstalled first because we know that core kinds
 	// do not depend on them.
 	for _, kind := range c.UnknownKinds(UninstallOrder) {
-		uninstallKind(c.Kind[kind], ns, kind, dry)
+		uninstallKind(c.Kind[kind], ns, kind, dry, client)
 	}
 
 	// Uninstall all of the known kinds in a particular order.
 	for _, kind := range UninstallOrder {
-		uninstallKind(c.Kind[kind], ns, kind, dry)
+		uninstallKind(c.Kind[kind], ns, kind, dry, client)
 	}
 
 	return nil
 }
 
-func uninstallKind(kind []*manifest.Manifest, ns, ktype string, dry bool) {
+func uninstallKind(kind []*manifest.Manifest, ns, ktype string, dry bool, client kubectl.Runner) {
 	for _, o := range kind {
 		if dry {
 			log.Msg("%s/%s", ktype, o.Name)
-		} else if err := kubectlDelete(o.Name, ktype, ns); err != nil {
-			log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
+		} else {
+			out, err := client.Delete(o.Name, ktype, ns)
+			if err != nil {
+				log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)
+			}
+			log.Info(string(out))
 		}
 	}
-}
-
-func kubectlDelete(name, ktype, ns string) error {
-	log.Debug("Deleting %s (%s)", name, ktype)
-	a := []string{"delete", ktype, name}
-	if ns != "" {
-		a = append([]string{fmt.Sprintf("--namespace=%q", ns)}, a...)
-	}
-
-	cmd := exec.Command("kubectl", a...)
-
-	if d, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("%s: %s", string(d), err)
-	}
-	return nil
 }

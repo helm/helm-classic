@@ -3,6 +3,7 @@ package cli
 import (
 	"github.com/codegangsta/cli"
 	"github.com/helm/helm/action"
+	"github.com/helm/helm/kubectl"
 )
 
 const uninstallDescription = `For each supplied 'chart-name', this will connect to Kubernetes
@@ -18,8 +19,10 @@ var uninstallCmd = cli.Command{
 	ArgsUsage:   "[chart-name...]",
 	Action: func(c *cli.Context) {
 		minArgs(c, 1, "uninstall")
+
+		client := kubectl.Client
 		for _, chart := range c.Args() {
-			action.Uninstall(chart, home(c), c.String("namespace"), c.Bool("force"))
+			action.Uninstall(chart, home(c), c.String("namespace"), c.Bool("force"), client)
 		}
 	},
 	Flags: []cli.Flag{
