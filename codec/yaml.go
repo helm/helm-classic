@@ -58,7 +58,7 @@ func (d *yamlDecoder) All() ([]*Object, error) {
 	ms := []*Object{}
 	for scanner.Scan() {
 		m := &Object{
-			data: scanner.Bytes(),
+			data: append([]byte(nil), scanner.Bytes()...),
 			dec: func(b []byte, v interface{}) error {
 				return yaml.Unmarshal(b, v)
 			},
