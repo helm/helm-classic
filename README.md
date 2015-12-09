@@ -105,8 +105,8 @@ Some of the features we plan to tackle in the near future:
 
 - [x] Working with External (or Private) Repositories [#118](https://github.com/helm/helm/issues/118)
 - [ ] Mandatory Group Labels [#80](https://github.com/helm/helm/issues/80)
-- [ ] Linting for Charts [#96](https://github.com/helm/helm/issues/96)
-- [ ] End-to-End Testing of Charts [#4](https://github.com/helm/helm/issues/4)
+- [x] Linting for Charts [#96](https://github.com/helm/helm/issues/96)
+- [x] End-to-End Testing of Charts [#4](https://github.com/helm/helm/issues/4)
 - [x] Dry-Run Installs [#78](https://github.com/helm/helm/issues/78)
 - [ ] Improved Dependency Resolution (based on service provider)
 - [ ] Upgrading Charts
