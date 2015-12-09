@@ -33,7 +33,7 @@ func TestYamlDecoderOne(t *testing.T) {
 }
 
 func TestYamlDecoderAll(t *testing.T) {
-	d, err := ioutil.ReadFile(path.Join(testdata, "three-pods.yaml"))
+	d, err := ioutil.ReadFile(path.Join(testdata, "three-pods-and-three-services.yaml"))
 	if err != nil {
 		t.Error(err)
 	}
@@ -43,17 +43,28 @@ func TestYamlDecoderAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	if len(ms) != 3 {
-		t.Errorf("Expected 3 pods, got %d", len(ms))
+	if len(ms) != 6 {
+		t.Errorf("Expected 6 parts, got %d", len(ms))
 	}
 
-	ref, err := ms[2].Ref()
-	if err != nil {
-		t.Errorf("Expected a reference for pod[2]: %s", err)
-	}
+	for i := 0; i < 3; i++ {
+		ref, err := ms[i*2].Ref()
+		if err != nil {
+			t.Errorf("Expected a reference for pod[%d]: %s", i, err)
+		}
 
-	if ref.Kind != "Pod" {
-		t.Errorf("Expected Pod, got %s", ref.Kind)
+		if ref.Kind != "Pod" {
+			t.Errorf("Expected Pod, got %s", ref.Kind)
+		}
+
+		ref, err = ms[i*2+1].Ref()
+		if err != nil {
+			t.Errorf("Expected a reference for service[%d]: %s", i, err)
+		}
+
+		if ref.Kind != "Service" {
+			t.Errorf("Expected Service, got %s", ref.Kind)
+		}
 	}
 }
 
