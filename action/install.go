@@ -47,9 +47,8 @@ func Install(chartName, home, namespace string, force bool, client kubectl.Runne
 		log.Die("Failed to load chart: %s", err)
 	}
 
-	// Give user the option to bale if dependencies are not satisfied.
+	// Give user the option to bail if dependencies are not satisfied.
 	nope, err := dependency.Resolve(c.Chartfile, helm.WorkspaceChartDirectory(home))
-
 	if err != nil {
 		log.Warn("Failed to check dependencies: %s", err)
 		if !force {

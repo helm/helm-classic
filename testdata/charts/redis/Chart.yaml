@@ -1,4 +1,4 @@
-name: redis-standalone
+name: redis
 home: http://github.com/deis/redis
 version: 0.0.1
 description: Simple standalone pod running Redis.

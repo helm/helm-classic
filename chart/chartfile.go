@@ -83,7 +83,14 @@ func RepoName(chartpath string) string {
 //
 // It returns false if the version string or constraint is unparsable or if the
 // version does not meet the constraint.
+//
+// If the dependency version is blank or "*", this will immediately return true.
 func (d *Dependency) VersionOK(version string) bool {
+
+	if d.Version == "" || d.Version == "*" {
+		return true
+	}
+
 	c, err := semver.NewConstraint(d.Version)
 	if err != nil {
 		return false

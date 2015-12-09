@@ -1,0 +1,11 @@
+name: dep3
+from:
+  name: dep3
+  version: 5.2.3
+home: http://github.com/helm/helm
+version: 5.2.3
+description: Example dependency
+maintainers:
+  - Helm <helm@deis.com>
+details:
+  This package is used for dependency testing.

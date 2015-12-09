@@ -24,6 +24,10 @@ var fetchCmd = cli.Command{
 			Value: "default",
 			Usage: "The Kubernetes destination namespace.",
 		},
+		cli.BoolFlag{
+			Name:  "force",
+			Usage: "Fetch a package even if some of its dependencies cannot be found or do not satisfy dependencies.",
+		},
 	},
 }
 
@@ -39,5 +43,5 @@ func fetch(c *cli.Context) {
 		lname = a[1]
 	}
 
-	action.Fetch(chart, lname, home)
+	action.Fetch(chart, lname, home, c.Bool("force"))
 }

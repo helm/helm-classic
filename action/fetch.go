@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/helm/helm/chart"
+	"github.com/helm/helm/config"
 	"github.com/helm/helm/dependency"
 	"github.com/helm/helm/log"
 	helm "github.com/helm/helm/util"
@@ -15,35 +16,31 @@ import (
 // - chartName is the source
 // - lname is the local name for that chart (chart-name); if blank, it is set to the chart.
 // - homedir is the home directory for the user
-func Fetch(chartName, lname, homedir string) {
+func Fetch(chartName, lname, homedir string, force bool) {
 
-	r := mustConfig(homedir).Repos
-	repository, chartName := r.RepoChart(chartName)
+	cfg := mustConfig(homedir)
+	repository, chartName := cfg.Repos.RepoChart(chartName)
 
 	if lname == "" {
 		lname = chartName
 	}
 
-	fetch(chartName, lname, homedir, repository)
-
-	chartFilePath := helm.WorkspaceChartDirectory(homedir, lname, "Chart.yaml")
+	chartFilePath := helm.CacheDirectory(homedir, repository, chartName, "Chart.yaml")
+	log.Debug("Loading %s", chartFilePath)
 	cfile, err := chart.LoadChartfile(chartFilePath)
 	if err != nil {
 		log.Die("Source is not a valid chart. Missing Chart.yaml: %s", err)
 	}
 
-	deps, err := dependency.Resolve(cfile, helm.WorkspaceChartDirectory(homedir))
-	if err != nil {
-		log.Warn("Could not check dependencies: %s", err)
-		return
+	toFetch := getFetchDependencies(cfg, cfile, homedir, repository, force)
+	for _, d := range toFetch {
+		log.Info("⇓ Fetching copy of %s %s from %s", d.Chartfile.Name, d.Chartfile.Version, d.Chartfile.From.Repo)
+		rn := cfg.Repos.ByRepo(d.Chartfile.From.Repo)
+		dn := rn + "/" + d.Chartfile.Name
+		ln := rn + "-" + d.Chartfile.Name
+		fetch(dn, ln, homedir, rn)
 	}
-
-	if len(deps) > 0 {
-		log.Warn("Unsatisfied dependencies:")
-		for _, d := range deps {
-			log.Msg("\t%s %s", d.Name, d.Version)
-		}
-	}
+	fetch(chartName, lname, homedir, repository)
 
 	log.Info("Fetched chart into workspace %s", helm.WorkspaceChartDirectory(homedir, lname))
 	log.Info("Done")
@@ -71,6 +68,63 @@ func fetch(chartName, lname, homedir, chartpath string) {
 	if err := updateChartfile(src, dest, lname); err != nil {
 		log.Die("Failed to update Chart.yaml: %s", err)
 	}
+}
+
+func getFetchDependencies(cfg *config.Configfile, cfile *chart.Chartfile, homedir, repository string, force bool) []*dependency.Resolution {
+	workdir := helm.WorkspaceChartDirectory(homedir)
+	cachedir := helm.CacheDirectory(homedir)
+
+	cfile.From = &chart.Dependency{
+		Repo: cfg.Repos.ByName(repository),
+		Name: cfile.Name,
+	}
+
+	resolver := dependency.NewResolver(cfg, workdir, cachedir)
+	deps, err := resolver.Resolve(cfile, repository)
+	if err != nil {
+		log.Die("Could not check dependencies: %s", err)
+	}
+
+	toFetch := []*dependency.Resolution{}
+	already := []*dependency.Resolution{}
+
+	failed := 0
+	if len(deps) > 0 {
+		for n, d := range deps {
+			if d.Found == false {
+				failed++
+				log.Err("Dependency cannot be found: %s", n)
+				continue
+			}
+			if d.Satisfies == false {
+				failed++
+				log.Err("Insufficient: %s %s (%s): %s (Workspace chart: %b)", d.Chartfile.Name, d.Chartfile.Version, n, d.SatisfiesErr, d.Fetched)
+				if d.Fetched == true {
+					log.Info("Re-fetching %s from the chart repo may resolve this.", d.Chartfile.Name)
+				}
+				continue
+			}
+			if d.Fetched {
+				already = append(already, d)
+				continue
+			}
+			toFetch = append(toFetch, d)
+		}
+	}
+	// If the talied errors are greater than 0, we stop here.
+	if failed > 0 {
+		if force {
+			log.Warn("Ignoring %d errors.", failed)
+		} else {
+			log.Die("Cannot continue. %d errors.", failed)
+		}
+	}
+
+	for _, d := range already {
+		log.Info("✔︎ Using fetched version of %s %s", d.Chartfile.Name, d.Chartfile.Version)
+	}
+
+	return toFetch
 }
 
 func updateChartfile(src, dest, lname string) error {

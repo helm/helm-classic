@@ -42,7 +42,7 @@ func TestUninstall(t *testing.T) {
 	test.FakeUpdate(tmpHome)
 
 	for _, tt := range tests {
-		Fetch(tt.chart, "", tmpHome)
+		Fetch(tt.chart, "", tmpHome, false)
 
 		actual := test.CaptureOutput(func() {
 			Uninstall(tt.chart, tmpHome, "", tt.force, tt.client)

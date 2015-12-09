@@ -1,0 +1,8 @@
+repos:
+  default: charts
+  tables:
+  - name: charts
+    repo: https://github.com/helm/charts
+  - name: deis
+    repo: https://github.com/deis/charts
+workspace: {}
