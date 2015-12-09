@@ -427,10 +427,14 @@ func install(c *cli.Context) {
 	minArgs(c, 1, "install")
 	h := home(c)
 	force := c.Bool("force")
-	dryRun := c.Bool("dry-run")
+
+	client := kubectl.Client
+	if c.Bool("dry-run") {
+		client = kubectl.PrintRunner{}
+	}
 
 	for _, chart := range c.Args() {
-		action.Install(chart, h, c.String("namespace"), force, dryRun)
+		action.Install(chart, h, c.String("namespace"), force, client)
 	}
 }
 
