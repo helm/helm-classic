@@ -31,7 +31,8 @@ var UninstallOrder = []string{"Service", "Pod", "ReplicationController", "Daemon
 // If the chart is not found in the workspace, it is fetched and then installed.
 //
 // During install, manifests are sent to Kubernetes in the ordered specified by InstallOrder.
-func Install(chartName, home, namespace string, force bool, dryRun bool) {
+func Install(chartName, home, namespace string, force bool, dryRun bool, valueFlag string, paramFolder string, printImportFolders bool, writeGeneratedKeys bool, generateSecretsData bool) {
+	secretFlags := &secretSettings{PrintImportFolders: printImportFolders, WriteGeneratedKeys: writeGeneratedKeys, GenerateSecretsData: generateSecretsData}
 	ochart := chartName
 	r := mustConfig(home).Repos
 	table, chartName := r.RepoChart(chartName)
@@ -71,7 +72,7 @@ func Install(chartName, home, namespace string, force bool, dryRun bool) {
 		msg = "Performing a dry run of `kubectl create -f` ..."
 	}
 	log.Info(msg)
-	if err := uploadManifests(c, namespace, dryRun); err != nil {
+	if err := uploadManifests(c, namespace, dryRun, secretFlags); err != nil {
 		log.Die("Failed to upload manifests: %s", err)
 	}
 	log.Info("Done")
@@ -92,7 +93,7 @@ func isSamePath(src, dst string) (bool, error) {
 }
 
 // uploadManifests sends manifests to Kubectl in a particular order.
-func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
+func uploadManifests(c *chart.Chart, namespace string, dryRun bool, secretFlags *secretSettings) error {
 
 	// Install known kinds in a predictable order.
 	for _, k := range InstallOrder {
@@ -104,6 +105,18 @@ func uploadManifests(c *chart.Chart, namespace string, dryRun bool) error {
 				chart.AnnChartDesc:    c.Chartfile.Description,
 				chart.AnnChartName:    c.Chartfile.Name,
 			})
+
+			// lets check if we need to create secrets for an RC
+			if k == "ReplicationController" {
+				rc, err := o.RC()
+				if rc != nil && err == nil {
+					err = createSecretsFromAnnotations(rc, namespace, dryRun, secretFlags)
+					if err != nil {
+						return err
+					}
+				}
+			}
+
 			var data []byte
 			var err error
 			if data, err = o.JSON(); err != nil {
