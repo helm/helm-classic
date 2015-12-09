@@ -135,7 +135,6 @@ func TestAddLabels(t *testing.T) {
 		t.Errorf("Failed to add labels: %s", err)
 	}
 
-	t.Log(string(m.data))
 	if !strings.Contains(string(m.data), "drink: slurm") {
 		t.Errorf("Could not find 'drink:slurm' in \n%s", string(m.data))
 	}
