@@ -1,0 +1,2 @@
+#helm:generate helm-tpl -f out.txt -t example-tpl.yaml -d example-vals.yaml
+Name: Inigo Montoya

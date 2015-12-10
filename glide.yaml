@@ -27,3 +27,4 @@ import:
   repo: https://github.com/go-check/check
 - package: code.google.com/p/goprotobuf
   repo: https://github.com/golang/protobuf
+- package: github.com/Masterminds/sprig

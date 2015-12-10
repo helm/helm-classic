@@ -1,0 +1,2 @@
+/* helm:generate echo foo bar baz */
+This one uses c-style comments.
