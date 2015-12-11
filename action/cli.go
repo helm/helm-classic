@@ -24,7 +24,7 @@ func Cli() *cli.App {
 	app.Usage = `The Kubernetes package manager
 To begin working with Helm, run the 'helm update' command:
 	$ helm update
-This will download all of the necessary data. Common actions from this point
+This will download all of the necessary data. Common  from this point
 include:
 	- helm help COMMAND: see help for a specific command
 	- helm search: search for charts
@@ -118,6 +118,12 @@ the 'nginx' chart into a directory named 'www' in your workspace.
 			Usage:     "Validates given chart",
 			ArgsUsage: "[chart-name]",
 			Action:    lint,
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "all",
+					Usage: "Check all available charts",
+				},
+			},
 		},
 		{
 			Name:      "remove",
@@ -385,17 +391,25 @@ func fetchChart(c *cli.Context) {
 		lname = a[1]
 	}
 
-	action.Fetch(chart, lname, home)
+	Fetch(chart, lname, home)
 }
 
 func lint(c *cli.Context) {
 	home := home(c)
-	minArgs(c, 1, "lint")
+	fmt.Println(c.Args())
 
-	a := c.Args()
-	chart := a[0]
+	all := c.Bool("all")
 
-	action.Lint(chart, home)
+	if all {
+		LintAll(home)
+	} else {
+		minArgs(c, 1, "lint")
+
+		a := c.Args()
+		chart := a[0]
+
+		Lint(chart, home)
+	}
 }
 
 func remove(c *cli.Context) {
