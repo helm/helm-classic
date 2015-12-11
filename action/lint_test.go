@@ -48,6 +48,24 @@ func TestLintMissingReadme(t *testing.T) {
 	}
 }
 
+func TestLintMissingChartYaml(t *testing.T) {
+	tmpHome := createTmpHome()
+	fakeUpdate(tmpHome)
+
+	chartName := "badChart"
+
+	Create(chartName, tmpHome)
+
+	os.Remove(filepath.Join(tmpHome, WorkspaceChartPath, chartName, "Chart.yaml"))
+
+	output := capture(func() {
+		Lint(chartName, tmpHome)
+	})
+
+	expectContains(t, output, "A Chart.yaml file was not found")
+	expectContains(t, output, "Chart [badChart] failed some checks")
+}
+
 func TestLintAllNone(t *testing.T) {
 	tmpHome := createTmpHome()
 	fakeUpdate(tmpHome)

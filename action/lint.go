@@ -136,10 +136,10 @@ func verifyMetadata(chartPath string) []string {
 	b, err := ioutil.ReadFile(file)
 
 	if err != nil {
-		errors = append(errors, fmt.Sprintf("Error reading Chart.yaml.\nError: %s", err))
+		return append(errors, fmt.Sprint(err))
 	}
 	if err = yaml.Unmarshal(b, &y); err != nil {
-		errors = append(errors, fmt.Sprintf("Error parsing Chart.yaml file. \nError: %s", err))
+		return append(errors, fmt.Sprint(err))
 	}
 	//require name, version, description, maintaners
 	if y.Name == "" {
