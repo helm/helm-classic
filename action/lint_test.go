@@ -80,6 +80,20 @@ func TestLintAllNone(t *testing.T) {
 	expectContains(t, output, fmt.Sprintf("Could not find any charts in \"%s", tmpHome))
 }
 
+func TestLintSingleCli(t *testing.T) {
+	tmpHome := createTmpHome()
+	fakeUpdate(tmpHome)
+
+	chartName := "goodChart"
+	Create(chartName, tmpHome)
+
+	output := capture(func() {
+		Cli().Run([]string{"helm", "--home", tmpHome, "lint", chartName})
+	})
+
+	expectContains(t, output, fmt.Sprintf("Chart [%s] has passed all necessary checks", chartName))
+}
+
 func TestLintEmptyChartYaml(t *testing.T) {
 	tmpHome := createTmpHome()
 	fakeUpdate(tmpHome)
