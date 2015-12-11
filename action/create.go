@@ -26,7 +26,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: example-pod
-  heritage: helm
+  labels:
+    heritage: helm
 spec:
   restartPolicy: Never
   containers:
