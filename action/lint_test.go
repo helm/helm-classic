@@ -1,6 +1,7 @@
 package action
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -45,6 +46,17 @@ func TestLintMissingReadme(t *testing.T) {
 	if !strings.Contains(output, expected) {
 		t.Fatalf("Expected: '%s' in %s.", expected, output)
 	}
+}
+
+func TestLintAllNone(t *testing.T) {
+	tmpHome := createTmpHome()
+	fakeUpdate(tmpHome)
+
+	output := capture(func() {
+		Cli().Run([]string{"helm", "--home", tmpHome, "lint", "--all"})
+	})
+
+	expectContains(t, output, fmt.Sprintf("Could not find any charts in \"%s", tmpHome))
 }
 
 func TestLintAll(t *testing.T) {

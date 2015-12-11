@@ -2,7 +2,6 @@ package action
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/codegangsta/cli"
@@ -396,7 +395,6 @@ func fetchChart(c *cli.Context) {
 
 func lint(c *cli.Context) {
 	home := home(c)
-	fmt.Println(c.Args())
 
 	all := c.Bool("all")
 
