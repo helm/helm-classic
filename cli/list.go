@@ -6,8 +6,8 @@ import (
 )
 
 const listDescription = `This prints all of the packages that are currently installed in
-	the workspace. Packages are printed by the local name.
-	`
+the workspace. Packages are printed by the local name.
+`
 
 var listCmd = cli.Command{
 	Name:        "list",

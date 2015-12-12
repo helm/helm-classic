@@ -6,11 +6,11 @@ import (
 )
 
 const searchDescription = `This provides a simple interface for searching the chart cache
-	for charts matching a given pattern.
+for charts matching a given pattern.
 
-	If no string is provided, or if the special string '*' is provided, this will
-	list all available charts.
-	`
+If no string is provided, or if the special string '*' is provided, this will
+list all available charts.
+`
 
 var searchCmd = cli.Command{
 	Name:        "search",

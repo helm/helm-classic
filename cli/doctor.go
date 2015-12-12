@@ -6,8 +6,7 @@ import (
 )
 
 const doctorDescription = `This will run a series of checks to ensure that your
-	experience with helm is trouble-free.
-	`
+experience with helm is trouble-free.`
 
 var doctorCmd = cli.Command{
 	Name:        "doctor",

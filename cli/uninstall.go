@@ -6,10 +6,10 @@ import (
 )
 
 const uninstallDescription = `For each supplied 'chart-name', this will connect to Kubernetes
-	and remove all of the manifests specified.
+and remove all of the manifests specified.
 
-	This will not alter the charts in your workspace.
-	`
+This will not alter the charts in your workspace.
+`
 
 var uninstallCmd = cli.Command{
 	Name:        "uninstall",

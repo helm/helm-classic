@@ -33,7 +33,7 @@ For more information on Helm, go to http://helm.sh.
 
 ENVIRONMENT:
 $HELM_HOME:     Set an alternative location for Helm files. By default, these
-               are stored in ~/.helm
+				are stored in ~/.helm
 
 `
 

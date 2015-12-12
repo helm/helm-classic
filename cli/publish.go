@@ -6,8 +6,8 @@ import (
 )
 
 const publishDescription = `This copies a chart from the workdir into the cache. Doing so
-	is the first stage of contributing a chart upstream.
-	`
+is the first stage of contributing a chart upstream.
+`
 
 var publishCmd = cli.Command{
 	Name:        "publish",

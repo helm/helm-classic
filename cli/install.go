@@ -7,17 +7,17 @@ import (
 )
 
 const installDescription = `If the given 'chart-name' is present in your workspace, it
-	will be uploaded into Kubernetes. If no chart named 'chart-name' is found in
-	your workspace, Helm will look for a chart with that name, install it into the
-	workspace, and then immediately upload it to Kubernetes.
+will be uploaded into Kubernetes. If no chart named 'chart-name' is found in
+your workspace, Helm will look for a chart with that name, install it into the
+workspace, and then immediately upload it to Kubernetes.
 
-	When multiple charts are specified, Helm will attempt to install all of them,
-	following the resolution process described above.
+When multiple charts are specified, Helm will attempt to install all of them,
+following the resolution process described above.
 
-	As a special case, if the flag --chart-path is specified, Helm will look for a
-	Chart.yaml file and manifests/ directory at that path, and will install that
-	chart if found. In this case, you may not specify multiple charts at once.
-	`
+As a special case, if the flag --chart-path is specified, Helm will look for a
+Chart.yaml file and manifests/ directory at that path, and will install that
+chart if found. In this case, you may not specify multiple charts at once.
+`
 
 var installCmd = cli.Command{
 	Name:        "install",

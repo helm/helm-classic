@@ -23,7 +23,7 @@ created and then the Git repository is pulled in full.
 Subsequent calls to 'helm update' will simply synchronize the local cache
 with the remote.`
 
-// UpdateCmd represents the CLI command for fetching the latest version of all charts from Github.
+// updateCmd represents the CLI command for fetching the latest version of all charts from Github.
 var updateCmd = cli.Command{
 	Name:        "update",
 	Aliases:     []string{"up"},
