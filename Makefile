@@ -17,7 +17,7 @@ ifndef VERSION
 endif
 
 build: $(MAIN_GO)
-	go build -o $(HELM_BIN) -ldflags "-X cli.version=${VERSION}" $<
+	go build -o $(HELM_BIN) -ldflags "-X github.com/helm/helm/cli.version=${VERSION}" $<
 
 bootstrap:
 	go get -u github.com/golang/lint/golint github.com/mitchellh/gox
