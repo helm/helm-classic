@@ -7,11 +7,12 @@ import (
 	"strings"
 
 	"github.com/helm/helm/log"
+	helm "github.com/helm/helm/util"
 )
 
 // PrintREADME prints the README file (if it exists) to the console.
 func PrintREADME(chart, home string) {
-	p := filepath.Join(home, WorkspaceChartPath, chart, "README.*")
+	p := filepath.Join(home, helm.WorkspaceChartPath, chart, "README.*")
 	files, err := filepath.Glob(p)
 	if err != nil || len(files) == 0 {
 		// No README. Skip.

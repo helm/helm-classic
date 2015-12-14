@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/helm/helm/log"
+	"github.com/helm/helm/test"
 )
 
 func TestListRepos(t *testing.T) {
@@ -16,8 +17,8 @@ func TestListRepos(t *testing.T) {
 	log.Stdout = &b
 	defer func() { log.Stdout = os.Stdout }()
 
-	homedir := createTmpHome()
-	fakeUpdate(homedir)
+	homedir := test.CreateTmpHome()
+	test.FakeUpdate(homedir)
 	ListRepos(homedir)
 
 	out := b.String()

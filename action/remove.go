@@ -9,6 +9,7 @@ import (
 
 	"github.com/helm/helm/log"
 	"github.com/helm/helm/manifest"
+	helm "github.com/helm/helm/util"
 )
 
 // kubeGetter wraps the kubectl command, override in tests
@@ -28,7 +29,7 @@ var kubeGet kubeGetter = func(m string) string {
 // - homedir is the home directory for the user
 // - force will remove installed charts from workspace
 func Remove(chart, homedir string, force bool) {
-	chartPath := filepath.Join(homedir, WorkspaceChartPath, chart)
+	chartPath := filepath.Join(homedir, helm.WorkspaceChartPath, chart)
 	if _, err := os.Stat(chartPath); err != nil {
 		log.Err("Chart not found. %s", err)
 		return

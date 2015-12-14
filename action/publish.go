@@ -7,6 +7,7 @@ import (
 
 import (
 	"github.com/helm/helm/log"
+	helm "github.com/helm/helm/util"
 )
 
 // Publish a chart from the workspace to the cache directory
@@ -26,8 +27,8 @@ func Publish(chartName, homeDir, repo string, force bool) {
 		return
 	}
 
-	src := path.Join(homeDir, WorkspaceChartPath, chartName)
-	dst := path.Join(homeDir, CachePath, repo, chartName)
+	src := path.Join(homeDir, helm.WorkspaceChartPath, chartName)
+	dst := path.Join(homeDir, helm.CachePath, repo, chartName)
 
 	if _, err := os.Stat(dst); err == nil {
 		if force != true {
@@ -36,7 +37,7 @@ func Publish(chartName, homeDir, repo string, force bool) {
 		}
 	}
 
-	if err := copyDir(src, dst); err != nil {
+	if err := helm.CopyDir(src, dst); err != nil {
 		log.Die("failed to publish directory: %v", err)
 	}
 }

@@ -2,30 +2,25 @@ package config
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/helm/helm/log"
+	"github.com/helm/helm/test"
+	"github.com/helm/helm/util"
 )
 
-func createTmpHome() string {
-	tmpHome, _ := ioutil.TempDir("", "helm_home")
-	defer os.Remove(tmpHome)
-	return tmpHome
-}
-
 func TestEnsureRepo(t *testing.T) {
-	tmpHome := createTmpHome()
+	tmpHome := test.CreateTmpHome()
 
 	repo := "https://github.com/helm/charts"
 	ensureRepo(repo, filepath.Join(tmpHome, "cache", "charts"))
 }
 
 func TestParseConfigfile(t *testing.T) {
-	cfg, err := Parse([]byte(DefaultConfigfile))
+	cfg, err := Parse([]byte(util.DefaultConfigfile))
 	if err != nil {
 		t.Fatalf("Could not parse DefaultConfigfile: %s", err)
 	}

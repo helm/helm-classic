@@ -3,11 +3,12 @@ package action
 import (
 	"path/filepath"
 	"testing"
+
+	"github.com/helm/helm/test"
 )
 
 func TestListChart(t *testing.T) {
-
-	chartDir := filepath.Join(helmRoot, "testdata/charts/redis")
+	chartDir := filepath.Join(test.HelmRoot, "testdata/charts/redis")
 
 	files, err := listChart(chartDir)
 	if err != nil {
@@ -22,7 +23,7 @@ func TestListChart(t *testing.T) {
 
 func TestJoinChart(t *testing.T) {
 
-	chartDir := filepath.Join(helmRoot, "testdata/charts/redis")
+	chartDir := filepath.Join(test.HelmRoot, "testdata/charts/redis")
 
 	// prepare files fixture
 	var files []string
@@ -31,7 +32,7 @@ func TestJoinChart(t *testing.T) {
 		"testdata/charts/redis/manifests/redis-pod.yaml",
 	}
 	for _, f := range paths {
-		files = append(files, filepath.Join(helmRoot, f))
+		files = append(files, filepath.Join(test.HelmRoot, f))
 	}
 
 	bytes, err := joinChart(chartDir, files)

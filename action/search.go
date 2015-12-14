@@ -5,12 +5,13 @@ import (
 
 	"github.com/helm/helm/log"
 	"github.com/helm/helm/search"
+	helm "github.com/helm/helm/util"
 )
 
 // Search looks for packages with 'term' in their name.
 func Search(term, homedir string, regexp bool) {
 	cfg := mustConfig(homedir)
-	cdir := filepath.Join(homedir, CachePath)
+	cdir := filepath.Join(homedir, helm.CachePath)
 
 	i := search.NewIndex(cfg, cdir)
 	res, err := i.Search(term, 5, regexp)

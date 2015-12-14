@@ -6,12 +6,13 @@ import (
 	"testing"
 
 	"github.com/helm/helm/log"
+	"github.com/helm/helm/test"
 )
 
 func TestInfo(t *testing.T) {
 
-	tmpHome := createTmpHome()
-	fakeUpdate(tmpHome)
+	tmpHome := test.CreateTmpHome()
+	test.FakeUpdate(tmpHome)
 
 	var output bytes.Buffer
 	log.Stdout = &output
@@ -26,7 +27,7 @@ Version: 0.0.1
 Description: All the things, all semantically, none working
 Details: This package provides a sampling of all of the different manifest types. It can be used to test ordering and other properties of a chart.
 `
-	expect(t, output.String(), expected)
+	test.ExpectEquals(t, output.String(), expected)
 
 	// reset log
 	log.Stdout = os.Stdout
@@ -34,8 +35,8 @@ Details: This package provides a sampling of all of the different manifest types
 
 func TestInfoFormat(t *testing.T) {
 
-	tmpHome := createTmpHome()
-	fakeUpdate(tmpHome)
+	tmpHome := test.CreateTmpHome()
+	test.FakeUpdate(tmpHome)
 
 	var output bytes.Buffer
 	log.Stdout = &output
@@ -46,7 +47,7 @@ func TestInfoFormat(t *testing.T) {
 
 	expected := `Hello kitchensink`
 
-	expect(t, output.String(), expected)
+	test.ExpectEquals(t, output.String(), expected)
 
 	// reset log
 	log.Stdout = os.Stdout

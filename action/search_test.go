@@ -3,20 +3,22 @@ package action
 import (
 	"strings"
 	"testing"
+
+	"github.com/helm/helm/test"
 )
 
 func TestSearch(t *testing.T) {
-	tmpHome := createTmpHome()
-	fakeUpdate(tmpHome)
+	tmpHome := test.CreateTmpHome()
+	test.FakeUpdate(tmpHome)
 
 	Search("homeslice", tmpHome, false)
 }
 
 func TestSearchNotFound(t *testing.T) {
-	tmpHome := createTmpHome()
-	fakeUpdate(tmpHome)
+	tmpHome := test.CreateTmpHome()
+	test.FakeUpdate(tmpHome)
 
-	output := capture(func() {
+	output := test.CaptureOutput(func() {
 		Search("nonexistent", tmpHome, false)
 	})
 

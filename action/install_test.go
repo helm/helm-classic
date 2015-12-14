@@ -9,6 +9,7 @@ import (
 
 	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
+	"github.com/helm/helm/test"
 )
 
 func TestInstall(t *testing.T) {
@@ -69,9 +70,9 @@ func TestInstall(t *testing.T) {
 		},
 	}
 
-	tmpHome := createTmpHome()
+	tmpHome := test.CreateTmpHome()
 	defer os.RemoveAll(tmpHome)
-	fakeUpdate(tmpHome)
+	test.FakeUpdate(tmpHome)
 
 	defer func() {
 		if err := recover(); err != nil {

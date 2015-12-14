@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/helm/helm/log"
+	"github.com/helm/helm/test"
 )
 
 var (
@@ -63,8 +64,8 @@ func TestTRemove(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tmpHome := createTmpHome()
-		fakeUpdate(tmpHome)
+		tmpHome := test.CreateTmpHome()
+		test.FakeUpdate(tmpHome)
 
 		Fetch("kitchensink", "", tmpHome)
 

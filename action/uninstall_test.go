@@ -9,6 +9,7 @@ import (
 
 	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
+	"github.com/helm/helm/test"
 )
 
 func TestUninstall(t *testing.T) {
@@ -47,9 +48,9 @@ func TestUninstall(t *testing.T) {
 		},
 	}
 
-	tmpHome := createTmpHome()
+	tmpHome := test.CreateTmpHome()
 	defer os.RemoveAll(tmpHome)
-	fakeUpdate(tmpHome)
+	test.FakeUpdate(tmpHome)
 
 	for _, tt := range tests {
 		Fetch(tt.chart, "", tmpHome)

@@ -10,14 +10,27 @@ var lintCmd = cli.Command{
 	Usage:     "Validates given chart",
 	ArgsUsage: "[chart-name]",
 	Action:    lint,
+	Flags: []cli.Flag{
+		cli.BoolFlag{
+			Name:  "all",
+			Usage: "Check all available charts",
+		},
+	},
 }
 
 func lint(c *cli.Context) {
 	home := home(c)
-	minArgs(c, 1, "lint")
 
-	a := c.Args()
-	chart := a[0]
+	all := c.Bool("all")
 
-	action.Lint(chart, home)
+	if all {
+		action.LintAll(home)
+	} else {
+		minArgs(c, 1, "lint")
+
+		a := c.Args()
+		chart := a[0]
+
+		action.Lint(chart, home)
+	}
 }

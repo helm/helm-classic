@@ -15,15 +15,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// DefaultConfigfile is the default Helm configuration.
-const DefaultConfigfile = `repos:
-  default: charts
-  tables:
-    - name: charts
-      repo: https://github.com/helm/charts
-workspace:
-`
-
 // ErrNotFound indicates no local repository could be found.
 var ErrNotFound = errors.New("No local repository")
 

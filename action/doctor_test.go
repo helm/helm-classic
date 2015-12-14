@@ -4,19 +4,22 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/helm/helm/test"
+	"github.com/helm/helm/util"
 )
 
 func TestEnsurePrereqs(t *testing.T) {
 	pp := os.Getenv("PATH")
 	defer os.Setenv("PATH", pp)
 
-	os.Setenv("PATH", filepath.Join(helmRoot, "testdata")+":"+pp)
+	os.Setenv("PATH", filepath.Join(test.HelmRoot, "testdata")+":"+pp)
 
-	homedir := createTmpHome()
+	homedir := test.CreateTmpHome()
 	CheckAllPrereqs(homedir)
 }
 
 func TestEnsureHome(t *testing.T) {
-	tmpHome := createTmpHome()
-	ensureHome(tmpHome)
+	tmpHome := test.CreateTmpHome()
+	util.EnsureHome(tmpHome)
 }
