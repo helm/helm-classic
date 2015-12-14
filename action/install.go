@@ -104,11 +104,12 @@ func uploadManifests(c *chart.Chart, namespace string, client kubectl.Runner) er
 			if data, err = o.JSON(); err != nil {
 				return err
 			}
+			log.Debug("File: %s", string(data))
 			out, err := client.Create(data, namespace)
+			log.Msg(string(out))
 			if err != nil {
 				return err
 			}
-			log.Info(string(out))
 		}
 	}
 
@@ -117,10 +118,10 @@ func uploadManifests(c *chart.Chart, namespace string, client kubectl.Runner) er
 		for _, o := range c.Kind[k] {
 			o.VersionedObject.AddAnnotations(map[string]string{chart.AnnFile: o.Source})
 			out, err := marshalAndCreate(o.VersionedObject, namespace, client)
+			log.Msg(string(out))
 			if err != nil {
 				return err
 			}
-			log.Info(string(out))
 		}
 	}
 
@@ -132,7 +133,9 @@ func marshalAndCreate(o interface{}, ns string, client kubectl.Runner) ([]byte, 
 	if err := codec.JSON.Encode(&b).One(o); err != nil {
 		return nil, err
 	}
-	return client.Create(b.Bytes(), ns)
+	data := b.Bytes()
+	log.Debug("File: %s", string(data))
+	return client.Create(data, ns)
 }
 
 // Check by chart directory name whether a chart is fetched into the workspace.
