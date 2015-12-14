@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/helm/helm/log"
@@ -93,11 +94,17 @@ A	jenkins
 M	mysql
 M	owncloud`
 
-	expected := "Updated 3 charts\ncassandra                    mysql                        owncloud                     \nAdded 1 charts\njenkins                      \n"
+	expected := []string{
+		"Updated 3 charts\ncassandra                    mysql                        owncloud",
+		"Added 1 charts\njenkins",
+	}
+
 	printSummary(diff)
 	actual := b.String()
 
-	if actual != expected {
-		t.Errorf("Expected %q to eq %q", actual, expected)
+	for _, exp := range expected {
+		if !strings.Contains(actual, exp) {
+			t.Errorf("Expected %q to contain %q", actual, exp)
+		}
 	}
 }
