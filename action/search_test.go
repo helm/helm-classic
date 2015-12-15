@@ -1,7 +1,6 @@
 package action
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/helm/helm/test"
@@ -18,14 +17,12 @@ func TestSearchNotFound(t *testing.T) {
 	tmpHome := test.CreateTmpHome()
 	test.FakeUpdate(tmpHome)
 
-	output := test.CaptureOutput(func() {
+	// test that a "no chart found" message was printed
+	expected := "No results found"
+
+	actual := test.CaptureOutput(func() {
 		Search("nonexistent", tmpHome, false)
 	})
 
-	// test that a "no chart found" message was printed
-	txt := "No results found"
-
-	if !strings.Contains(output, txt) {
-		t.Fatalf("Expected %s to be printed, got %s", txt, output)
-	}
+	test.ExpectContains(t, actual, expected)
 }

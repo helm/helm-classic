@@ -68,11 +68,22 @@ func ExpectContains(t *testing.T, actual string, expected string) {
 }
 
 // CaptureOutput redirect all log/std streams, capture and replace
-func CaptureOutput(fn func()) string {
+func CaptureOutput(fn func()) (out string) {
 	logStderr := log.Stderr
 	logStdout := log.Stdout
 	osStdout := os.Stdout
 	osStderr := os.Stderr
+
+	defer func() {
+		log.Stderr = logStderr
+		log.Stdout = logStdout
+		os.Stdout = osStdout
+		os.Stderr = osStderr
+
+		if r := recover(); r != nil {
+			out = r.(string)
+		}
+	}()
 
 	r, w, _ := os.Pipe()
 
@@ -85,14 +96,7 @@ func CaptureOutput(fn func()) string {
 
 	// read test output and restore previous stdout
 	w.Close()
-	out, _ := ioutil.ReadAll(r)
-
-	defer func() {
-		log.Stderr = logStderr
-		log.Stdout = logStdout
-		os.Stdout = osStdout
-		os.Stderr = osStderr
-	}()
-
-	return string(out[:])
+	b, _ := ioutil.ReadAll(r)
+	out = string(b)
+	return
 }
