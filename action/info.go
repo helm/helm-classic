@@ -6,6 +6,7 @@ import (
 
 	"github.com/helm/helm/chart"
 	"github.com/helm/helm/log"
+	helm "github.com/helm/helm/util"
 )
 
 const defaultInfoFormat = `Name: {{.Name}}
@@ -23,7 +24,7 @@ Details: {{.Details}}
 func Info(chartName, homedir, format string) {
 	r := mustConfig(homedir).Repos
 	table, chartLocal := r.RepoChart(chartName)
-	chartPath := filepath.Join(homedir, CachePath, table, chartLocal, "Chart.yaml")
+	chartPath := filepath.Join(homedir, helm.CachePath, table, chartLocal, "Chart.yaml")
 
 	if format == "" {
 		format = defaultInfoFormat

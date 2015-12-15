@@ -37,8 +37,8 @@ $HELM_HOME:     Set an alternative location for Helm files. By default, these
 
 `
 
-// Execute is the main entrypoint for the Helm CLI.
-func Execute() {
+// Cli is the main entrypoint for the Helm CLI.
+func Cli() *cli.App {
 	app := cli.NewApp()
 	app.Name = "helm"
 	app.Usage = globalUsage
@@ -98,5 +98,5 @@ func Execute() {
 		return nil
 	}
 
-	app.RunAndExitOnError()
+	return app
 }

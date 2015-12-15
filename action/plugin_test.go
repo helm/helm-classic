@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/helm/helm/test"
 )
 
 func TestPluginName(t *testing.T) {
@@ -18,7 +20,7 @@ func TestPlugin(t *testing.T) {
 	p := "plugin"
 	a := []string{"myplugin", "-a", "-b", "-c"}
 
-	os.Setenv("PATH", os.ExpandEnv("$PATH:"+helmRoot+"/testdata"))
+	os.Setenv("PATH", os.ExpandEnv("$PATH:"+test.HelmRoot+"/testdata"))
 
 	buf, err := ioutil.TempFile("", "helm-plugin-test")
 	if err != nil {
@@ -29,7 +31,7 @@ func TestPlugin(t *testing.T) {
 	os.Stdout = buf
 	defer func() { os.Stdout = oldout; buf.Close(); os.Remove(buf.Name()) }()
 
-	fakeUpdate(f)
+	test.FakeUpdate(f)
 	Plugin(f, p, a)
 
 	buf.Seek(0, 0)

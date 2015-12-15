@@ -10,6 +10,7 @@ import (
 	"github.com/helm/helm/dependency"
 	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
+	helm "github.com/helm/helm/util"
 )
 
 // InstallOrder defines the order in which manifests should be installed, by Kind.
@@ -40,14 +41,14 @@ func Install(chartName, home, namespace string, force bool, client kubectl.Runne
 		fetch(chartName, chartName, home, table)
 	}
 
-	cd := filepath.Join(home, WorkspaceChartPath, chartName)
+	cd := filepath.Join(home, helm.WorkspaceChartPath, chartName)
 	c, err := chart.Load(cd)
 	if err != nil {
 		log.Die("Failed to load chart: %s", err)
 	}
 
 	// Give user the option to bale if dependencies are not satisfied.
-	nope, err := dependency.Resolve(c.Chartfile, filepath.Join(home, WorkspaceChartPath))
+	nope, err := dependency.Resolve(c.Chartfile, filepath.Join(home, helm.WorkspaceChartPath))
 	if err != nil {
 		log.Warn("Failed to check dependencies: %s", err)
 		if !force {
@@ -142,7 +143,7 @@ func marshalAndCreate(o interface{}, ns string, client kubectl.Runner) ([]byte, 
 //
 // This does NOT check the Chart.yaml file.
 func chartFetched(chartName, home string) bool {
-	p := filepath.Join(home, WorkspaceChartPath, chartName, "Chart.yaml")
+	p := filepath.Join(home, helm.WorkspaceChartPath, chartName, "Chart.yaml")
 	log.Debug("Looking for %q", p)
 	if fi, err := os.Stat(p); err != nil || fi.IsDir() {
 		log.Debug("No chart: %s", err)

@@ -11,6 +11,7 @@ import (
 	"github.com/helm/helm/kubectl"
 	"github.com/helm/helm/log"
 	"github.com/helm/helm/manifest"
+	helm "github.com/helm/helm/util"
 )
 
 // Uninstall removes a chart from Kubernetes.
@@ -24,7 +25,7 @@ func Uninstall(chartName, home, namespace string, force bool, client kubectl.Run
 		return
 	}
 
-	cd := filepath.Join(home, WorkspaceChartPath, chartName)
+	cd := filepath.Join(home, helm.WorkspaceChartPath, chartName)
 	c, err := chart.Load(cd)
 	if err != nil {
 		log.Die("Failed to load chart: %s", err)

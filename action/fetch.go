@@ -1,13 +1,13 @@
 package action
 
 import (
-	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/helm/helm/chart"
 	"github.com/helm/helm/dependency"
 	"github.com/helm/helm/log"
+	helm "github.com/helm/helm/util"
 )
 
 // Fetch gets a chart from the source repo and copies to the workdir.
@@ -26,13 +26,13 @@ func Fetch(chartName, lname, homedir string) {
 
 	fetch(chartName, lname, homedir, repository)
 
-	chartFilePath := filepath.Join(homedir, WorkspaceChartPath, lname, "Chart.yaml")
+	chartFilePath := filepath.Join(homedir, helm.WorkspaceChartPath, lname, "Chart.yaml")
 	cfile, err := chart.LoadChartfile(chartFilePath)
 	if err != nil {
 		log.Die("Source is not a valid chart. Missing Chart.yaml: %s", err)
 	}
 
-	deps, err := dependency.Resolve(cfile, filepath.Join(homedir, WorkspaceChartPath))
+	deps, err := dependency.Resolve(cfile, filepath.Join(homedir, helm.WorkspaceChartPath))
 	if err != nil {
 		log.Warn("Could not check dependencies: %s", err)
 		return
@@ -45,13 +45,13 @@ func Fetch(chartName, lname, homedir string) {
 		}
 	}
 
-	log.Info("Fetched chart into workspace %s", filepath.Join(homedir, WorkspaceChartPath, lname))
+	log.Info("Fetched chart into workspace %s", filepath.Join(homedir, helm.WorkspaceChartPath, lname))
 	log.Info("Done")
 }
 
 func fetch(chartName, lname, homedir, chartpath string) {
-	src := filepath.Join(homedir, CachePath, chartpath, chartName)
-	dest := filepath.Join(homedir, WorkspaceChartPath, lname)
+	src := filepath.Join(homedir, helm.CachePath, chartpath, chartName)
+	dest := filepath.Join(homedir, helm.WorkspaceChartPath, lname)
 
 	if fi, err := os.Stat(src); err != nil {
 		log.Die("Chart %s not found in %s", lname, src)
@@ -64,7 +64,7 @@ func fetch(chartName, lname, homedir, chartpath string) {
 	}
 
 	log.Debug("Fetching %s to %s", src, dest)
-	if err := copyDir(src, dest); err != nil {
+	if err := helm.CopyDir(src, dest); err != nil {
 		log.Die("Failed copying %s to %s", src, dest)
 	}
 
@@ -92,62 +92,4 @@ func updateChartfile(src, dest, lname string) error {
 	}
 
 	return dc.Save(filepath.Join(dest, "Chart.yaml"))
-}
-
-// Copy a directory and its subdirectories.
-func copyDir(src, dst string) error {
-
-	var failure error
-
-	walker := func(fname string, fi os.FileInfo, e error) error {
-		if e != nil {
-			log.Warn("Encounter error walking %q: %s", fname, e)
-			failure = e
-			return nil
-		}
-
-		log.Debug("Copying %s", fname)
-		rf, err := filepath.Rel(src, fname)
-		if err != nil {
-			log.Warn("Could not find relative path: %s", err)
-			return nil
-		}
-		df := filepath.Join(dst, rf)
-
-		// Handle directories by creating mirrors.
-		if fi.IsDir() {
-			if err := os.MkdirAll(df, fi.Mode()); err != nil {
-				log.Warn("Could not create %q: %s", df, err)
-				failure = err
-			}
-			return nil
-		}
-
-		// Otherwise, copy files.
-		in, err := os.Open(fname)
-		if err != nil {
-			log.Warn("Skipping file %s: %s", fname, err)
-			return nil
-		}
-		out, err := os.Create(df)
-		if err != nil {
-			in.Close()
-			log.Warn("Skipping file copy %s: %s", fname, err)
-			return nil
-		}
-		if _, err = io.Copy(out, in); err != nil {
-			log.Warn("Copy from %s to %s failed: %s", fname, df, err)
-		}
-
-		if err := out.Close(); err != nil {
-			log.Warn("Failed to close %q: %s", df, err)
-		}
-		if err := in.Close(); err != nil {
-			log.Warn("Failed to close reader %q: %s", fname, err)
-		}
-
-		return nil
-	}
-	filepath.Walk(src, walker)
-	return failure
 }

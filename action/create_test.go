@@ -1,13 +1,14 @@
 package action
 
 import (
+	"github.com/helm/helm/test"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
 )
 
 func TestCreate(t *testing.T) {
-	tmpHome := createTmpHome()
+	tmpHome := test.CreateTmpHome()
 
 	Create("mychart", tmpHome)
 
@@ -27,7 +28,7 @@ details: |-
   This section allows you to provide additional details about your application.
   Provide any information that would be useful to users at a glance.
 `
-	expect(t, actualChartfile, expectedChartfile)
+	test.ExpectEquals(t, actualChartfile, expectedChartfile)
 
 	// asset readme
 	readme, err := ioutil.ReadFile(filepath.Join(tmpHome, "workspace/charts/mychart/README.md"))
@@ -43,7 +44,7 @@ external documentation.
 If your application requires any specific configuration like Secrets, you may
 include that information here.
 `
-	expect(t, expectedReadme, actualReadme)
+	test.ExpectEquals(t, expectedReadme, actualReadme)
 
 	// assert example manifest
 	manifest, err := ioutil.ReadFile(filepath.Join(tmpHome, "workspace/charts/mychart/manifests/example-pod.yaml"))
@@ -56,7 +57,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: example-pod
-  heritage: helm
+  labels:
+    heritage: helm
 spec:
   restartPolicy: Never
   containers:
@@ -64,5 +66,5 @@ spec:
     image: "alpine:3.2"
     command: ["/bin/sleep","9000"]
 `
-	expect(t, actualManifest, expectedManifest)
+	test.ExpectEquals(t, actualManifest, expectedManifest)
 }

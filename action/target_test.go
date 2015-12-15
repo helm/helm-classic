@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/helm/helm/log"
+	"github.com/helm/helm/test"
 )
 
 func TestTarget(t *testing.T) {
@@ -26,5 +27,5 @@ func TestTarget(t *testing.T) {
 	Target(client)
 	actual := strings.TrimSpace(output.String())
 
-	expect(t, actual, expected)
+	test.ExpectEquals(t, actual, expected)
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/helm/helm/chart"
 	"github.com/helm/helm/log"
+	helm "github.com/helm/helm/util"
 )
 
 // readmeSkel is the template for the README.md
@@ -26,7 +27,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: example-pod
-  heritage: helm
+  labels:
+    heritage: helm
 spec:
   restartPolicy: Never
   containers:
@@ -42,7 +44,7 @@ spec:
 func Create(chartName, homeDir string) {
 
 	chart := newSkelChartfile(chartName)
-	chartDir := filepath.Join(homeDir, WorkspaceChartPath, chartName)
+	chartDir := filepath.Join(homeDir, helm.WorkspaceChartPath, chartName)
 
 	// create directories
 	if err := os.MkdirAll(filepath.Join(chartDir, "manifests"), 0755); err != nil {
