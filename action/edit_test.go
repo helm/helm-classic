@@ -1,49 +1,28 @@
 package action
 
 import (
-	"path/filepath"
+	"os"
+	"path"
 	"testing"
 
 	"github.com/helm/helm/test"
 )
 
-func TestListChart(t *testing.T) {
-	chartDir := filepath.Join(test.HelmRoot, "testdata/charts/redis")
+func TestEdit(t *testing.T) {
+	editor := os.Getenv("EDITOR")
+	os.Setenv("EDITOR", "echo")
+	defer os.Setenv("EDITOR", editor)
 
-	files, err := listChart(chartDir)
-	if err != nil {
-		t.Fatal(err)
-	}
+	tmpHome := test.CreateTmpHome()
+	defer os.RemoveAll(tmpHome)
+	test.FakeUpdate(tmpHome)
 
-	if len(files) != 2 {
-		t.Fatalf("expected 2, got: %v", len(files))
-	}
+	Fetch("redis", "", tmpHome)
 
+	expected := path.Join(tmpHome, "workspace/charts/redis")
+	actual := test.CaptureOutput(func() {
+		Edit("redis", tmpHome)
+	})
+
+	test.ExpectContains(t, actual, expected)
 }
-
-func TestJoinChart(t *testing.T) {
-
-	chartDir := filepath.Join(test.HelmRoot, "testdata/charts/redis")
-
-	// prepare files fixture
-	var files []string
-	paths := []string{
-		"testdata/charts/redis/Chart.yaml",
-		"testdata/charts/redis/manifests/redis-pod.yaml",
-	}
-	for _, f := range paths {
-		files = append(files, filepath.Join(test.HelmRoot, f))
-	}
-
-	bytes, err := joinChart(chartDir, files)
-	if err != nil {
-		t.Fatalf("failed to join chart: %v", bytes)
-	}
-
-	if bytes.Len() < 1 {
-		t.Fatalf("empty chart after join: %v", bytes)
-	}
-
-}
-
-// TODO: TestSaveChart to test serialization
