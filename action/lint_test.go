@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -22,7 +23,7 @@ func TestLintSuccess(t *testing.T) {
 	Create(chartName, tmpHome)
 
 	output := test.CaptureOutput(func() {
-		Lint(chartName, tmpHome)
+		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
 	expected := "Chart [goodChart] has passed all necessary checks"
@@ -38,10 +39,10 @@ func TestLintMissingReadme(t *testing.T) {
 
 	Create(chartName, tmpHome)
 
-	os.Remove(util.WorkspaceChartDirectory(tmpHome, chartName, "README.md"))
+	os.Remove(filepath.Join(util.WorkspaceChartDirectory(tmpHome, chartName), "README.md"))
 
 	output := test.CaptureOutput(func() {
-		Lint(chartName, tmpHome)
+		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
 	expected := "A README file was not found"
@@ -59,10 +60,10 @@ func TestLintMissingChartYaml(t *testing.T) {
 
 	Create(chartName, tmpHome)
 
-	os.Remove(util.WorkspaceChartDirectory(tmpHome, chartName, "Chart.yaml"))
+	os.Remove(filepath.Join(util.WorkspaceChartDirectory(tmpHome, chartName), "Chart.yaml"))
 
 	output := test.CaptureOutput(func() {
-		Lint(chartName, tmpHome)
+		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
 	test.ExpectContains(t, output, "A Chart.yaml file was not found")
@@ -85,7 +86,7 @@ func TestLintEmptyChartYaml(t *testing.T) {
 	ioutil.WriteFile(chartYaml, badChartYaml, 0644)
 
 	output := test.CaptureOutput(func() {
-		Lint(chartName, tmpHome)
+		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
 	test.ExpectContains(t, output, "Missing Name specification in Chart.yaml file")
@@ -93,4 +94,15 @@ func TestLintEmptyChartYaml(t *testing.T) {
 	test.ExpectContains(t, output, "Missing description in Chart.yaml file")
 	test.ExpectContains(t, output, "Missing maintainers information in Chart.yaml file")
 	test.ExpectContains(t, output, fmt.Sprintf("Chart [%s] failed some checks", chartName))
+}
+
+func TestLintBadPath(t *testing.T) {
+	tmpHome := test.CreateTmpHome()
+	chartName := "badChart"
+
+	output := test.CaptureOutput(func() {
+		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
+	})
+
+	test.ExpectContains(t, output, chartName+" not found in workspace")
 }

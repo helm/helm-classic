@@ -34,29 +34,27 @@ type GHRepoService interface {
 // - homedir is the home directory for the user
 func LintAll(homedir string) {
 	md := util.WorkspaceChartDirectory(homedir, "*")
-	charts, err := filepath.Glob(md)
+	chartPaths, err := filepath.Glob(md)
 	if err != nil {
 		log.Warn("Could not find any charts in %q: %s", md, err)
 	}
 
-	if len(charts) == 0 {
+	if len(chartPaths) == 0 {
 		log.Warn("Could not find any charts in %q", md)
 	} else {
-		for _, c := range charts {
-			Lint(filepath.Base(c), homedir)
+		for _, chartPath := range chartPaths {
+			Lint(chartPath)
 		}
 	}
 }
 
 // Lint validates that a chart is well-formed
 //
-// - chartName is the name of the chart
-// - homedir is the home directory for the user
-func Lint(chartName, homedir string) {
+// - chartPath path to chart directory
+func Lint(chartPath string) {
 	var errors = make([]string, 0)
+	chartName := filepath.Base(chartPath)
 
-	//assumes chart is in your workspace directory
-	chartPath := util.WorkspaceChartDirectory(homedir, chartName)
 	//makes sure all files are in place
 	structure, fatalDs := directoryStructure(chartPath)
 
@@ -69,6 +67,7 @@ func Lint(chartName, homedir string) {
 
 	//checks to see if chart name is unique
 	nameErr := verifyChartNameUnique(chartName)
+
 	if nameErr == nil {
 		errors = append(errors, fmt.Sprintf("Chart name %s already exists in charts repository [github.com/helm/charts]. If you're planning on submitting this chart to the charts repo, please consider changing the chart name.", chartName))
 	}
@@ -92,6 +91,7 @@ func directoryStructure(chartPath string) (map[string]os.FileInfo, []string) {
 	chartInfo, err := os.Stat(chartPath)
 	if err != nil {
 		messages = append(messages, fmt.Sprintf("Chart %s not found in workspace. Error: %v", chartPath, err))
+		return structure, messages
 	}
 
 	if chartInfo.IsDir() {

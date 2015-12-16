@@ -3,27 +3,12 @@ package cli
 import (
 	"fmt"
 	"os"
-	"reflect"
 	"testing"
 
 	"github.com/helm/helm/action"
 	"github.com/helm/helm/test"
 	"github.com/helm/helm/util"
 )
-
-func TestLintFlags(t *testing.T) {
-	actualFlags := make([]string, len(lintCmd.Flags))
-
-	for i, flag := range lintCmd.Flags {
-		actualFlags[i] = flag.String()
-	}
-
-	expectedFlags := []string{"--all	Check all available charts"}
-
-	if !reflect.DeepEqual(actualFlags, expectedFlags) {
-		t.Fatalf("Expected: %v, Actual: %v", expectedFlags, actualFlags)
-	}
-}
 
 func TestLintAllNone(t *testing.T) {
 	tmpHome := test.CreateTmpHome()
@@ -36,7 +21,7 @@ func TestLintAllNone(t *testing.T) {
 	test.ExpectContains(t, output, fmt.Sprintf("Could not find any charts in \"%s", tmpHome))
 }
 
-func TestLintSingleCli(t *testing.T) {
+func TestLintSingle(t *testing.T) {
 	tmpHome := test.CreateTmpHome()
 	test.FakeUpdate(tmpHome)
 
@@ -45,6 +30,20 @@ func TestLintSingleCli(t *testing.T) {
 
 	output := test.CaptureOutput(func() {
 		Cli().Run([]string{"helm", "--home", tmpHome, "lint", chartName})
+	})
+
+	test.ExpectContains(t, output, fmt.Sprintf("Chart [%s] has passed all necessary checks", chartName))
+}
+
+func TestLintChartByPath(t *testing.T) {
+	home1 := test.CreateTmpHome()
+	home2 := test.CreateTmpHome()
+
+	chartName := "goodChart"
+	action.Create(chartName, home1)
+
+	output := test.CaptureOutput(func() {
+		Cli().Run([]string{"helm", "--home", home2, "lint", util.WorkspaceChartDirectory(home1, chartName)})
 	})
 
 	test.ExpectContains(t, output, fmt.Sprintf("Chart [%s] has passed all necessary checks", chartName))

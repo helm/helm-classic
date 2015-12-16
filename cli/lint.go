@@ -1,8 +1,12 @@
 package cli
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/codegangsta/cli"
 	"github.com/helm/helm/action"
+	"github.com/helm/helm/util"
 )
 
 var lintCmd = cli.Command{
@@ -25,12 +29,22 @@ func lint(c *cli.Context) {
 
 	if all {
 		action.LintAll(home)
+		return
+	}
+
+	minArgs(c, 1, "lint")
+
+	a := c.Args()
+	chartNameOrPath := a[0]
+
+	fromHome := util.WorkspaceChartDirectory(home, chartNameOrPath)
+	fromAbs := filepath.Clean(chartNameOrPath)
+
+	_, err := os.Stat(fromAbs)
+
+	if err == nil {
+		action.Lint(fromAbs)
 	} else {
-		minArgs(c, 1, "lint")
-
-		a := c.Args()
-		chart := a[0]
-
-		action.Lint(chart, home)
+		action.Lint(fromHome)
 	}
 }
