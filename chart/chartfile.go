@@ -16,6 +16,7 @@ type Chartfile struct {
 	Name         string            `yaml:"name"`
 	From         *Dependency       `yaml:"from,omitempty"`
 	Home         string            `yaml:"home"`
+	Source       []string          `yaml:"source,omitempty"`
 	Version      string            `yaml:"version"`
 	Description  string            `yaml:"description"`
 	Maintainers  []string          `yaml:"maintainers,omitempty"`

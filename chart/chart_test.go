@@ -70,6 +70,10 @@ func TestLoadChart(t *testing.T) {
 	if f.PreInstall["mykeys"] != "generate-keypair foo" {
 		t.Errorf("Expected map value for mykeys.")
 	}
+
+	if f.Source[0] != "https://example.com/helm" {
+		t.Errorf("Expected https://example.com/helm, got %s", f.Source)
+	}
 }
 
 func TestVersionOK(t *testing.T) {
