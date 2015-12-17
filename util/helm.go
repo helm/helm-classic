@@ -77,7 +77,6 @@ func CopyDir(src, dst string) error {
 			return nil
 		}
 
-		log.Debug("Copying %s", fname)
 		rf, err := filepath.Rel(src, fname)
 		if err != nil {
 			log.Warn("Could not find relative path: %s", err)
