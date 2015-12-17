@@ -5,9 +5,6 @@ import "path/filepath"
 // CachePath is the suffix for the cache.
 const CachePath = "cache"
 
-// CacheChartPath is the directory that contains a user's cached charts.
-const CacheChartPath = "cache/charts"
-
 // WorkspacePath is the user's workspace directory.
 const WorkspacePath = "workspace"
 
