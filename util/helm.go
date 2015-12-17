@@ -24,7 +24,7 @@ workspace:
 // EnsureHome ensures that a HELM_HOME exists.
 func EnsureHome(home string) {
 
-	must := []string{home, CacheDirectory(home), filepath.Join(home, WorkspacePath)}
+	must := []string{home, CacheDirectory(home), filepath.Join(home, workspacePath)}
 
 	for _, p := range must {
 		if fi, err := os.Stat(p); err != nil {

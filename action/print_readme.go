@@ -12,7 +12,7 @@ import (
 
 // PrintREADME prints the README file (if it exists) to the console.
 func PrintREADME(chart, home string) {
-	p := filepath.Join(home, helm.WorkspaceChartPath, chart, "README.*")
+	p := helm.WorkspaceChartDirectory(home, chart, "README.*")
 	files, err := filepath.Glob(p)
 	if err != nil || len(files) == 0 {
 		// No README. Skip.

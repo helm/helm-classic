@@ -44,7 +44,7 @@ spec:
 func Create(chartName, homeDir string) {
 
 	chart := newSkelChartfile(chartName)
-	chartDir := filepath.Join(homeDir, helm.WorkspaceChartPath, chartName)
+	chartDir := helm.WorkspaceChartDirectory(homeDir, chartName)
 
 	// create directories
 	if err := os.MkdirAll(filepath.Join(chartDir, "manifests"), 0755); err != nil {

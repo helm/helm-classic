@@ -26,13 +26,13 @@ func Fetch(chartName, lname, homedir string) {
 
 	fetch(chartName, lname, homedir, repository)
 
-	chartFilePath := filepath.Join(homedir, helm.WorkspaceChartPath, lname, "Chart.yaml")
+	chartFilePath := helm.WorkspaceChartDirectory(homedir, lname, "Chart.yaml")
 	cfile, err := chart.LoadChartfile(chartFilePath)
 	if err != nil {
 		log.Die("Source is not a valid chart. Missing Chart.yaml: %s", err)
 	}
 
-	deps, err := dependency.Resolve(cfile, filepath.Join(homedir, helm.WorkspaceChartPath))
+	deps, err := dependency.Resolve(cfile, helm.WorkspaceChartDirectory(homedir))
 	if err != nil {
 		log.Warn("Could not check dependencies: %s", err)
 		return
@@ -45,13 +45,13 @@ func Fetch(chartName, lname, homedir string) {
 		}
 	}
 
-	log.Info("Fetched chart into workspace %s", filepath.Join(homedir, helm.WorkspaceChartPath, lname))
+	log.Info("Fetched chart into workspace %s", helm.WorkspaceChartDirectory(homedir, lname))
 	log.Info("Done")
 }
 
 func fetch(chartName, lname, homedir, chartpath string) {
 	src := helm.CacheDirectory(homedir, chartpath, chartName)
-	dest := filepath.Join(homedir, helm.WorkspaceChartPath, lname)
+	dest := helm.WorkspaceChartDirectory(homedir, lname)
 
 	if fi, err := os.Stat(src); err != nil {
 		log.Die("Chart %s not found in %s", lname, src)

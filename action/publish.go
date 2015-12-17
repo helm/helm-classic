@@ -1,9 +1,6 @@
 package action
 
-import (
-	"os"
-	"path"
-)
+import "os"
 
 import (
 	"github.com/helm/helm/log"
@@ -27,7 +24,7 @@ func Publish(chartName, homeDir, repo string, force bool) {
 		return
 	}
 
-	src := path.Join(homeDir, helm.WorkspaceChartPath, chartName)
+	src := helm.WorkspaceChartDirectory(homeDir, chartName)
 	dst := helm.CacheDirectory(homeDir, repo, chartName)
 
 	if _, err := os.Stat(dst); err == nil {
