@@ -13,10 +13,6 @@ workspace, and then immediately upload it to Kubernetes.
 
 When multiple charts are specified, Helm will attempt to install all of them,
 following the resolution process described above.
-
-As a special case, if the flag --chart-path is specified, Helm will look for a
-Chart.yaml file and manifests/ directory at that path, and will install that
-chart if found. In this case, you may not specify multiple charts at once.
 `
 
 var installCmd = cli.Command{
