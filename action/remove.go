@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 
 	"github.com/helm/helm/log"
@@ -29,7 +28,7 @@ var kubeGet kubeGetter = func(m string) string {
 // - homedir is the home directory for the user
 // - force will remove installed charts from workspace
 func Remove(chart, homedir string, force bool) {
-	chartPath := filepath.Join(homedir, helm.WorkspaceChartPath, chart)
+	chartPath := helm.WorkspaceChartDirectory(homedir, chart)
 	if _, err := os.Stat(chartPath); err != nil {
 		log.Err("Chart not found. %s", err)
 		return

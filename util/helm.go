@@ -9,18 +9,6 @@ import (
 	"github.com/helm/helm/log"
 )
 
-// CachePath is the suffix for the cache.
-const CachePath = "cache"
-
-// CacheChartPath is the directory that contains a user's cached charts.
-const CacheChartPath = "cache/charts"
-
-// WorkspacePath is the user's workspace directory.
-const WorkspacePath = "workspace"
-
-// WorkspaceChartPath is the directory that contains a user's workspace charts.
-const WorkspaceChartPath = "workspace/charts"
-
 // Configfile is the file containing helm's YAML configuration data.
 const Configfile = "config.yaml"
 
@@ -33,12 +21,10 @@ const DefaultConfigfile = `repos:
 workspace:
 `
 
-var helmpaths = []string{CachePath, WorkspacePath}
-
 // EnsureHome ensures that a HELM_HOME exists.
 func EnsureHome(home string) {
 
-	must := []string{home, filepath.Join(home, CachePath), filepath.Join(home, WorkspacePath), filepath.Join(home, CacheChartPath)}
+	must := []string{home, CacheDirectory(home), filepath.Join(home, workspacePath)}
 
 	for _, p := range must {
 		if fi, err := os.Stat(p); err != nil {

@@ -11,7 +11,7 @@ import (
 	"github.com/helm/helm/chart"
 	"github.com/helm/helm/log"
 	"github.com/helm/helm/manifest"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm/util"
 	"gopkg.in/yaml.v2"
 )
 
@@ -33,7 +33,7 @@ type GHRepoService interface {
 //
 // - homedir is the home directory for the user
 func LintAll(homedir string) {
-	md := filepath.Join(homedir, helm.WorkspaceChartPath, "*")
+	md := util.WorkspaceChartDirectory(homedir, "*")
 	charts, err := filepath.Glob(md)
 	if err != nil {
 		log.Warn("Could not find any charts in %q: %s", md, err)
@@ -56,7 +56,7 @@ func Lint(chartName, homedir string) {
 	var errors = make([]string, 0)
 
 	//assumes chart is in your workspace directory
-	chartPath := filepath.Join(homedir, helm.WorkspaceChartPath, chartName)
+	chartPath := util.WorkspaceChartDirectory(homedir, chartName)
 	//makes sure all files are in place
 	structure, fatalDs := directoryStructure(chartPath)
 

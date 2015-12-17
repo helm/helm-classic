@@ -1,10 +1,11 @@
 package action
 
 import (
-	"github.com/helm/helm/test"
 	"io/ioutil"
-	"path/filepath"
 	"testing"
+
+	"github.com/helm/helm/test"
+	"github.com/helm/helm/util"
 )
 
 func TestCreate(t *testing.T) {
@@ -13,7 +14,7 @@ func TestCreate(t *testing.T) {
 	Create("mychart", tmpHome)
 
 	// assert chartfile
-	chartfile, err := ioutil.ReadFile(filepath.Join(tmpHome, "workspace/charts/mychart/Chart.yaml"))
+	chartfile, err := ioutil.ReadFile(util.WorkspaceChartDirectory(tmpHome, "mychart/Chart.yaml"))
 	if err != nil {
 		t.Errorf("Could not read chartfile: %s", err)
 	}
@@ -31,7 +32,7 @@ details: |-
 	test.ExpectEquals(t, actualChartfile, expectedChartfile)
 
 	// asset readme
-	readme, err := ioutil.ReadFile(filepath.Join(tmpHome, "workspace/charts/mychart/README.md"))
+	readme, err := ioutil.ReadFile(util.WorkspaceChartDirectory(tmpHome, "mychart/README.md"))
 	if err != nil {
 		t.Errorf("Could not read README.md: %s", err)
 	}
@@ -47,7 +48,7 @@ include that information here.
 	test.ExpectEquals(t, expectedReadme, actualReadme)
 
 	// assert example manifest
-	manifest, err := ioutil.ReadFile(filepath.Join(tmpHome, "workspace/charts/mychart/manifests/example-pod.yaml"))
+	manifest, err := ioutil.ReadFile(util.WorkspaceChartDirectory(tmpHome, "mychart/manifests/example-pod.yaml"))
 	if err != nil {
 		t.Errorf("Could not read manifest: %s", err)
 	}

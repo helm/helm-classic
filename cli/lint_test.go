@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -58,7 +57,7 @@ func TestLintAll(t *testing.T) {
 	missingReadmeChart := "missingReadme"
 
 	action.Create(missingReadmeChart, tmpHome)
-	os.Remove(filepath.Join(tmpHome, util.WorkspaceChartPath, missingReadmeChart, "README.md"))
+	os.Remove(util.WorkspaceChartDirectory(tmpHome, missingReadmeChart, "README.md"))
 
 	action.Create("goodChart", tmpHome)
 

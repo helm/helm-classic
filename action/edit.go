@@ -3,9 +3,9 @@ package action
 import (
 	"os"
 	"os/exec"
-	"path"
 
 	"github.com/helm/helm/log"
+	"github.com/helm/helm/util"
 )
 
 // Edit charts using the shell-defined $EDITOR
@@ -14,7 +14,7 @@ import (
 // - homeDir is the helm home directory for the user
 func Edit(chartName, homeDir string) {
 
-	chartDir := path.Join(homeDir, "workspace", "charts", chartName)
+	chartDir := util.WorkspaceChartDirectory(homeDir, chartName)
 
 	if _, err := os.Stat(chartDir); os.IsNotExist(err) {
 		log.Die("Could not find chart: %s", chartName)
