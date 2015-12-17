@@ -28,7 +28,7 @@ func Publish(chartName, homeDir, repo string, force bool) {
 	}
 
 	src := path.Join(homeDir, helm.WorkspaceChartPath, chartName)
-	dst := path.Join(homeDir, helm.CachePath, repo, chartName)
+	dst := helm.CacheDirectory(homeDir, repo, chartName)
 
 	if _, err := os.Stat(dst); err == nil {
 		if force != true {

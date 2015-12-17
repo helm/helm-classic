@@ -50,7 +50,7 @@ func Fetch(chartName, lname, homedir string) {
 }
 
 func fetch(chartName, lname, homedir, chartpath string) {
-	src := filepath.Join(homedir, helm.CachePath, chartpath, chartName)
+	src := helm.CacheDirectory(homedir, chartpath, chartName)
 	dest := filepath.Join(homedir, helm.WorkspaceChartPath, lname)
 
 	if fi, err := os.Stat(src); err != nil {

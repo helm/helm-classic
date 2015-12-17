@@ -1,7 +1,6 @@
 package action
 
 import (
-	"path/filepath"
 	"text/template"
 
 	"github.com/helm/helm/chart"
@@ -24,7 +23,7 @@ Details: {{.Details}}
 func Info(chartName, homedir, format string) {
 	r := mustConfig(homedir).Repos
 	table, chartLocal := r.RepoChart(chartName)
-	chartPath := filepath.Join(homedir, helm.CachePath, table, chartLocal, "Chart.yaml")
+	chartPath := helm.CacheDirectory(homedir, table, chartLocal, "Chart.yaml")
 
 	if format == "" {
 		format = defaultInfoFormat
