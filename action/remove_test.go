@@ -1,52 +1,28 @@
 package action
 
 import (
-	"bytes"
-	"io"
 	"os"
-	"strings"
 	"testing"
 
-	"github.com/helm/helm/log"
 	"github.com/helm/helm/test"
 )
 
 var (
-	// save globals for reset
-	defaultKubeGet func(string) string
-	defaultLogErr  io.Writer
-	defaultLogOut  io.Writer
-
-	// output stores command output
-	output bytes.Buffer
-
 	// mock responses from kubectl
 	mockFoundGetter    = func(string) string { return "installed" }
 	mockNotFoundGetter = func(string) string { return "not found" }
 	mockFailConnection = func(string) string { return "unable to connect to a server" }
 )
 
-func saveDefaults() {
-	defaultKubeGet = kubeGet
-	defaultLogErr = log.Stderr
-	defaultLogOut = log.Stdout
-}
-
-func rmCmdTeardown() {
-	kubeGet = defaultKubeGet
-	log.Stderr = defaultLogErr
-	log.Stdout = defaultLogOut
-	output.Reset()
-}
-
 func TestTRemove(t *testing.T) {
-	saveDefaults()
+	kg := kubeGet
+	defer func() { kubeGet = kg }()
 
 	tests := []struct {
 		chartName string
 		getter    kubeGetter
 		force     bool
-		match     string
+		expected  string
 	}{
 		{"kitchensink", mockNotFoundGetter, false, "All clear! You have successfully removed kitchensink from your workspace."},
 
@@ -69,19 +45,15 @@ func TestTRemove(t *testing.T) {
 
 		Fetch("kitchensink", "", tmpHome)
 
-		log.Stderr = &output
-		log.Stdout = &output
-
 		// set the mock getter
 		kubeGet = tt.getter
 
-		Remove(tt.chartName, tmpHome, tt.force)
+		actual := test.CaptureOutput(func() {
+			Remove(tt.chartName, tmpHome, tt.force)
+		})
 
-		if !strings.Contains(output.String(), tt.match) {
-			t.Errorf("\nExpected\n%s\nTo contain\n%s\n", output.String(), tt.match)
-		}
+		test.ExpectContains(t, actual, tt.expected)
 
 		os.Remove(tmpHome)
-		rmCmdTeardown()
 	}
 }

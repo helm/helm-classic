@@ -1,26 +1,16 @@
 package action
 
 import (
-	"bytes"
 	"errors"
 	"os"
-	"strings"
+	"path/filepath"
 	"testing"
 
 	"github.com/helm/helm/kubectl"
-	"github.com/helm/helm/log"
 	"github.com/helm/helm/test"
 )
 
 func TestInstall(t *testing.T) {
-	var output bytes.Buffer
-	log.Stdout = &output
-	log.Stderr = &output
-	defer func() {
-		log.Stdout = os.Stdout
-		log.Stderr = os.Stderr
-	}()
-
 	// Todo: add tests
 	// - with an invalid chart name
 	// - with failure to check dependencies
@@ -74,21 +64,18 @@ func TestInstall(t *testing.T) {
 	defer os.RemoveAll(tmpHome)
 	test.FakeUpdate(tmpHome)
 
-	defer func() {
-		if err := recover(); err != nil {
-			output.WriteString(err.(string))
-		}
-	}()
+	// Todo: get rid of this hacky mess
+	pp := os.Getenv("PATH")
+	defer os.Setenv("PATH", pp)
+	os.Setenv("PATH", filepath.Join(test.HelmRoot, "testdata")+":"+pp)
 
 	for _, tt := range tests {
-		Install(tt.chart, tmpHome, "", tt.force, tt.client)
-		actual := output.String()
+		actual := test.CaptureOutput(func() {
+			Install(tt.chart, tmpHome, "", tt.force, tt.client)
+		})
 
 		for _, exp := range tt.expected {
-			if !strings.Contains(actual, exp) {
-				t.Logf("%+v", tt)
-				t.Errorf("\n[Expected]\n%s\n[To Contain]\n%s\n", actual, exp)
-			}
+			test.ExpectContains(t, actual, exp)
 		}
 	}
 }

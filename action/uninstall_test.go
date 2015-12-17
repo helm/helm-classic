@@ -1,26 +1,15 @@
 package action
 
 import (
-	"bytes"
 	"errors"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/helm/helm/kubectl"
-	"github.com/helm/helm/log"
 	"github.com/helm/helm/test"
 )
 
 func TestUninstall(t *testing.T) {
-	var output bytes.Buffer
-	log.Stdout = &output
-	log.Stderr = &output
-	defer func() {
-		log.Stdout = os.Stdout
-		log.Stderr = os.Stderr
-	}()
-
 	tests := []struct {
 		name     string // Todo: print name on fail
 		chart    string
@@ -55,14 +44,12 @@ func TestUninstall(t *testing.T) {
 	for _, tt := range tests {
 		Fetch(tt.chart, "", tmpHome)
 
-		Uninstall(tt.chart, tmpHome, "", tt.force, tt.client)
-		actual := output.String()
+		actual := test.CaptureOutput(func() {
+			Uninstall(tt.chart, tmpHome, "", tt.force, tt.client)
+		})
 
 		for _, exp := range tt.expected {
-			if !strings.Contains(actual, exp) {
-				t.Errorf("\n[Expected]\n%s\n[To Contain]\n%s\n", actual, exp)
-			}
+			test.ExpectContains(t, actual, exp)
 		}
-		output.Reset()
 	}
 }
