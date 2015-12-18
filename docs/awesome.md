@@ -32,7 +32,9 @@ A simple Chart.yaml file should look like this:
 
 ```
 name: NAME OF CHART
-home: URL TO IMAGE HOME
+home: URL TO PROJECT HOME
+source:
+  - URL TO IMAGE SOURCE
 version: VERSION
 description: SHORT DESCRIPTION
 dependencies:
@@ -47,6 +49,7 @@ details:
 
 - name: This should be the same name as your chart directory.
 - home: The URL to the project where the container image came from. This is to assist people in finding out how their image was built.
+- source: A set of URLs to the source of container images
 - version: A SemVer 2 version string.
 - description: A short (several word) description of this chart.
 - dependencies: A set of name/filter pairs
