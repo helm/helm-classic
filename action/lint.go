@@ -52,7 +52,7 @@ func LintAll(homedir string) {
 //
 // - chartPath path to chart directory
 func Lint(chartPath string) {
-	var errors = make([]string, 0)
+	var warnings = make([]string, 0)
 	chartName := filepath.Base(chartPath)
 
 	//makes sure all files are in place
@@ -60,23 +60,23 @@ func Lint(chartPath string) {
 
 	if len(fatalDs) == 0 {
 		dsErrs := checkDirectoryStructure(structure, chartPath)
-		errors = append(errors, dsErrs...)
+		warnings = append(warnings, dsErrs...)
 	} else {
-		errors = append(errors, fatalDs...)
+		warnings = append(warnings, fatalDs...)
 	}
 
 	//checks to see if chart name is unique
 	nameErr := verifyChartNameUnique(chartName)
 
 	if nameErr == nil {
-		errors = append(errors, fmt.Sprintf("Chart name %s already exists in charts repository [github.com/helm/charts]. If you're planning on submitting this chart to the charts repo, please consider changing the chart name.", chartName))
+		warnings = append(warnings, fmt.Sprintf("Chart name %s already exists in charts repository [github.com/helm/charts]. If you're planning on submitting this chart to the charts repo, please consider changing the chart name.", chartName))
 	}
-	errors = append(errors, verifyMetadata(chartPath)...)
-	errors = append(errors, verifyManifests(chartPath)...)
+	warnings = append(warnings, verifyMetadata(chartPath)...)
+	warnings = append(warnings, verifyManifests(chartPath)...)
 
-	if len(errors) > 0 {
-		for _, message := range errors {
-			log.Err(message)
+	if len(warnings) > 0 {
+		for _, message := range warnings {
+			log.Warn(message)
 		}
 		log.Warn("Chart [%s] failed some checks", chartName)
 	} else {
@@ -130,62 +130,62 @@ func checkDirectoryStructure(structure map[string]os.FileInfo, chartPath string)
 
 // verifyMetadata checks the Chart.yaml file for a Name, Version, Description, and Maintainers
 func verifyMetadata(chartPath string) []string {
-	var errors = make([]string, 0)
+	var warnings = make([]string, 0)
 	var y *chart.Chartfile
 
 	file := filepath.Join(chartPath, "Chart.yaml")
 	b, err := ioutil.ReadFile(file)
 
 	if err != nil {
-		return append(errors, fmt.Sprint(err))
+		return append(warnings, fmt.Sprint(err))
 	}
 	if err = yaml.Unmarshal(b, &y); err != nil {
-		return append(errors, fmt.Sprint(err))
+		return append(warnings, fmt.Sprint(err))
 	}
 	//require name, version, description, maintaners
 	if y.Name == "" {
-		errors = append(errors, "Missing Name specification in Chart.yaml file")
+		warnings = append(warnings, "Missing Name specification in Chart.yaml file")
 	}
 	if y.Version == "" {
-		errors = append(errors, "Missing Version specification in Chart.yaml file")
+		warnings = append(warnings, "Missing Version specification in Chart.yaml file")
 	}
 	if y.Description == "" {
-		errors = append(errors, "Missing description in Chart.yaml file")
+		warnings = append(warnings, "Missing description in Chart.yaml file")
 	}
 	if y.Maintainers == nil {
-		errors = append(errors, "Missing maintainers information in Chart.yaml file")
+		warnings = append(warnings, "Missing maintainers information in Chart.yaml file")
 	}
 
-	return errors
+	return warnings
 }
 
 func verifyManifests(chartPath string) []string {
-	var errors = make([]string, 0)
+	var warnings = make([]string, 0)
 	manifests, err := manifest.ParseDir(chartPath)
 	if err != nil {
-		errors = append(errors, fmt.Sprintf("Error walking manifest files. Err: %s", err))
+		warnings = append(warnings, fmt.Sprintf("Error walking manifest files. Err: %s", err))
 	}
 
 	for _, m := range manifests {
 		meta, _ := m.VersionedObject.Meta()
 		if meta.Name == "" {
-			errors = append(errors, fmt.Sprintf("missing name in %s", m.Source))
+			warnings = append(warnings, fmt.Sprintf("missing name in %s", m.Source))
 		}
 
 		val, ok := meta.Labels["heritage"]
 		if !ok || (val != "helm") {
-			errors = append(errors, fmt.Sprintf("Missing a label: `heritage: helm` in %s", m.Source))
+			warnings = append(warnings, fmt.Sprintf("Missing a label: `heritage: helm` in %s", m.Source))
 		}
 
 		kind := meta.Kind
 		validKinds := InstallOrder
 		valid := validKind(kind, validKinds)
 		if !valid {
-			errors = append(errors, fmt.Sprintf("%s is not a valid `kind` value for manifest. Here are valid kinds of manifests: %v", kind, validKinds))
+			warnings = append(warnings, fmt.Sprintf("%s is not a valid `kind` value for manifest. Here are valid kinds of manifests: %v", kind, validKinds))
 		}
 	}
 
-	return errors
+	return warnings
 }
 
 func validKind(kind string, validKinds []string) bool {
