@@ -70,6 +70,24 @@ func TestLintMissingChartYaml(t *testing.T) {
 	test.ExpectContains(t, output, "Chart [badChart] failed some checks")
 }
 
+func TestLintMissingManifestDirectory(t *testing.T) {
+	tmpHome := test.CreateTmpHome()
+	test.FakeUpdate(tmpHome)
+
+	chartName := "brokeChart"
+
+	Create(chartName, tmpHome)
+
+	os.RemoveAll(filepath.Join(util.WorkspaceChartDirectory(tmpHome, chartName), "manifests"))
+
+	output := test.CaptureOutput(func() {
+		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
+	})
+
+	test.ExpectMatches(t, output, fmt.Sprintf("A manifests directory was not found.*%s", chartName))
+	test.ExpectContains(t, output, fmt.Sprintf("Chart [%s] failed some checks", chartName))
+}
+
 func TestLintEmptyChartYaml(t *testing.T) {
 	tmpHome := test.CreateTmpHome()
 	test.FakeUpdate(tmpHome)
