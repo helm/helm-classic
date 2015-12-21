@@ -21,7 +21,7 @@ build: $(MAIN_GO)
 
 bootstrap:
 	go get -u github.com/golang/lint/golint github.com/mitchellh/gox
-	glide -y glide-full.yaml up
+	glide install
 
 build-all:
 	gox -verbose \
