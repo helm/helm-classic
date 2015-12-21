@@ -119,3 +119,15 @@ func TestLintBadPath(t *testing.T) {
 
 	test.ExpectContains(t, output, chartName+" not found in workspace")
 }
+
+func TestVerifyChartNameMatchesChartDir(t *testing.T) {
+	loc := "testdata/charts/dep1"
+	if err := verifyChartNameMatchesChartDir(loc); err != nil {
+		t.Errorf("verify for location %s failed (%s)", loc, err)
+	}
+
+	loc = "testdata/charts/misnamed"
+	if verifyChartNameMatchesChartDir(loc) == nil {
+		t.Errorf("verify for location %s didn't fail but should have", loc)
+	}
+}
