@@ -1,4 +1,6 @@
 package: github.com/helm/helm
+ignore:
+- appengine
 import:
 - package: github.com/codegangsta/cli
   version: f445c894402839580d30de47551cedc152dad814
@@ -19,3 +21,9 @@ import:
 - package: github.com/google/go-querystring
 - package: github.com/google/go-github
   version: 81d0490d8aa8400f6760a077f4a2039eb0296e86
+- package: github.com/steveeJ/gexpect
+  repo: https://github.com/coreos/gexpect
+- package: launchpad.net/gocheck
+  repo: https://github.com/go-check/check
+- package: code.google.com/p/goprotobuf
+  repo: https://github.com/golang/protobuf
