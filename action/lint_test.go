@@ -121,12 +121,13 @@ func TestLintBadPath(t *testing.T) {
 }
 
 func TestVerifyChartNameMatchesChartDir(t *testing.T) {
-	loc := "testdata/charts/dep1"
+	testData := fmt.Sprintf("%s/testdata/", test.HelmRoot)
+	loc := fmt.Sprintf("%scharts/dep1", testData)
 	if err := verifyChartNameMatchesChartDir(loc); err != nil {
 		t.Errorf("verify for location %s failed (%s)", loc, err)
 	}
 
-	loc = "testdata/charts/misnamed"
+	loc = fmt.Sprintf("%scharts/misnamed", testData)
 	if verifyChartNameMatchesChartDir(loc) == nil {
 		t.Errorf("verify for location %s didn't fail but should have", loc)
 	}
