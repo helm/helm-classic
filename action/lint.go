@@ -77,10 +77,6 @@ func Lint(chartPath string) {
 			log.Err(err)
 		}
 
-		if err := verifyChartNameMatchesChartDir(chartPath); err != nil {
-			log.Warn(err.Error())
-		}
-
 		if numErrors > 0 {
 			log.Err("Chart [%s] failed some checks", chartName)
 		} else {
@@ -131,6 +127,7 @@ func verifyMetadata(chartPath string, v *Validation) {
 	var y *chart.Chartfile
 
 	file := filepath.Join(chartPath, Chartfile)
+	chartDir := filepath.Base(chartPath)
 	b, err := ioutil.ReadFile(file)
 
 	if err != nil {
@@ -146,6 +143,9 @@ func verifyMetadata(chartPath string, v *Validation) {
 	// require name, version, description, maintaners
 	if y.Name == "" {
 		v.AddError("Missing Name specification in Chart.yaml file")
+	}
+	if y.Name != chartDir {
+		v.AddError(fmt.Sprintf("Chart.yaml name (%s) is not the same as its directory (%s)", y.Name, chartDir))
 	}
 	if y.Version == "" {
 		v.AddError("Missing Version specification in Chart.yaml file")
@@ -204,22 +204,4 @@ func verifyChartNameUnique(chartName string, v *Validation) {
 	if _, err := RepoService.DownloadContents(Owner, Project, chartPath, nil); err == nil {
 		v.AddWarning(fmt.Sprintf("Chart name %s already exists in charts repository [github.com/helm/charts]. If you're planning on submitting this chart to the charts repo, please consider changing the chart name.", chartName))
 	}
-}
-
-func verifyChartNameMatchesChartDir(chartLoc string) error {
-	chartPath := filepath.Join(chartLoc, "Chart.yaml")
-	b, err := ioutil.ReadFile(chartPath)
-	if err != nil {
-		return fmt.Errorf("Error reading chart at %s (%s)", chartPath, err)
-	}
-	var chartFile *chart.Chartfile
-	if err = yaml.Unmarshal(b, &chartFile); err != nil {
-		return fmt.Errorf("Error parsing Chart.yaml file at %s (%s)", chartPath, err)
-	}
-
-	dirName := filepath.Base(chartLoc)
-	if dirName != chartFile.Name {
-		return fmt.Errorf("Chart in directory %s (%s) is named %s", dirName, chartLoc, chartFile.Name)
-	}
-	return nil
 }
