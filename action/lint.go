@@ -52,46 +52,48 @@ func LintAll(homedir string) {
 //
 // - chartPath path to chart directory
 func Lint(chartPath string) {
-	var warnings = make([]string, 0)
+	v := new(Validation)
 	chartName := filepath.Base(chartPath)
 
 	//makes sure all files are in place
-	structure, fatalDs := directoryStructure(chartPath)
+	structure := directoryStructure(chartPath, v)
 
-	if len(fatalDs) == 0 {
-		dsErrs := checkDirectoryStructure(structure, chartPath)
-		warnings = append(warnings, dsErrs...)
-	} else {
-		warnings = append(warnings, fatalDs...)
+	if v.Valid() {
+		checkDirectoryStructure(structure, chartPath, v)
 	}
 
 	//checks to see if chart name is unique
-	nameErr := verifyChartNameUnique(chartName)
+	verifyChartNameUnique(chartName, v)
+	verifyMetadata(chartPath, v)
+	verifyManifests(chartPath, v)
 
-	if nameErr == nil {
-		warnings = append(warnings, fmt.Sprintf("Chart name %s already exists in charts repository [github.com/helm/charts]. If you're planning on submitting this chart to the charts repo, please consider changing the chart name.", chartName))
-	}
-	warnings = append(warnings, verifyMetadata(chartPath)...)
-	warnings = append(warnings, verifyManifests(chartPath)...)
+	numErrors := len(v.Errors)
 
-	if len(warnings) > 0 {
-		for _, message := range warnings {
-			log.Warn(message)
+	if len(v.Warnings) > 0 || numErrors > 0 {
+		for _, warning := range v.Warnings {
+			log.Warn(warning)
 		}
-		log.Warn("Chart [%s] failed some checks", chartName)
+		for _, err := range v.Errors {
+			log.Err(err)
+		}
+
+		if numErrors > 0 {
+			log.Err("Chart [%s] failed some checks", chartName)
+		} else {
+			log.Warn("Chart [%s] failed some checks", chartName)
+		}
 	} else {
 		log.Info("Chart [%s] has passed all necessary checks", chartName)
 	}
 }
 
-func directoryStructure(chartPath string) (map[string]os.FileInfo, []string) {
-	var messages = make([]string, 0)
+func directoryStructure(chartPath string, v *Validation) map[string]os.FileInfo {
 	structure := make(map[string]os.FileInfo)
 
 	chartInfo, err := os.Stat(chartPath)
 	if err != nil {
-		messages = append(messages, fmt.Sprintf("Chart %s not found in workspace. Error: %v", chartPath, err))
-		return structure, messages
+		v.AddError(fmt.Sprintf("Chart %s not found in workspace. Error: %v", chartPath, err))
+		return structure
 	}
 
 	if chartInfo.IsDir() {
@@ -100,21 +102,15 @@ func directoryStructure(chartPath string) (map[string]os.FileInfo, []string) {
 			structure[f.Name()] = f
 		}
 	} else {
-		messages = append(messages, fmt.Sprintf("Chart Path [%s] is not a directory.", chartPath))
+		v.AddError(fmt.Sprintf("Chart Path [%s] is not a directory.", chartPath))
 	}
 
-	return structure, messages
+	return structure
 }
 
-func checkDirectoryStructure(structure map[string]os.FileInfo, chartPath string) []string {
-	var messages = make([]string, 0)
-
+func checkDirectoryStructure(structure map[string]os.FileInfo, chartPath string, v *Validation) {
 	if _, ok := structure["README.md"]; ok != true {
-		messages = append(messages, fmt.Sprintf("A README file was not found in %s", chartPath))
-	}
-
-	if _, ok := structure["Chart.yaml"]; ok != true {
-		messages = append(messages, fmt.Sprintf("A Chart.yaml file was not found in %s", chartPath))
+		v.AddWarning(fmt.Sprintf("A README file was not found in %s", chartPath))
 	}
 
 	manifestInfo, ok := structure["manifests"]
@@ -122,70 +118,67 @@ func checkDirectoryStructure(structure map[string]os.FileInfo, chartPath string)
 	if ok && manifestInfo.IsDir() {
 		// manifest files logic
 	} else {
-		messages = append(messages, fmt.Sprintf("A manifests directory was not found in %s", chartPath))
+		v.AddError(fmt.Sprintf("A manifests directory was not found in %s", chartPath))
 	}
-
-	return messages
 }
 
 // verifyMetadata checks the Chart.yaml file for a Name, Version, Description, and Maintainers
-func verifyMetadata(chartPath string) []string {
-	var warnings = make([]string, 0)
+func verifyMetadata(chartPath string, v *Validation) {
 	var y *chart.Chartfile
 
 	file := filepath.Join(chartPath, "Chart.yaml")
 	b, err := ioutil.ReadFile(file)
 
 	if err != nil {
-		return append(warnings, fmt.Sprint(err))
+		v.AddError("A Chart.yaml file was not found")
+		return
 	}
+
 	if err = yaml.Unmarshal(b, &y); err != nil {
-		return append(warnings, fmt.Sprint(err))
+		v.AddError(fmt.Sprint(err))
+		return
 	}
-	//require name, version, description, maintaners
+
+	// require name, version, description, maintaners
 	if y.Name == "" {
-		warnings = append(warnings, "Missing Name specification in Chart.yaml file")
+		v.AddError("Missing Name specification in Chart.yaml file")
 	}
 	if y.Version == "" {
-		warnings = append(warnings, "Missing Version specification in Chart.yaml file")
+		v.AddError("Missing Version specification in Chart.yaml file")
 	}
 	if y.Description == "" {
-		warnings = append(warnings, "Missing description in Chart.yaml file")
+		v.AddWarning("Missing description in Chart.yaml file")
 	}
 	if y.Maintainers == nil {
-		warnings = append(warnings, "Missing maintainers information in Chart.yaml file")
+		v.AddWarning("Missing maintainers information in Chart.yaml file")
 	}
-
-	return warnings
 }
 
-func verifyManifests(chartPath string) []string {
-	var warnings = make([]string, 0)
+func verifyManifests(chartPath string, v *Validation) {
 	manifests, err := manifest.ParseDir(chartPath)
+
 	if err != nil {
-		warnings = append(warnings, fmt.Sprintf("Error walking manifest files. Err: %s", err))
+		v.AddError(fmt.Sprintf("Error walking manifest files. Err: %s", err))
 	}
 
 	for _, m := range manifests {
 		meta, _ := m.VersionedObject.Meta()
 		if meta.Name == "" {
-			warnings = append(warnings, fmt.Sprintf("missing name in %s", m.Source))
+			v.AddWarning(fmt.Sprintf("missing name in %s", m.Source))
 		}
 
 		val, ok := meta.Labels["heritage"]
 		if !ok || (val != "helm") {
-			warnings = append(warnings, fmt.Sprintf("Missing a label: `heritage: helm` in %s", m.Source))
+			v.AddWarning(fmt.Sprintf("Missing a label: `heritage: helm` in %s", m.Source))
 		}
 
 		kind := meta.Kind
 		validKinds := InstallOrder
-		valid := validKind(kind, validKinds)
-		if !valid {
-			warnings = append(warnings, fmt.Sprintf("%s is not a valid `kind` value for manifest. Here are valid kinds of manifests: %v", kind, validKinds))
+
+		if valid := validKind(kind, validKinds); !valid {
+			v.AddError(fmt.Sprintf("%s is not a valid `kind` value for manifest. Here are valid kinds of manifests: %v", kind, validKinds))
 		}
 	}
-
-	return warnings
 }
 
 func validKind(kind string, validKinds []string) bool {
@@ -197,12 +190,14 @@ func validKind(kind string, validKinds []string) bool {
 	return false
 }
 
-func verifyChartNameUnique(chartName string) error {
+func verifyChartNameUnique(chartName string, v *Validation) {
 	if RepoService == nil {
 		RepoService = github.NewClient(nil).Repositories
 	}
 
 	chartPath := filepath.Join(chartName, "Chart.yaml")
-	_, err := RepoService.DownloadContents(Owner, Project, chartPath, nil)
-	return err
+
+	if _, err := RepoService.DownloadContents(Owner, Project, chartPath, nil); err == nil {
+		v.AddWarning(fmt.Sprintf("Chart name %s already exists in charts repository [github.com/helm/charts]. If you're planning on submitting this chart to the charts repo, please consider changing the chart name.", chartName))
+	}
 }
