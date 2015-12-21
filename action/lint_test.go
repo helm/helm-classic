@@ -55,7 +55,7 @@ func TestLintMissingChartYaml(t *testing.T) {
 
 	Create(chartName, tmpHome)
 
-	os.Remove(filepath.Join(util.WorkspaceChartDirectory(tmpHome, chartName), "Chart.yaml"))
+	os.Remove(filepath.Join(util.WorkspaceChartDirectory(tmpHome, chartName), Chartfile))
 
 	output := test.CaptureOutput(func() {
 		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
@@ -93,7 +93,7 @@ func TestLintEmptyChartYaml(t *testing.T) {
 
 	badChartYaml, _ := yaml.Marshal(make(map[string]string))
 
-	chartYaml := util.WorkspaceChartDirectory(tmpHome, chartName, "Chart.yaml")
+	chartYaml := util.WorkspaceChartDirectory(tmpHome, chartName, Chartfile)
 
 	os.Remove(chartYaml)
 	ioutil.WriteFile(chartYaml, badChartYaml, 0644)
