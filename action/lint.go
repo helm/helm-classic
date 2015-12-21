@@ -113,10 +113,6 @@ func checkDirectoryStructure(structure map[string]os.FileInfo, chartPath string,
 		v.AddWarning(fmt.Sprintf("A README file was not found in %s", chartPath))
 	}
 
-	if _, ok := structure["Chart.yaml"]; ok != true {
-		v.AddError(fmt.Sprintf("A Chart.yaml file was not found in %s", chartPath))
-	}
-
 	manifestInfo, ok := structure["manifests"]
 
 	if ok && manifestInfo.IsDir() {
@@ -134,7 +130,7 @@ func verifyMetadata(chartPath string, v *Validation) {
 	b, err := ioutil.ReadFile(file)
 
 	if err != nil {
-		v.AddError(fmt.Sprint(err))
+		v.AddError("A Chart.yaml file was not found")
 		return
 	}
 

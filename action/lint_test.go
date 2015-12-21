@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/helm/helm/test"
@@ -45,11 +44,7 @@ func TestLintMissingReadme(t *testing.T) {
 		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
-	expected := "A README file was not found"
-
-	if !strings.Contains(output, expected) {
-		t.Fatalf("Expected: '%s' in %s.", expected, output)
-	}
+	test.ExpectContains(t, output, "A README file was not found")
 }
 
 func TestLintMissingChartYaml(t *testing.T) {
