@@ -53,6 +53,22 @@ func Walk(dir string) (int, error) {
 		os.Setenv("HELM_GENERATE_COMMAND_EXPANDED", line)
 		log.Debug("File: %s, Command: %s", path, line)
 		count++
+
+		// Execute the command in the file's directory to make relative
+		// paths usable.
+		origin, err := os.Getwd()
+		if err != nil {
+			log.Warn("Could not get PWD: %s", err)
+		} else if err := os.Chdir(dir); err != nil {
+			log.Warn("Could not change directory to %s: %s", dir, err)
+		} else {
+			origin = dir
+			defer func() {
+				if e := os.Chdir(origin); e != nil {
+					log.Warn("Could not return to %s: %s", origin, e)
+				}
+			}()
+		}
 		err = execute(line)
 		if err != nil {
 			return fmt.Errorf("failed to execute %s (%s): %s", line, path, err)

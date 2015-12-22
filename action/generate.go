@@ -9,6 +9,10 @@ import (
 	"github.com/helm/helm/util"
 )
 
+// Generate runs generators on the entire chart.
+//
+// By design, this only operates on workspaces, as it should never be run
+// on the cache.
 func Generate(chart, homedir string) {
 	if abs, err := filepath.Abs(homedir); err == nil {
 		homedir = abs

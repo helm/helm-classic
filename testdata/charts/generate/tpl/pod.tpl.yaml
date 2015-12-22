@@ -1,0 +1,13 @@
+#helm:generate helm tpl -o manifests/pod.yaml -d $HELM_GENERATE_DIR/values.toml $HELM_GENERATE_FILE
+apiVersion: v1
+kind: Pod
+metadata:
+  name: www
+  labels:
+    heritage: helm
+spec:
+  restartPolicy: Never
+  containers:
+    - name: {{default "www-server" .ContainerName}}
+      image: {{default "nginx" .Image}}
+      command: ["/bin/sleep","9000"]
