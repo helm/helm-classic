@@ -95,6 +95,15 @@ func TestVersionOK(t *testing.T) {
 		t.Errorf("Version 1.2.3 should have been marked in-range")
 	}
 
+	// Blank out a version and see if it resolves without a version.
+	f.Dependencies[1].Version = ""
+	if !d.VersionOK("1.2.3") {
+		t.Errorf("A blank version requirement should match anything.")
+	}
+	f.Dependencies[1].Version = "*"
+	if !d.VersionOK("1.2.3") {
+		t.Errorf("A blank version requirement should match anything.")
+	}
 }
 
 func TestUnknownKinds(t *testing.T) {

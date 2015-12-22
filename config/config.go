@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -124,6 +125,34 @@ func (r *Repos) RepoChart(name string) (string, string) {
 	return res[0], res[1]
 }
 
+// ByName takes a repository name (e.g. "charts") and returns the Git repo string.
+func (r *Repos) ByName(name string) string {
+	var defRepo string
+	for _, rr := range r.Tables {
+		if rr.Name == name {
+			defRepo = rr.Repo
+		}
+	}
+	return defRepo
+}
+
+// ByRepo takes a repository and returns the name associated with it.
+//
+// This calculates the canonical repository name (CanonicalRepo) and uses that
+// in the comparison.
+func (r *Repos) ByRepo(repository string) string {
+	repo, err := CanonicalRepo(repository)
+	if err != nil {
+		repo = repository
+	}
+	for _, rr := range r.Tables {
+		if cr, err := CanonicalRepo(rr.Repo); err == nil && cr == repo {
+			return rr.Name
+		}
+	}
+	return ""
+}
+
 // Add adds the named remote and then fetches it.
 func (r *Repos) Add(name, repo string) error {
 	for _, r := range r.Tables {
@@ -170,6 +199,61 @@ func (r *Repos) Update(name string) error {
 		}
 	}
 	return ErrNotFound
+}
+
+// CanonicalRepo returns a canonical repo name of the form `host/path.git`.
+//
+// There are several accepted Git protocol representations:
+//
+//	- /PATH.git (local)   -> localhost/PATH
+//	- file:///PATH.git (local)   -> localhost/PATH
+//	- https://HOST/PATH.git    -> HOST/PATH
+//	- http://HOST/PATH.git    -> HOST/PATH
+//	- ssh://user@HOST/PATH.git -> HOST/PATH
+//	- user@HOST:PATH.git  -> HOST/PATH
+//
+// Additionaly, we allow the following non-Git patterns:
+//
+//	- localhost/PATH -> localhost/PATH
+//	- HOST/PATH (go style) -> HOST/PATH
+//
+// In the case where no suitable normalization can be found, this will return
+// the original string, assuming that there is some additional Git representation
+// that we don't know about.
+func CanonicalRepo(name string) (string, error) {
+	name = strings.TrimSuffix(name, ".git")
+
+	if strings.Index(name, "://") > 0 {
+		// URL parseable
+		u, err := url.Parse(name)
+		if err != nil {
+			return name, err
+		}
+
+		if u.Scheme == "file" && u.Host == "" {
+			u.Host = "localhost"
+		}
+
+		return filepath.Join(u.Host, u.Path), nil
+	} else if i := strings.Index(name, "@"); i > 0 && i < strings.Index(name, ":") {
+
+		a := strings.SplitN(name, "@", 2)
+		if len(a) != 2 {
+			return name, fmt.Errorf("Could not parse SCP name %s: '@' split failed", name)
+		}
+
+		a = strings.SplitN(a[1], ":", 2)
+		if len(a) != 2 {
+			return name, fmt.Errorf("Could not parse SCP name %s: ':' split failed", name)
+		}
+
+		return filepath.Join(a[0], a[1]), nil
+	} else if filepath.IsAbs(name) {
+		// Is a filepath
+		return filepath.Join("localhost", name), nil
+	}
+	// Default: try to turn this into a URL.
+	return CanonicalRepo("http://" + name)
 }
 
 func ensureRepo(repo, dir string) (*vcs.GitRepo, error) {

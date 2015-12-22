@@ -61,13 +61,15 @@ func TestOptRepoMatch(t *testing.T) {
 }
 
 func TestCanonicalRepo(t *testing.T) {
-	expect := "example.com/foo/bar.git"
+	expect := "example.com/foo/bar"
 	orig := []string{
 		"git@example.com:foo/bar.git",
 		"git@example.com:/foo/bar.git",
 		"http://example.com/foo/bar.git",
 		"https://example.com/foo/bar.git",
 		"ssh://git@example.com/foo/bar.git",
+		"http://example.com/foo/bar",
+		"example.com/foo/bar",
 	}
 	for _, v := range orig {
 		cv, err := canonicalRepo(v)
@@ -79,11 +81,11 @@ func TestCanonicalRepo(t *testing.T) {
 		}
 	}
 
-	expect = "localhost/slurm/bar.git"
+	expect = "localhost/slurm/bar"
 	orig = []string{
 		"file:///slurm/bar.git",
 		"/slurm/bar.git",
-		"slurm/bar.git",
+		"localhost/slurm/bar.git",
 	}
 	for _, v := range orig {
 		cv, err := canonicalRepo(v)
@@ -96,7 +98,7 @@ func TestCanonicalRepo(t *testing.T) {
 	}
 }
 
-func TestSatisfies(t *testing.T) {
+func Testsatisfies(t *testing.T) {
 	a := &chart.Dependency{
 		Name:    "slurm",
 		Version: "1.2.3",

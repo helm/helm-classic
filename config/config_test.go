@@ -54,6 +54,28 @@ func TestLoadConfigfile(t *testing.T) {
 	}
 }
 
+func TestByName(t *testing.T) {
+	cfg, err := Load("../testdata/Configfile.yaml")
+	if err != nil {
+		t.Fatalf("Could not load ../testdata/Configfile.yaml: %s", err)
+	}
+
+	if rn := cfg.Repos.ByName("charts"); rn != "https://github.com/helm/charts" {
+		t.Errorf("Unexpected chart URL: %s", rn)
+	}
+}
+
+func TestByRepo(t *testing.T) {
+	cfg, err := Load("../testdata/Configfile.yaml")
+	if err != nil {
+		t.Fatalf("Could not load ../testdata/Configfile.yaml: %s", err)
+	}
+
+	if rn := cfg.Repos.ByRepo("https://github.com/helm/charts"); rn != "charts" {
+		t.Errorf("Unexpected chart name: %s", rn)
+	}
+}
+
 func TestSave(t *testing.T) {
 	cfg, err := Load("../testdata/Configfile.yaml")
 	if err != nil {
@@ -100,6 +122,44 @@ M	owncloud`
 	for _, exp := range expected {
 		if !strings.Contains(actual, exp) {
 			t.Errorf("Expected %q to contain %q", actual, exp)
+		}
+	}
+}
+
+func TestCanonicalRepo(t *testing.T) {
+	expect := "example.com/foo/bar"
+	orig := []string{
+		"git@example.com:foo/bar.git",
+		"git@example.com:/foo/bar.git",
+		"http://example.com/foo/bar.git",
+		"https://example.com/foo/bar.git",
+		"ssh://git@example.com/foo/bar.git",
+		"http://example.com/foo/bar",
+		"example.com/foo/bar",
+	}
+	for _, v := range orig {
+		cv, err := CanonicalRepo(v)
+		if err != nil {
+			t.Errorf("Failed to parse %s: %s", v, err)
+		}
+		if cv != expect {
+			t.Errorf("Expected %q, got %q for %q", expect, cv, v)
+		}
+	}
+
+	expect = "localhost/slurm/bar"
+	orig = []string{
+		"file:///slurm/bar.git",
+		"/slurm/bar.git",
+		"localhost/slurm/bar.git",
+	}
+	for _, v := range orig {
+		cv, err := CanonicalRepo(v)
+		if err != nil {
+			t.Errorf("Failed to parse %s: %s", v, err)
+		}
+		if cv != expect {
+			t.Errorf("Expected %q, got %q for %q", expect, cv, v)
 		}
 	}
 }

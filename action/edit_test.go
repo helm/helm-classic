@@ -17,7 +17,7 @@ func TestEdit(t *testing.T) {
 	defer os.RemoveAll(tmpHome)
 	test.FakeUpdate(tmpHome)
 
-	Fetch("redis", "", tmpHome)
+	Fetch("redis", "", tmpHome, false)
 
 	expected := path.Join(tmpHome, "workspace/charts/redis")
 	actual := test.CaptureOutput(func() {
