@@ -14,7 +14,7 @@ func TestGenerate(t *testing.T) {
 	test.FakeUpdate(homedir)
 	Fetch(ch, ch, homedir)
 
-	Generate(ch, homedir)
+	Generate(ch, homedir, []string{"ignore"})
 
 	// Now we should be able to load and read the `pod.yaml` file.
 	path := util.WorkspaceChartDirectory(homedir, "generate/manifests/pod.yaml")

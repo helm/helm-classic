@@ -59,7 +59,10 @@ func Template(out, in, data string) {
 func openValues(filename string) (interface{}, error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, err
+		// We generate a warning here, but do not require that a values
+		// file exists.
+		log.Warn("Skipped file %s: %s", filename, err)
+		return map[string]interface{}{}, nil
 	}
 
 	ext := filepath.Ext(filename)

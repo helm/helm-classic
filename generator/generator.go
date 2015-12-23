@@ -17,13 +17,27 @@ const GeneratorKeyword = "helm:generate "
 // Walk walks a chart directory and executes generators as it finds them.
 //
 // Returns the number of generators executed.
-func Walk(dir string) (int, error) {
+func Walk(dir string, exclude []string) (int, error) {
+
+	excludes := make(map[string]bool, len(exclude))
+	for i := 0; i < len(exclude); i++ {
+		excludes[filepath.Join(dir, exclude[i])] = true
+	}
+
 	count := 0
 	err := filepath.Walk(dir, func(path string, fi os.FileInfo, err error) error {
 
 		// dive-bomb if we hit an error.
 		if err != nil {
 			return err
+		}
+
+		// Exclude anything explicitly excluded.
+		if excludes[path] == true {
+			if fi.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
 		}
 
 		// Skip directory entries. If the directory prefix is . or _, skip the

@@ -13,7 +13,7 @@ import (
 //
 // By design, this only operates on workspaces, as it should never be run
 // on the cache.
-func Generate(chart, homedir string) {
+func Generate(chart, homedir string, exclude []string) {
 	if abs, err := filepath.Abs(homedir); err == nil {
 		homedir = abs
 	}
@@ -22,7 +22,7 @@ func Generate(chart, homedir string) {
 	os.Setenv("HELM_HOME", homedir)
 	os.Setenv("HELM_DEFAULT_REPO", mustConfig(homedir).Repos.Default)
 
-	count, err := generator.Walk(chartPath)
+	count, err := generator.Walk(chartPath, exclude)
 	if err != nil {
 		log.Die("Failed to complete generation: %s", err)
 	}

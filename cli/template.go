@@ -25,6 +25,7 @@ simple extension scanning to determine the file type of the values data file.
 
 - YAML: .yaml, .yml
 - TOML: .toml
+- JSON: .json
 
 If an output file is specified, the results will be written to the output
 file instead of STDOUT. Writing to the source template file is unsupported.
@@ -45,7 +46,7 @@ var tplCmd = cli.Command{
 		},
 		cli.StringFlag{
 			Name:  "values,d",
-			Usage: "A file containing values to substitute into the template. TOML (.toml) or YAML (.yaml, .yml) are supported.",
+			Usage: "A file containing values to substitute into the template. TOML (.toml), JSON (.json), and YAML (.yaml, .yml) are supported.",
 		},
 	},
 	Action: func(c *cli.Context) {
