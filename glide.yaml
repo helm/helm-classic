@@ -18,6 +18,7 @@ import:
 - package: golang.org/x/crypto
   version: master
 - package: github.com/aokoli/goutils
+  version: master
 - package: github.com/pborman/uuid
   version: master
 - package: gopkg.in/yaml.v2
@@ -32,3 +33,4 @@ import:
 - package: code.google.com/p/goprotobuf
   repo: https://github.com/golang/protobuf
 - package: github.com/Masterminds/sprig
+  version: ">= 1.0.0"

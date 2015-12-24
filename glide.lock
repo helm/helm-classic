@@ -1,5 +1,5 @@
-hash: e6030003da75bdc40af8759f89caf8eea3e452ae5221b6198dd27dd493101b62
-updated: 2015-12-22T22:56:19.980093215-07:00
+hash: 133cd09dd30c6deb1a32623d7536b0534739eab64275dfa13131772e3bed4c5c
+updated: 2015-12-23T09:48:26.23220392-07:00
 imports:
 - name: bitbucket.org/bertimus9/systemstat
   version: 1468fd0db20598383c9393cccaa547de6ad99e5e
@@ -204,7 +204,7 @@ imports:
 - name: github.com/docker/libkv
   version: c2aac5dbbaa5c872211edea7c0f32b3bd67e7410
 - name: github.com/docker/libnetwork
-  version: 9f0563ea8f430d8828553aac97161cbff4056436
+  version: c9860db84b183c45e1c32dcd881603300f59e0ac
 - name: github.com/docker/libtrust
   version: fa567046d9b14f6aa788882a950d69651d230b21
 - name: github.com/docker/spdystream
@@ -380,7 +380,7 @@ imports:
 - name: github.com/Masterminds/semver
   version: 6333b7bd29aad1d79898ff568fd90a8aa533ae82
 - name: github.com/Masterminds/sprig
-  version: 7ce0a33728d31c4dffbf680589103604f9fbc817
+  version: b1cce20af1bbdac676eec8704716cc3b92779aff
 - name: github.com/Masterminds/vcs
   version: eaee272c8fa4514e1572e182faecff5be20e792a
 - name: github.com/matttproud/golang_protobuf_extensions
