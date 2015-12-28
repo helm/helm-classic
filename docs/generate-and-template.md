@@ -214,7 +214,8 @@ generator plugins:
 
 - All of the named environment variables are available to the plugin.
 - The plugin does _not_ execute in a shell. Thus you cannot expect that
-  implementors will be able to easily redirect STDOUT or STDERR
+  implementors will be able to easily redirect STDOUT or STDERR using
+  shell redirects.
   - It is advised, therefore, that you not write generated output to
    STDOUT, but provide a flag for writing to a file.
   - User-facing output like progress meters _should_ be written to

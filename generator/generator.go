@@ -17,6 +17,10 @@ const GeneratorKeyword = "helm:generate "
 // Walk walks a chart directory and executes generators as it finds them.
 //
 // Returns the number of generators executed.
+//
+// Walking will error out whenever a generator cannot be completely executed.
+// This includes cases such as not finding the generator referenced, and
+// cases where the generator itself exits with a non-zero exit code.
 func Walk(dir string, exclude []string) (int, error) {
 
 	excludes := make(map[string]bool, len(exclude))

@@ -33,7 +33,7 @@ file instead of STDOUT. Writing to the source template file is unsupported.
 `
 
 // tplCmd is the command to handle templating.
-// glide tpl -o dest.txt -d data.toml my_template.tpl
+// helm tpl -o dest.txt -d data.toml my_template.tpl
 var tplCmd = cli.Command{
 	Name:      "template",
 	Aliases:   []string{"tpl"},
