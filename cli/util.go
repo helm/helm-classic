@@ -12,11 +12,6 @@ func home(c *cli.Context) string {
 	return os.ExpandEnv(c.GlobalString("home"))
 }
 
-// repo runs the --repo flag through os.ExpandEnv.
-func repo(c *cli.Context) string {
-	return os.ExpandEnv(c.GlobalString("repo"))
-}
-
 // minArgs checks to see if the right number of args are passed.
 //
 // If not, it prints an error and quits.

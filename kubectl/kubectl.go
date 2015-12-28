@@ -1,12 +1,5 @@
 package kubectl
 
-import (
-	"fmt"
-	"io/ioutil"
-	"os/exec"
-	"strings"
-)
-
 // Path is the path of the kubectl binary
 var Path = "kubectl"
 
@@ -30,14 +23,3 @@ type PrintRunner struct{}
 
 // Client stores the instance of Runner
 var Client Runner = RealRunner{}
-
-func commandToString(cmd *exec.Cmd) string {
-	var stdin string
-
-	if cmd.Stdin != nil {
-		b, _ := ioutil.ReadAll(cmd.Stdin)
-		stdin = fmt.Sprintf("< %s", string(b))
-	}
-
-	return fmt.Sprintf("[CMD] %s %s", strings.Join(cmd.Args, " "), stdin)
-}
