@@ -105,11 +105,3 @@ func (c *Chart) UnknownKinds(known []string) []string {
 
 	return u
 }
-
-func setOriginFile(ann map[string]string, source string) map[string]string {
-	if len(ann) == 0 {
-		return map[string]string{AnnFile: source}
-	}
-	ann[AnnFile] = source
-	return ann
-}

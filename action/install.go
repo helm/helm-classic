@@ -3,7 +3,6 @@ package action
 import (
 	"bytes"
 	"os"
-	"path/filepath"
 
 	"github.com/helm/helm/chart"
 	"github.com/helm/helm/codec"
@@ -74,18 +73,6 @@ func Install(chartName, home, namespace string, force bool, client kubectl.Runne
 	log.Info("Done")
 
 	PrintREADME(chartName, home)
-}
-
-func isSamePath(src, dst string) (bool, error) {
-	a, err := filepath.Abs(dst)
-	if err != nil {
-		return false, err
-	}
-	b, err := filepath.Abs(src)
-	if err != nil {
-		return false, err
-	}
-	return a == b, nil
 }
 
 // uploadManifests sends manifests to Kubectl in a particular order.
