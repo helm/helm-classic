@@ -23,7 +23,7 @@ Details: {{.Details}}
 func Info(chartName, homedir, format string) {
 	r := mustConfig(homedir).Repos
 	table, chartLocal := r.RepoChart(chartName)
-	chartPath := helm.CacheDirectory(homedir, table, chartLocal, "Chart.yaml")
+	chartPath := helm.CacheDirectory(homedir, table, chartLocal, Chartfile)
 
 	if format == "" {
 		format = defaultInfoFormat

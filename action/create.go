@@ -52,7 +52,7 @@ func Create(chartName, homeDir string) {
 	}
 
 	// create Chartfile.yaml
-	if err := chart.Save(filepath.Join(chartDir, "Chart.yaml")); err != nil {
+	if err := chart.Save(filepath.Join(chartDir, Chartfile)); err != nil {
 		log.Die("Could not create Chart.yaml: err", err)
 	}
 

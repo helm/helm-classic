@@ -8,6 +8,12 @@ import (
 	helm "github.com/helm/helm/util"
 )
 
+const (
+	// Chartfile is the name of the YAML file that contains chart metadata.
+	// One must exist inside the top level directory of every chart.
+	Chartfile = "Chart.yaml"
+)
+
 // mustConfig parses a config file or dies trying.
 func mustConfig(homedir string) *config.Configfile {
 	rpath := filepath.Join(homedir, helm.Configfile)

@@ -131,7 +131,7 @@ func marshalAndCreate(o interface{}, ns string, client kubectl.Runner) ([]byte, 
 //
 // This does NOT check the Chart.yaml file.
 func chartFetched(chartName, home string) bool {
-	p := helm.WorkspaceChartDirectory(home, chartName, "Chart.yaml")
+	p := helm.WorkspaceChartDirectory(home, chartName, Chartfile)
 	log.Debug("Looking for %q", p)
 	if fi, err := os.Stat(p); err != nil || fi.IsDir() {
 		log.Debug("No chart: %s", err)

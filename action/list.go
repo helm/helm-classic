@@ -17,7 +17,7 @@ func List(homedir string) {
 	}
 	for _, c := range charts {
 		cname := filepath.Base(c)
-		if ch, err := chart.LoadChartfile(filepath.Join(c, "Chart.yaml")); err == nil {
+		if ch, err := chart.LoadChartfile(filepath.Join(c, Chartfile)); err == nil {
 			log.Info("\t%s (%s %s) - %s", cname, ch.Name, ch.Version, ch.Description)
 			continue
 		}

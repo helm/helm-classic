@@ -26,7 +26,7 @@ func Fetch(chartName, lname, homedir string) {
 
 	fetch(chartName, lname, homedir, repository)
 
-	chartFilePath := helm.WorkspaceChartDirectory(homedir, lname, "Chart.yaml")
+	chartFilePath := helm.WorkspaceChartDirectory(homedir, lname, Chartfile)
 	cfile, err := chart.LoadChartfile(chartFilePath)
 	if err != nil {
 		log.Die("Source is not a valid chart. Missing Chart.yaml: %s", err)
@@ -74,12 +74,12 @@ func fetch(chartName, lname, homedir, chartpath string) {
 }
 
 func updateChartfile(src, dest, lname string) error {
-	sc, err := chart.LoadChartfile(filepath.Join(src, "Chart.yaml"))
+	sc, err := chart.LoadChartfile(filepath.Join(src, Chartfile))
 	if err != nil {
 		return err
 	}
 
-	dc, err := chart.LoadChartfile(filepath.Join(dest, "Chart.yaml"))
+	dc, err := chart.LoadChartfile(filepath.Join(dest, Chartfile))
 	if err != nil {
 		return err
 	}
@@ -91,5 +91,5 @@ func updateChartfile(src, dest, lname string) error {
 		Repo:    chart.RepoName(src),
 	}
 
-	return dc.Save(filepath.Join(dest, "Chart.yaml"))
+	return dc.Save(filepath.Join(dest, Chartfile))
 }

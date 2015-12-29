@@ -126,7 +126,7 @@ func checkDirectoryStructure(structure map[string]os.FileInfo, chartPath string,
 func verifyMetadata(chartPath string, v *Validation) {
 	var y *chart.Chartfile
 
-	file := filepath.Join(chartPath, "Chart.yaml")
+	file := filepath.Join(chartPath, Chartfile)
 	b, err := ioutil.ReadFile(file)
 
 	if err != nil {
@@ -195,7 +195,7 @@ func verifyChartNameUnique(chartName string, v *Validation) {
 		RepoService = github.NewClient(nil).Repositories
 	}
 
-	chartPath := filepath.Join(chartName, "Chart.yaml")
+	chartPath := filepath.Join(chartName, Chartfile)
 
 	if _, err := RepoService.DownloadContents(Owner, Project, chartPath, nil); err == nil {
 		v.AddWarning(fmt.Sprintf("Chart name %s already exists in charts repository [github.com/helm/charts]. If you're planning on submitting this chart to the charts repo, please consider changing the chart name.", chartName))
