@@ -65,6 +65,20 @@ func TestLintMissingChartYaml(t *testing.T) {
 	test.ExpectContains(t, output, "Chart [badChart] failed some checks")
 }
 
+func TestLintMismatchedChartNameAndDir(t *testing.T) {
+	tmpHome := test.CreateTmpHome()
+	chartName := "chart-0"
+	chartDir := "chart-1"
+	chart := newSkelChartfile(chartName)
+	createWithChart(chart, chartDir, tmpHome)
+
+	output := test.CaptureOutput(func() {
+		Lint(util.WorkspaceChartDirectory(tmpHome, chartDir))
+	})
+
+	test.ExpectContains(t, output, fmt.Sprintf("Chart.yaml name (%s) is not the same as its directory (%s)", chartName, chartDir))
+}
+
 func TestLintMissingManifestDirectory(t *testing.T) {
 	tmpHome := test.CreateTmpHome()
 	test.FakeUpdate(tmpHome)

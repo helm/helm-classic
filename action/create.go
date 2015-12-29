@@ -42,8 +42,11 @@ spec:
 // - chartName being created
 // - homeDir is the helm home directory for the user
 func Create(chartName, homeDir string) {
-
 	chart := newSkelChartfile(chartName)
+	createWithChart(chart, chartName, homeDir)
+}
+
+func createWithChart(chart *chart.Chartfile, chartName, homeDir string) {
 	chartDir := helm.WorkspaceChartDirectory(homeDir, chartName)
 
 	// create directories

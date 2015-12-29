@@ -127,6 +127,7 @@ func verifyMetadata(chartPath string, v *Validation) {
 	var y *chart.Chartfile
 
 	file := filepath.Join(chartPath, Chartfile)
+	chartDir := filepath.Base(chartPath)
 	b, err := ioutil.ReadFile(file)
 
 	if err != nil {
@@ -142,6 +143,9 @@ func verifyMetadata(chartPath string, v *Validation) {
 	// require name, version, description, maintaners
 	if y.Name == "" {
 		v.AddError("Missing Name specification in Chart.yaml file")
+	}
+	if y.Name != chartDir {
+		v.AddError(fmt.Sprintf("Chart.yaml name (%s) is not the same as its directory (%s)", y.Name, chartDir))
 	}
 	if y.Version == "" {
 		v.AddError("Missing Version specification in Chart.yaml file")
