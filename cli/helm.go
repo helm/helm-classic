@@ -81,6 +81,8 @@ func Cli() *cli.App {
 		targetCmd,
 		uninstallCmd,
 		updateCmd,
+		generateCmd,
+		tplCmd,
 	}
 
 	app.CommandNotFound = func(c *cli.Context, command string) {

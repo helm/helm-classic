@@ -1,0 +1,8 @@
+name: generate
+home: http://github.com/helm/charts
+version: 0.0.1
+description: Witness the power of this fully operational battlestation.
+maintainers:
+  - Notta Moon <info@deis.com>
+details:
+  This package exhibits template support.

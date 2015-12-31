@@ -7,6 +7,7 @@ DIST_DIR := _dist
 GO_PACKAGES := action chart config dependency log manifest release plugins/sec plugins/example codec
 MAIN_GO := helm.go
 HELM_BIN := $(BIN_DIR)/helm
+PATH_WITH_HELM = PATH="$(shell pwd)/$(BIN_DIR):$(PATH)"
 
 VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null)+$(shell git rev-parse --short HEAD)
 
@@ -53,10 +54,10 @@ else
 endif
 
 quicktest:
-	go test -short ./ $(addprefix ./,$(GO_PACKAGES))
+	$(PATH_WITH_HELM) go test -short ./ $(addprefix ./,$(GO_PACKAGES))
 
 test: test-style
-	go test -v ./ $(addprefix ./,$(GO_PACKAGES))
+	$(PATH_WITH_HELM) go test -v ./ $(addprefix ./,$(GO_PACKAGES))
 
 test-style:
 	@if [ $(shell gofmt -e -l -s *.go $(GO_PACKAGES)) ]; then \

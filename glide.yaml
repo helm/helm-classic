@@ -14,10 +14,15 @@ import:
   subpackages:
   - /pkg
 - package: speter.net/go/exp/math/dec/inf
+  version: 42ca6cd68aa922bc3f32f1e056e61b65945d9ad7
 - package: golang.org/x/crypto
+  version: master
 - package: github.com/aokoli/goutils
+  version: master
 - package: github.com/pborman/uuid
+  version: master
 - package: gopkg.in/yaml.v2
+  version: master
 - package: github.com/google/go-querystring
 - package: github.com/google/go-github
   version: 81d0490d8aa8400f6760a077f4a2039eb0296e86
@@ -27,3 +32,5 @@ import:
   repo: https://github.com/go-check/check
 - package: code.google.com/p/goprotobuf
   repo: https://github.com/golang/protobuf
+- package: github.com/Masterminds/sprig
+  version: ">= 1.0.0"
