@@ -1,4 +1,4 @@
-package action
+package validation
 
 // Validation - hold messages related to validation of something
 type Validation struct {
