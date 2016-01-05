@@ -12,6 +12,7 @@ import (
 	"github.com/helm/helm/log"
 	"github.com/helm/helm/manifest"
 	"github.com/helm/helm/util"
+	"github.com/helm/helm/validation"
 	"gopkg.in/yaml.v2"
 )
 
@@ -52,7 +53,7 @@ func LintAll(homedir string) {
 //
 // - chartPath path to chart directory
 func Lint(chartPath string) {
-	v := new(Validation)
+	v := new(validation.Validation)
 	chartName := filepath.Base(chartPath)
 
 	//makes sure all files are in place
@@ -87,7 +88,7 @@ func Lint(chartPath string) {
 	}
 }
 
-func directoryStructure(chartPath string, v *Validation) map[string]os.FileInfo {
+func directoryStructure(chartPath string, v *validation.Validation) map[string]os.FileInfo {
 	structure := make(map[string]os.FileInfo)
 
 	chartInfo, err := os.Stat(chartPath)
@@ -108,7 +109,7 @@ func directoryStructure(chartPath string, v *Validation) map[string]os.FileInfo 
 	return structure
 }
 
-func checkDirectoryStructure(structure map[string]os.FileInfo, chartPath string, v *Validation) {
+func checkDirectoryStructure(structure map[string]os.FileInfo, chartPath string, v *validation.Validation) {
 	if _, ok := structure["README.md"]; ok != true {
 		v.AddWarning(fmt.Sprintf("A README file was not found in %s", chartPath))
 	}
@@ -123,7 +124,7 @@ func checkDirectoryStructure(structure map[string]os.FileInfo, chartPath string,
 }
 
 // verifyMetadata checks the Chart.yaml file for a Name, Version, Description, and Maintainers
-func verifyMetadata(chartPath string, v *Validation) {
+func verifyMetadata(chartPath string, v *validation.Validation) {
 	var y *chart.Chartfile
 
 	file := filepath.Join(chartPath, Chartfile)
@@ -158,7 +159,7 @@ func verifyMetadata(chartPath string, v *Validation) {
 	}
 }
 
-func verifyManifests(chartPath string, v *Validation) {
+func verifyManifests(chartPath string, v *validation.Validation) {
 	manifests, err := manifest.ParseDir(chartPath)
 
 	if err != nil {
@@ -194,7 +195,7 @@ func validKind(kind string, validKinds []string) bool {
 	return false
 }
 
-func verifyChartNameUnique(chartName string, v *Validation) {
+func verifyChartNameUnique(chartName string, v *validation.Validation) {
 	if RepoService == nil {
 		RepoService = github.NewClient(nil).Repositories
 	}
