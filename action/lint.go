@@ -90,6 +90,13 @@ func Lint(chartPath string) {
 		return err == nil && chartfile.Maintainers != nil
 	})
 
+	cv.AddWarning("README.md is present", func(path string, v *validation.Validation) bool {
+		readmePath := filepath.Join(path, "README.md")
+		stat, err := os.Stat(readmePath)
+
+		return err == nil && stat.Mode().IsRegular()
+	})
+
 	if cv.Valid() {
 		log.Info("Chart[%s] has passed all necessary checks", cv.ChartName())
 	} else {
