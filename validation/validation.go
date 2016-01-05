@@ -23,7 +23,7 @@ const (
 // Validation - hold messages related to validation of something
 type Validation struct {
 	children  []*Validation
-	path      string
+	Path      string
 	validator validator
 	Message   string
 	level     int
@@ -31,7 +31,12 @@ type Validation struct {
 
 //ChartYamlPath - path to Chart.yaml
 func (v *Validation) ChartYamlPath() string {
-	return filepath.Join(v.path, "Chart.yaml")
+	return filepath.Join(v.Path, "Chart.yaml")
+}
+
+//ChartManifestsPath - path to Manifests directory
+func (v *Validation) ChartManifestsPath() string {
+	return filepath.Join(v.Path, "Manifests")
 }
 
 func (v *Validation) Chartfile() (*chart.Chartfile, error) {
@@ -65,7 +70,7 @@ func (cv *ChartValidation) AddError(message string, fn validator) *Validation {
 	v.Message = message
 	v.validator = fn
 	v.level = errorLevel
-	v.path = cv.Path
+	v.Path = cv.Path
 
 	cv.addValidator(v)
 
@@ -78,7 +83,7 @@ func (cv *ChartValidation) AddWarning(message string, fn validator) *Validation 
 	v.Message = message
 	v.validator = fn
 	v.level = warningLevel
-	v.path = cv.Path
+	v.Path = cv.Path
 
 	cv.addValidator(v)
 
@@ -91,7 +96,7 @@ func (v *Validation) AddError(message string, fn validator) *Validation {
 	child.Message = message
 	child.validator = fn
 	child.level = errorLevel
-	child.path = v.path
+	child.Path = v.Path
 
 	v.addValidator(child)
 
@@ -104,7 +109,7 @@ func (v *Validation) AddWarning(message string, fn validator) *Validation {
 	child.Message = message
 	child.validator = fn
 	child.level = warningLevel
-	child.path = v.path
+	child.Path = v.Path
 
 	v.addValidator(child)
 
@@ -116,7 +121,7 @@ func (cv *ChartValidation) ChartName() string {
 }
 
 func (v *Validation) valid() bool {
-	return v.validator(v.path, v)
+	return v.validator(v.Path, v)
 }
 
 func (v *Validation) walk(talker func(_ *Validation) bool) {

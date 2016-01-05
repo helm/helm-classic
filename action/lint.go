@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/go-github/github"
 	"github.com/helm/helm/log"
+	"github.com/helm/helm/manifest"
 	"github.com/helm/helm/util"
 	"github.com/helm/helm/validation"
 )
@@ -95,6 +96,67 @@ func Lint(chartPath string) {
 		stat, err := os.Stat(readmePath)
 
 		return err == nil && stat.Mode().IsRegular()
+	})
+
+	manifestsValidation := cv.AddError("Manifests directory is present", func(path string, v *validation.Validation) bool {
+		stat, err := os.Stat(v.ChartManifestsPath())
+
+		return err == nil && stat.Mode().IsDir()
+	})
+
+	manifestsParsingValidation := manifestsValidation.AddError("Manifests are valid yaml", func(path string, v *validation.Validation) bool {
+		manifests, err := manifest.ParseDir(v.Path)
+
+		return err == nil && manifests != nil
+	})
+
+	manifestsParsingValidation.AddError("Manifests have correct metadata and are valid kinds of manifests", func(path string, v *validation.Validation) bool {
+		manifests, manifestErr := manifest.ParseDir(v.Path)
+		if manifestErr != nil {
+			return false
+		}
+
+		for _, m := range manifests {
+			meta, _ := m.VersionedObject.Meta()
+			if meta.Name == "" {
+				return false
+			}
+
+			val, ok := meta.Labels["heritage"]
+			if !ok || (val != "helm") {
+				return false
+			}
+		}
+
+		return true
+	})
+
+	manifestsParsingValidation.AddError("Manifests are valid kinds of manifests", func(path string, v *validation.Validation) bool {
+		manifests, manifestErr := manifest.ParseDir(v.Path)
+		if manifestErr != nil {
+			return false
+		}
+
+		var result bool = true
+
+		validKinds := InstallOrder
+		for _, m := range manifests {
+			meta, _ := m.VersionedObject.Meta()
+			kind := meta.Kind
+			validManifestKind := false
+
+			for _, validKind := range validKinds {
+				if kind == validKind {
+					validManifestKind = true
+				}
+			}
+
+			if validManifestKind == false {
+				result = false
+			}
+		}
+
+		return result
 	})
 
 	if cv.Valid() {
