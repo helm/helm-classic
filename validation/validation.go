@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/helm/helm/chart"
+	"github.com/helm/helm/manifest"
 	"gopkg.in/yaml.v2"
 )
 
@@ -13,6 +14,8 @@ import (
 type ChartValidation struct {
 	Path        string
 	Validations []*Validation
+	Chartfile   *chart.Chartfile
+	Manifests   []*manifest.Manifest
 }
 
 const (
@@ -36,7 +39,7 @@ func (v *Validation) ChartYamlPath() string {
 
 //ChartManifestsPath - path to Manifests directory
 func (v *Validation) ChartManifestsPath() string {
-	return filepath.Join(v.Path, "Manifests")
+	return filepath.Join(v.Path, "manifests")
 }
 
 func (v *Validation) Chartfile() (*chart.Chartfile, error) {

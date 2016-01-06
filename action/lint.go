@@ -54,41 +54,39 @@ func Lint(chartPath string) {
 
 	//TODO: chartPresenceValidation := v.AddError("Chart found", func(path string, v *ChartValidation) bool { }
 
-	chartYamlValidation := cv.AddError("Chart.yaml is present", func(path string, v *validation.Validation) bool {
+	chartYamlPresenceValidation := cv.AddError("Chart.yaml is present", func(path string, v *validation.Validation) bool {
 		stat, err := os.Stat(v.ChartYamlPath())
 
 		return err == nil && stat.Mode().IsRegular()
 	})
 
-	chartYamlNameValidation := chartYamlValidation.AddError("Chart.yaml has a name field", func(path string, v *validation.Validation) bool {
+	chartYamlValidation := chartYamlPresenceValidation.AddError("Chart.yaml is valid yaml", func(path string, v *validation.Validation) bool {
 		chartfile, err := v.Chartfile()
+		if err == nil {
+			cv.Chartfile = chartfile
+		}
 
-		return err == nil && chartfile.Name != ""
+		return err == nil
+	})
+
+	chartYamlNameValidation := chartYamlValidation.AddError("Chart.yaml has a name field", func(path string, v *validation.Validation) bool {
+		return cv.Chartfile.Name != ""
 	})
 
 	chartYamlNameValidation.AddError("Name declared in Chart.yaml is the same as chart name.", func(path string, v *validation.Validation) bool {
-		chartfile, err := v.Chartfile()
-
-		return err == nil && chartfile.Name == cv.ChartName()
-
+		return cv.Chartfile.Name == cv.ChartName()
 	})
 
 	chartYamlValidation.AddError("Chart.yaml has a version field", func(path string, v *validation.Validation) bool {
-		chartfile, err := v.Chartfile()
-
-		return err == nil && chartfile.Version != ""
+		return cv.Chartfile.Version != ""
 	})
 
 	chartYamlValidation.AddWarning("Chart.yaml has a description field", func(path string, v *validation.Validation) bool {
-		chartfile, err := v.Chartfile()
-
-		return err == nil && chartfile.Description != ""
+		return cv.Chartfile.Description != ""
 	})
 
 	chartYamlValidation.AddWarning("Chart.yaml has a maintainers field", func(path string, v *validation.Validation) bool {
-		chartfile, err := v.Chartfile()
-
-		return err == nil && chartfile.Maintainers != nil
+		return cv.Chartfile.Maintainers != nil
 	})
 
 	cv.AddWarning("README.md is present", func(path string, v *validation.Validation) bool {
@@ -105,43 +103,30 @@ func Lint(chartPath string) {
 	})
 
 	manifestsParsingValidation := manifestsValidation.AddError("Manifests are valid yaml", func(path string, v *validation.Validation) bool {
-		manifests, err := manifest.ParseDir(v.Path)
-
-		return err == nil && manifests != nil
-	})
-
-	manifestsParsingValidation.AddError("Manifests have correct metadata and are valid kinds of manifests", func(path string, v *validation.Validation) bool {
-		manifests, manifestErr := manifest.ParseDir(v.Path)
-		if manifestErr != nil {
-			return false
+		manifests, err := manifest.ParseDir(cv.Path)
+		if err == nil {
+			cv.Manifests = manifests
 		}
 
-		for _, m := range manifests {
+		return err == nil && cv.Manifests != nil
+	})
+
+	manifestsParsingValidation.AddError("Manifests have correct and valid metadata", func(path string, v *validation.Validation) bool {
+
+		success := true
+		validKinds := InstallOrder
+
+		for _, m := range cv.Manifests {
 			meta, _ := m.VersionedObject.Meta()
 			if meta.Name == "" {
-				return false
+				success = false
 			}
 
 			val, ok := meta.Labels["heritage"]
 			if !ok || (val != "helm") {
-				return false
+				success = false
 			}
-		}
 
-		return true
-	})
-
-	manifestsParsingValidation.AddError("Manifests are valid kinds of manifests", func(path string, v *validation.Validation) bool {
-		manifests, manifestErr := manifest.ParseDir(v.Path)
-		if manifestErr != nil {
-			return false
-		}
-
-		var result bool = true
-
-		validKinds := InstallOrder
-		for _, m := range manifests {
-			meta, _ := m.VersionedObject.Meta()
 			kind := meta.Kind
 			validManifestKind := false
 
@@ -152,11 +137,11 @@ func Lint(chartPath string) {
 			}
 
 			if validManifestKind == false {
-				result = false
+				success = false
 			}
 		}
 
-		return result
+		return success
 	})
 
 	if cv.Valid() {
