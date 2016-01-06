@@ -50,11 +50,15 @@ func LintAll(homedir string) {
 // - chartPath path to chart directory
 func Lint(chartPath string) {
 	cv := new(validation.ChartValidation)
-	cv.Path = chartPath
 
-	//TODO: chartPresenceValidation := v.AddError("Chart found", func(path string, v *ChartValidation) bool { }
+	chartPresenceValidation := cv.AddError("Chart found at "+chartPath, func(path string, v *validation.Validation) bool {
+		stat, err := os.Stat(chartPath)
+		cv.Path = chartPath
 
-	chartYamlPresenceValidation := cv.AddError("Chart.yaml is present", func(path string, v *validation.Validation) bool {
+		return err == nil && stat.Mode().IsDir()
+	})
+
+	chartYamlPresenceValidation := chartPresenceValidation.AddError("Chart.yaml is present", func(path string, v *validation.Validation) bool {
 		stat, err := os.Stat(v.ChartYamlPath())
 
 		return err == nil && stat.Mode().IsRegular()
@@ -73,7 +77,7 @@ func Lint(chartPath string) {
 		return cv.Chartfile.Name != ""
 	})
 
-	chartYamlNameValidation.AddError("Name declared in Chart.yaml is the same as chart name.", func(path string, v *validation.Validation) bool {
+	chartYamlNameValidation.AddError("Name declared in Chart.yaml is the same as directory name.", func(path string, v *validation.Validation) bool {
 		return cv.Chartfile.Name == cv.ChartName()
 	})
 
@@ -89,14 +93,14 @@ func Lint(chartPath string) {
 		return cv.Chartfile.Maintainers != nil
 	})
 
-	cv.AddWarning("README.md is present", func(path string, v *validation.Validation) bool {
+	chartPresenceValidation.AddWarning("README.md is present", func(path string, v *validation.Validation) bool {
 		readmePath := filepath.Join(path, "README.md")
 		stat, err := os.Stat(readmePath)
 
 		return err == nil && stat.Mode().IsRegular()
 	})
 
-	manifestsValidation := cv.AddError("Manifests directory is present", func(path string, v *validation.Validation) bool {
+	manifestsValidation := chartPresenceValidation.AddError("Manifests directory is present", func(path string, v *validation.Validation) bool {
 		stat, err := os.Stat(v.ChartManifestsPath())
 
 		return err == nil && stat.Mode().IsDir()
@@ -145,8 +149,12 @@ func Lint(chartPath string) {
 	})
 
 	if cv.Valid() {
-		log.Info("Chart[%s] has passed all necessary checks", cv.ChartName())
+		log.Info("Chart [%s] has passed all necessary checks", cv.ChartName())
 	} else {
-		log.Err("Chart [%s] is not completely valid", cv.ChartName())
+		if cv.ErrorCount > 0 {
+			log.Err("Chart [%s] has failed some necessary checks. Check out the error and warning messages listed.", cv.ChartName())
+		} else {
+			log.Warn("Chart [%s] has passed all necessary checks but failed some checks as well. Proceed with caution. Check out the warnings listed.", cv.ChartName())
+		}
 	}
 }

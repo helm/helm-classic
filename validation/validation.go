@@ -4,29 +4,33 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"strconv"
 
 	"github.com/helm/helm/chart"
+	"github.com/helm/helm/log"
 	"github.com/helm/helm/manifest"
 	"gopkg.in/yaml.v2"
 )
 
 // ChartValidation represents a specific instance of validation against a specific directory
 type ChartValidation struct {
-	Path        string
-	Validations []*Validation
-	Chartfile   *chart.Chartfile
-	Manifests   []*manifest.Manifest
+	Path         string
+	Validations  []*Validation
+	Chartfile    *chart.Chartfile
+	Manifests    []*manifest.Manifest
+	ErrorCount   int
+	WarningCount int
 }
 
 const (
-	warningLevel = 0
-	errorLevel   = 1
+	warningLevel = 1
+	errorLevel   = 2
 )
 
 // Validation - hold messages related to validation of something
 type Validation struct {
 	children  []*Validation
-	Path      string
+	path      string
 	validator validator
 	Message   string
 	level     int
@@ -34,12 +38,12 @@ type Validation struct {
 
 //ChartYamlPath - path to Chart.yaml
 func (v *Validation) ChartYamlPath() string {
-	return filepath.Join(v.Path, "Chart.yaml")
+	return filepath.Join(v.path, "Chart.yaml")
 }
 
 //ChartManifestsPath - path to Manifests directory
 func (v *Validation) ChartManifestsPath() string {
-	return filepath.Join(v.Path, "manifests")
+	return filepath.Join(v.path, "manifests")
 }
 
 func (v *Validation) Chartfile() (*chart.Chartfile, error) {
@@ -73,7 +77,7 @@ func (cv *ChartValidation) AddError(message string, fn validator) *Validation {
 	v.Message = message
 	v.validator = fn
 	v.level = errorLevel
-	v.Path = cv.Path
+	v.path = cv.Path
 
 	cv.addValidator(v)
 
@@ -86,7 +90,7 @@ func (cv *ChartValidation) AddWarning(message string, fn validator) *Validation 
 	v.Message = message
 	v.validator = fn
 	v.level = warningLevel
-	v.Path = cv.Path
+	v.path = cv.Path
 
 	cv.addValidator(v)
 
@@ -99,7 +103,7 @@ func (v *Validation) AddError(message string, fn validator) *Validation {
 	child.Message = message
 	child.validator = fn
 	child.level = errorLevel
-	child.Path = v.Path
+	child.path = v.path
 
 	v.addValidator(child)
 
@@ -112,7 +116,7 @@ func (v *Validation) AddWarning(message string, fn validator) *Validation {
 	child.Message = message
 	child.validator = fn
 	child.level = warningLevel
-	child.Path = v.Path
+	child.path = v.path
 
 	v.addValidator(child)
 
@@ -124,7 +128,7 @@ func (cv *ChartValidation) ChartName() string {
 }
 
 func (v *Validation) valid() bool {
-	return v.validator(v.Path, v)
+	return v.validator(v.path, v)
 }
 
 func (v *Validation) walk(talker func(_ *Validation) bool) {
@@ -147,11 +151,28 @@ func (cv *ChartValidation) walk(talker func(v *Validation) bool) {
 func (cv *ChartValidation) Valid() bool {
 	var valid bool = true
 
+	fmt.Printf("\nVerifying %s chart is a valid chart...\n", cv.ChartName())
 	cv.walk(func(v *Validation) bool {
+		v.path = cv.Path
 		vv := v.valid()
-		fmt.Println(fmt.Sprintf(v.Message+" : %v", vv))
+		if !vv {
+			switch v.level {
+			case 2:
+				cv.ErrorCount = cv.ErrorCount + 1
+				msg := v.Message + " : " + strconv.FormatBool(vv)
+				log.Err(msg)
+			case 1:
+				cv.WarningCount = cv.WarningCount + 1
+				msg := v.Message + " : " + strconv.FormatBool(vv)
+				log.Warn(msg)
+			}
+		} else {
+			msg := v.Message + " : " + strconv.FormatBool(vv)
+			log.Info(msg)
+		}
+
 		valid = valid && vv
-		return valid
+		return valid // TODO:unnecessary?
 	})
 
 	return valid
