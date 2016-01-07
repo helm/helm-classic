@@ -44,7 +44,7 @@ func TestLintMissingReadme(t *testing.T) {
 		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
-	test.ExpectContains(t, output, "A README file was not found")
+	test.ExpectContains(t, output, "README.md is present and not empty : false")
 }
 
 func TestLintMissingChartYaml(t *testing.T) {
@@ -61,8 +61,8 @@ func TestLintMissingChartYaml(t *testing.T) {
 		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
-	test.ExpectContains(t, output, "A Chart.yaml file was not found")
-	test.ExpectContains(t, output, "Chart [badChart] failed some checks")
+	test.ExpectContains(t, output, "Chart.yaml is present : false")
+	test.ExpectContains(t, output, "Chart [badChart] has failed some necessary checks.")
 }
 
 func TestLintMismatchedChartNameAndDir(t *testing.T) {
@@ -76,7 +76,7 @@ func TestLintMismatchedChartNameAndDir(t *testing.T) {
 		Lint(util.WorkspaceChartDirectory(tmpHome, chartDir))
 	})
 
-	test.ExpectContains(t, output, fmt.Sprintf("Chart.yaml name (%s) is not the same as its directory (%s)", chartName, chartDir))
+	test.ExpectContains(t, output, "Name declared in Chart.yaml is the same as directory name. : false")
 }
 
 func TestLintMissingManifestDirectory(t *testing.T) {
@@ -93,8 +93,8 @@ func TestLintMissingManifestDirectory(t *testing.T) {
 		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
-	test.ExpectMatches(t, output, fmt.Sprintf("A manifests directory was not found.*%s", chartName))
-	test.ExpectContains(t, output, fmt.Sprintf("Chart [%s] failed some checks", chartName))
+	test.ExpectMatches(t, output, "Manifests directory is present : false")
+	test.ExpectContains(t, output, "Chart ["+chartName+"] has failed some necessary checks")
 }
 
 func TestLintEmptyChartYaml(t *testing.T) {
@@ -116,11 +116,11 @@ func TestLintEmptyChartYaml(t *testing.T) {
 		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
-	test.ExpectContains(t, output, "Missing Name specification in Chart.yaml file")
-	test.ExpectContains(t, output, "Missing Version specification in Chart.yaml file")
-	test.ExpectContains(t, output, "Missing description in Chart.yaml file")
-	test.ExpectContains(t, output, "Missing maintainers information in Chart.yaml file")
-	test.ExpectContains(t, output, fmt.Sprintf("Chart [%s] failed some checks", chartName))
+	test.ExpectContains(t, output, "Chart.yaml has a name field : false")
+	test.ExpectContains(t, output, "Chart.yaml has a version field : false")
+	test.ExpectContains(t, output, "Chart.yaml has a description field : false")
+	test.ExpectContains(t, output, "Chart.yaml has a maintainers field : false")
+	test.ExpectContains(t, output, fmt.Sprintf("Chart [%s] has failed some necessary checks", chartName))
 }
 
 func TestLintBadPath(t *testing.T) {
@@ -131,5 +131,6 @@ func TestLintBadPath(t *testing.T) {
 		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
-	test.ExpectContains(t, output, chartName+" not found in workspace")
+	msg := "Chart found at " + tmpHome + "/workspace/charts/" + chartName + " : false"
+	test.ExpectContains(t, output, msg)
 }
