@@ -12,7 +12,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// ChartValidation represents a specific instance of validation against a specific directory
+// ChartValidation represents a specific instance of validation against a specific directory.
 type ChartValidation struct {
 	Path         string
 	Validations  []*Validation
@@ -27,7 +27,7 @@ const (
 	errorLevel   = 2
 )
 
-// Validation - hold messages related to validation of something
+// Validation represents a single validation of a ChartValidation.
 type Validation struct {
 	children  []*Validation
 	path      string
@@ -36,16 +36,17 @@ type Validation struct {
 	level     int
 }
 
-//ChartYamlPath - path to Chart.yaml
+// ChartYamlPath returns the fully qualified path to the "Chart.yaml" file.
 func (v *Validation) ChartYamlPath() string {
 	return filepath.Join(v.path, "Chart.yaml")
 }
 
-//ChartManifestsPath - path to Manifests directory
+// ChartManifestsPath returns the fully qualified path to the "Manifests" directory.
 func (v *Validation) ChartManifestsPath() string {
 	return filepath.Join(v.path, "manifests")
 }
 
+// Charfile returns a chart.Chartfile object formed from the Chart.yaml file.
 func (v *Validation) Chartfile() (*chart.Chartfile, error) {
 	var y *chart.Chartfile
 	b, err := ioutil.ReadFile(v.ChartYamlPath())
@@ -71,7 +72,7 @@ func (v *Validation) addValidator(child *Validation) {
 	v.children = append(v.children, child)
 }
 
-// AddError - add error level validation to ChartValidation
+// AddError adds error level validation to a ChartValidation.
 func (cv *ChartValidation) AddError(message string, fn validator) *Validation {
 	v := new(Validation)
 	v.Message = message
@@ -84,7 +85,7 @@ func (cv *ChartValidation) AddError(message string, fn validator) *Validation {
 	return v
 }
 
-// AddWarning - add warning level validation to ChartValidation
+// AddWarning adds a warning level validation to a ChartValidation
 func (cv *ChartValidation) AddWarning(message string, fn validator) *Validation {
 	v := new(Validation)
 	v.Message = message
@@ -97,7 +98,7 @@ func (cv *ChartValidation) AddWarning(message string, fn validator) *Validation 
 	return v
 }
 
-// AddError - add error level validation to Validation
+// AddError adds an error level validation to a Validation.
 func (v *Validation) AddError(message string, fn validator) *Validation {
 	child := new(Validation)
 	child.Message = message
@@ -110,7 +111,7 @@ func (v *Validation) AddError(message string, fn validator) *Validation {
 	return child
 }
 
-// AddWarning - add warning level validation to Validation
+// AddWarning adds a warning level validation to a Validation.
 func (v *Validation) AddWarning(message string, fn validator) *Validation {
 	child := new(Validation)
 	child.Message = message
@@ -123,6 +124,7 @@ func (v *Validation) AddWarning(message string, fn validator) *Validation {
 	return child
 }
 
+// ChartName returns the name of the chart directory.
 func (cv *ChartValidation) ChartName() string {
 	return filepath.Base(cv.Path)
 }
@@ -147,7 +149,7 @@ func (cv *ChartValidation) walk(talker func(v *Validation) bool) {
 	}
 }
 
-// Valid - true if every validation passes
+// Valid returns true if every validation passes.
 func (cv *ChartValidation) Valid() bool {
 	var valid bool = true
 
@@ -172,7 +174,7 @@ func (cv *ChartValidation) Valid() bool {
 		}
 
 		valid = valid && vv
-		return valid // TODO:unnecessary?
+		return valid
 	})
 
 	return valid
