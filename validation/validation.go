@@ -31,7 +31,7 @@ const (
 type Validation struct {
 	children  []*Validation
 	path      string
-	validator validator
+	validator Validator
 	Message   string
 	level     int
 }
@@ -62,7 +62,8 @@ func (v *Validation) Chartfile() (*chart.Chartfile, error) {
 	return y, nil
 }
 
-type validator func(path string, v *Validation) (result bool)
+// Validator is a declared function that returns the result of a Validation.
+type Validator func(path string, v *Validation) (result bool)
 
 func (cv *ChartValidation) addValidator(v *Validation) {
 	cv.Validations = append(cv.Validations, v)
@@ -73,7 +74,7 @@ func (v *Validation) addValidator(child *Validation) {
 }
 
 // AddError adds error level validation to a ChartValidation.
-func (cv *ChartValidation) AddError(message string, fn validator) *Validation {
+func (cv *ChartValidation) AddError(message string, fn Validator) *Validation {
 	v := new(Validation)
 	v.Message = message
 	v.validator = fn
@@ -86,7 +87,7 @@ func (cv *ChartValidation) AddError(message string, fn validator) *Validation {
 }
 
 // AddWarning adds a warning level validation to a ChartValidation
-func (cv *ChartValidation) AddWarning(message string, fn validator) *Validation {
+func (cv *ChartValidation) AddWarning(message string, fn Validator) *Validation {
 	v := new(Validation)
 	v.Message = message
 	v.validator = fn
@@ -99,7 +100,7 @@ func (cv *ChartValidation) AddWarning(message string, fn validator) *Validation 
 }
 
 // AddError adds an error level validation to a Validation.
-func (v *Validation) AddError(message string, fn validator) *Validation {
+func (v *Validation) AddError(message string, fn Validator) *Validation {
 	child := new(Validation)
 	child.Message = message
 	child.validator = fn
@@ -112,7 +113,7 @@ func (v *Validation) AddError(message string, fn validator) *Validation {
 }
 
 // AddWarning adds a warning level validation to a Validation.
-func (v *Validation) AddWarning(message string, fn validator) *Validation {
+func (v *Validation) AddWarning(message string, fn Validator) *Validation {
 	child := new(Validation)
 	child.Message = message
 	child.validator = fn
@@ -133,7 +134,7 @@ func (v *Validation) valid() bool {
 	return v.validator(v.path, v)
 }
 
-func (v *Validation) walk(talker func(_ *Validation) bool) {
+func (v *Validation) walk(talker func(*Validation) bool) {
 	validResult := talker(v)
 
 	if validResult {
