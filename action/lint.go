@@ -93,11 +93,11 @@ func Lint(chartPath string) {
 		return cv.Chartfile.Maintainers != nil
 	})
 
-	chartPresenceValidation.AddWarning("README.md is present", func(path string, v *validation.Validation) bool {
+	chartPresenceValidation.AddWarning("README.md is present and not empty", func(path string, v *validation.Validation) bool {
 		readmePath := filepath.Join(path, "README.md")
 		stat, err := os.Stat(readmePath)
 
-		return err == nil && stat.Mode().IsRegular()
+		return err == nil && stat.Mode().IsRegular() && stat.Size() > 0
 	})
 
 	manifestsValidation := chartPresenceValidation.AddError("Manifests directory is present", func(path string, v *validation.Validation) bool {
@@ -115,7 +115,7 @@ func Lint(chartPath string) {
 		return err == nil && cv.Manifests != nil
 	})
 
-	manifestsParsingValidation.AddError("Manifests have correct and valid metadata", func(path string, v *validation.Validation) bool {
+	manifestsParsingValidation.AddWarning("Manifests have correct and valid metadata", func(path string, v *validation.Validation) bool {
 
 		success := true
 		validKinds := InstallOrder

@@ -44,7 +44,7 @@ func TestLintMissingReadme(t *testing.T) {
 		Lint(util.WorkspaceChartDirectory(tmpHome, chartName))
 	})
 
-	test.ExpectContains(t, output, "README.md is present : false")
+	test.ExpectContains(t, output, "README.md is present and not empty : false")
 }
 
 func TestLintMissingChartYaml(t *testing.T) {
