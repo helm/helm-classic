@@ -12,11 +12,13 @@ import (
 	"github.com/helm/helm/validation"
 )
 
-// Owner is default Helm repository owner or organization.
-var Owner = "helm"
+const (
+	// Owner is default Helm repository owner or organization.
+	Owner = "helm"
 
-// Project is the default Charts repository name.
-var Project = "charts"
+	// Project is the default Charts repository name.
+	Project = "charts"
+)
 
 // RepoService is a GitHub client instance.
 var RepoService GHRepoService
