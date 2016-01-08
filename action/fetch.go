@@ -53,9 +53,18 @@ func fetch(chartName, lname, homedir, chartpath string) {
 	src := helm.CacheDirectory(homedir, chartpath, chartName)
 	dest := helm.WorkspaceChartDirectory(homedir, lname)
 
-	if fi, err := os.Stat(src); err != nil {
-		log.Die("Chart %s not found in %s", lname, src)
-	} else if !fi.IsDir() {
+	fi, err := os.Stat(src)
+	if err != nil {
+		log.Warn("Oops. Looks like there was an issue finding the chart, %s, n %s. Running `helm update` to ensure you have the latest version of all Charts from Github...", lname, src)
+		Update(homedir)
+		fi, err = os.Stat(src)
+		if err != nil {
+			log.Die("Chart %s not found in %s", lname, src)
+		}
+		log.Info("Good news! Looks like that did the trick. Onwards and upwards!")
+	}
+
+	if !fi.IsDir() {
 		log.Die("Malformed chart %s: Chart must be in a directory.", chartName)
 	}
 
