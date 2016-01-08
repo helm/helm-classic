@@ -27,6 +27,8 @@ func AddRepo(homedir, name, repository string) {
 	if err := cfg.Save(""); err != nil {
 		log.Die("Could not save configuration: %s", err)
 	}
+
+	log.Info("Hooray! Successfully added the repo.")
 }
 
 // DeleteRepo deletes a repository.
