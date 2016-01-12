@@ -15,7 +15,7 @@ generation to use other tools.
 
 Helm includes a simple templating solution based on Go templates.
 Running `helm template example.yaml` will compile and execute
-the template `exxample.yaml`.
+the template `example.yaml`.
 
 As a simple example, here is a basic template:
 
