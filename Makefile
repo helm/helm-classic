@@ -26,7 +26,7 @@ bootstrap:
 
 build-all:
 	gox -verbose \
-	-ldflags "-X main.version=${VERSION}" \
+	-ldflags "-X github.com/helm/helm/cli.version=${VERSION}" \
 	-os="linux darwin " \
 	-arch="amd64 386" \
 	-output="$(DIST_DIR)/{{.OS}}-{{.Arch}}/{{.Dir}}" .
