@@ -38,7 +38,7 @@ $ helm repo add charts https://github.com/helm/charts
 
 From a Linux or Mac OS X client:
 ```
-curl -s https://get.helm.sh | sh
+curl -s https://get.helm.sh | bash
 ```
 
 *or*:
