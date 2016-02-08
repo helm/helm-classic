@@ -38,7 +38,7 @@ This section describes a few different workflows for Helm users.
 
 ### User Workflow (Simple)
 
-Use case: User is looking for a standalone etcd instance (one pod, no clustering). User wants it immediately installed on Kubernetes.
+Use case: User is looking for a redis cluster. User wants it immediately installed on Kubernetes.
 
 ```
 $ helm update
