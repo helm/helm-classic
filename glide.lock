@@ -1,5 +1,5 @@
-hash: 8795496d961ac8c664de05f4ec4d03e2f22c34126e7f2f8af23802e4146e5227
-updated: 2016-02-18T10:44:18.146325243-05:00
+hash: 8b5ff8428f49d6320cae267c59a87a98decf7fa1f4eeea3b90d95b2d21ce6f18
+updated: 2016-02-18T16:42:42.546699707-07:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c

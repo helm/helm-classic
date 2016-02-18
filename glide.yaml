@@ -33,4 +33,4 @@ import:
 - package: code.google.com/p/goprotobuf
   repo: https://github.com/golang/protobuf
 - package: github.com/Masterminds/sprig
-  version: ">= 1.0.0"
+  version: ">= 1.2.0"
