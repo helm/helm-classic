@@ -45,7 +45,7 @@ func TestUninstall(t *testing.T) {
 		Fetch(tt.chart, "", tmpHome)
 
 		actual := test.CaptureOutput(func() {
-			Uninstall(tt.chart, tmpHome, "", tt.force, tt.client)
+			Uninstall(tt.chart, tmpHome, "default", tt.force, tt.client)
 		})
 
 		for _, exp := range tt.expected {

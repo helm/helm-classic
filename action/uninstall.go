@@ -19,6 +19,10 @@ import (
 // chart.UninstallOrder. Any unknown types are removed before that sequence
 // is run.
 func Uninstall(chartName, home, namespace string, force bool, client kubectl.Runner) {
+	// This is a stop-gap until kubectl respects namespaces in manifests.
+	if namespace == "" {
+		log.Die("This command requires a namespace. Did you mean '-n default'?")
+	}
 	if !chartFetched(chartName, home) {
 		log.Info("No chart named %q in your workspace. Nothing to delete.", chartName)
 		return
