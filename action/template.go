@@ -15,6 +15,18 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+//GenerateTemplate evaluates a template and writes it to an io.Writer
+func GenerateTemplate(out io.Writer, in io.Reader, vals interface{}) {
+	tpl, err := ioutil.ReadAll(in)
+	if err != nil {
+		log.Die("Failed to read template file: %s", err)
+	}
+
+	if err := renderTemplate(out, string(tpl), vals); err != nil {
+		log.Die("Failed: %s", err)
+	}
+}
+
 // Template renders a template to an output file.
 func Template(out, in, data string) {
 	var dest io.Writer
@@ -33,6 +45,11 @@ func Template(out, in, data string) {
 		dest = log.Stdout
 	}
 
+	inReader, err := os.Open(in)
+	if err != nil {
+		log.Die("Failed to open template file: %s", err)
+	}
+
 	var vals interface{}
 	if data != "" {
 		var err error
@@ -42,14 +59,7 @@ func Template(out, in, data string) {
 		}
 	}
 
-	tpl, err := ioutil.ReadFile(in)
-	if err != nil {
-		log.Die("Failed to read template file: %s", err)
-	}
-
-	if err := renderTemplate(dest, string(tpl), vals); err != nil {
-		log.Die("Failed: %s", err)
-	}
+	GenerateTemplate(dest, inReader, vals)
 }
 
 // openValues opens a values file and tries to parse it with the right parser.
