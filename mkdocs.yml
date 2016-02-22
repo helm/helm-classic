@@ -7,6 +7,6 @@ pages:
  - Workspace Layout: workspace.md
  - Authoring Chart Basics: authoring_charts.md
  - Authoring Awesome Charts: awesome.md
- - Helm Generate and Template: generate-and-template.md
- - Helm Plugins: plugins.md
+ - Generate and Template: generate-and-template.md
+ - Plugin Support: plugins.md
 theme: readthedocs
