@@ -5,5 +5,8 @@ pages:
  - Using Labels: using_labels.md
  - Modeling Services: modeling_services.md
  - Workspace Layout: workspace.md
- - Authoring Charts: authoring_charts.md
+ - Authoring Chart Basics: authoring_charts.md
+ - Authoring Awesome Charts: awesome.md
+ - Generate and Template: generate-and-template.md
+ - Plugin Support: plugins.md
 theme: readthedocs
