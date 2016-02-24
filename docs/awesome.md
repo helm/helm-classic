@@ -132,7 +132,7 @@ From the Kubernetes documentation:
 
 > [W]e recommend that you use a replication controller even if your application requires only a single pod
 
-Because replication controllers come with better lifecycle management, we suggest using RCs instead of using pods. This will give your users all of the features of a pod, but with added assurances. That said, when you use an RC to run a service that _cannot be scaled_, you should indicate this to your users either by adding the `scalable: false` label to the RC, or by saying so directly in the README.
+Because replication controllers come with better lifecycle management, we suggest using RCs instead of using pods. This will give your users all of the features of a pod, but with added assurances. That said, when you use an RC to run a service that _cannot be scaled_, you should indicate this to your users either by adding the `scalable: "false"` label to the RC, or by saying so directly in the README.
 
 ### Secrets
 
@@ -174,5 +174,3 @@ The core Helm charts team reviews all charts to see if they comply with our char
 We absolutely _love_ contributions, so don't fret about this part of the process. When we ask for additional changes, it's only because we (like you) want the Helm community to have the best experience possible.
 
 See you in the issue queue!
-
-
