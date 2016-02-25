@@ -164,8 +164,8 @@ The suggested workflow for publishing a pull request goes like this:
 2. Add your fork to Helm: `helm repo add technosophos git@github.com:technosophos/charts.git`
 3. Copy your chart from your workspace to your new charts repo (see `helm publish`)
 4. Commit and push to your charts repo
-5. Using GitHub, file a PR (Pull Request) against the `deis/charts` repository
-6. Follow along in the `deis/charts` issue queue
+5. Using GitHub, file a PR (Pull Request) against the `helm/charts` repository
+6. Follow along in the `helm/charts` issue queue
 
 ## Review
 
