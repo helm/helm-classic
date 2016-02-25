@@ -12,9 +12,9 @@ go:
   - 1.5.1
 
 install:
-  - wget "https://github.com/Masterminds/glide/releases/download/0.9.0/glide-0.9.0-linux-amd64.tar.gz"
+  - wget "https://github.com/Masterminds/glide/releases/download/0.9.1/glide-0.9.1-linux-amd64.tar.gz"
   - mkdir -p $HOME/bin
-  - tar -vxz -C $HOME/bin --strip=1 -f glide-0.9.0-linux-amd64.tar.gz
+  - tar -vxz -C $HOME/bin --strip=1 -f glide-0.9.1-linux-amd64.tar.gz
   - export PATH="$HOME/bin:$PATH" GLIDE_HOME="$HOME/.glide"
 
 script: make bootstrap build test
