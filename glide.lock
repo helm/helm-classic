@@ -1,5 +1,5 @@
-hash: 8b5ff8428f49d6320cae267c59a87a98decf7fa1f4eeea3b90d95b2d21ce6f18
-updated: 2016-02-18T16:42:42.546699707-07:00
+hash: 849a5a2ade38616cb42d968ca3fbdf9b82c4d6f936c90de24bad74bce22c8c1a
+updated: 2016-02-25T09:38:03.403612173-05:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c
@@ -61,10 +61,6 @@ imports:
   version: bbcb9da2d746f8bdbd6a936686a0a6067ada0ec5
 - name: github.com/juju/ratelimit
   version: 772f5c38e468398c4511514f4f6aa9a4185bc0a0
-- name: github.com/kballard/go-shellquote
-  version: d8ec1a69a250a17bb0e419c386eac1f3711dc142
-- name: github.com/kr/pty
-  version: 05017fcccf23c823bfdea560dcc958a136e54fb7
 - name: github.com/Masterminds/semver
   version: c4f7ef0702f269161a60489ccbbc9f1241ad1265
 - name: github.com/Masterminds/sprig
@@ -111,6 +107,8 @@ imports:
   version: c2528b2dd8352441850638a8bb678c2ad056fd3e
   subpackages:
   - context
+  - html
+  - websocket
 - name: gopkg.in/yaml.v2
   version: f7716cbe52baa25d2e9b0d0da546fcf909fc16b4
 - name: k8s.io/kubernetes
