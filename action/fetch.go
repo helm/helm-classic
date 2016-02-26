@@ -55,7 +55,7 @@ func fetch(chartName, lname, homedir, chartpath string) {
 
 	fi, err := os.Stat(src)
 	if err != nil {
-		log.Warn("Oops. Looks like there was an issue finding the chart, %s, n %s. Running `helm update` to ensure you have the latest version of all Charts from Github...", lname, src)
+		log.Warn("Oops. Looks like there was an issue finding the chart, %s, in %s. Running `helm update` to ensure you have the latest version of all Charts from Github...", lname, src)
 		Update(homedir)
 		fi, err = os.Stat(src)
 		if err != nil {
