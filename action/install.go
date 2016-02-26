@@ -30,7 +30,7 @@ var UninstallOrder = []string{"Service", "Pod", "ReplicationController", "Daemon
 // If the chart is not found in the workspace, it is fetched and then installed.
 //
 // During install, manifests are sent to Kubernetes in the ordered specified by InstallOrder.
-func Install(chartName, home, namespace string, force bool, client kubectl.Runner) {
+func Install(chartName, home, namespace string, force bool, generate bool, exclude []string, client kubectl.Runner) {
 	ochart := chartName
 	r := mustConfig(home).Repos
 	table, chartName := r.RepoChart(chartName)
@@ -62,6 +62,11 @@ func Install(chartName, home, namespace string, force bool, client kubectl.Runne
 		if !force {
 			log.Die("Stopping install. Re-run with --force to install anyway.")
 		}
+	}
+
+	// Run the generator if -g is set.
+	if generate {
+		Generate(chartName, home, exclude)
 	}
 
 	CheckKubePrereqs()

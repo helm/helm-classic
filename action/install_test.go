@@ -71,7 +71,7 @@ func TestInstall(t *testing.T) {
 
 	for _, tt := range tests {
 		actual := test.CaptureOutput(func() {
-			Install(tt.chart, tmpHome, "", tt.force, tt.client)
+			Install(tt.chart, tmpHome, "", tt.force, false, []string{}, tt.client)
 		})
 
 		for _, exp := range tt.expected {
