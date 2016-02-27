@@ -2,6 +2,7 @@
 package manifest
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -65,7 +66,7 @@ func Parse(filename string) ([]*Manifest, error) {
 
 	docs, err := codec.YAML.Decode(d).All()
 	if err != nil {
-		return ms, err
+		return ms, fmt.Errorf("%s %s", filename, err)
 	}
 
 	for _, doc := range docs {
