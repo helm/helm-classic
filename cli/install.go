@@ -35,6 +35,14 @@ var installCmd = cli.Command{
 			Name:  "dry-run",
 			Usage: "Fetch the chart, but only display the underlying kubectl commands.",
 		},
+		cli.BoolFlag{
+			Name:  "generate,g",
+			Usage: "Run the generator before installing.",
+		},
+		cli.StringSliceFlag{
+			Name:  "exclude,x",
+			Usage: "Files or directories to exclude from the generator (if -g is set).",
+		},
 	},
 }
 
@@ -49,6 +57,6 @@ func install(c *cli.Context) {
 	}
 
 	for _, chart := range c.Args() {
-		action.Install(chart, h, c.String("namespace"), force, client)
+		action.Install(chart, h, c.String("namespace"), force, c.Bool("generate"), c.StringSlice("exclude"), client)
 	}
 }
