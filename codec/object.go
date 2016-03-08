@@ -85,7 +85,7 @@ func (m *Object) JSON() ([]byte, error) {
 // Meta returns a *Metadata
 //
 // This contains more information than an ObjectReference. It is valid for the
-// core Kubernetes kinds, but is not guranteed to work for all possible kinds.
+// core Kubernetes kinds, but is not guaranteed to work for all possible kinds.
 func (m *Object) Meta() (*Metadata, error) {
 	u := &Metadata{}
 	err := m.dec(m.data, u)

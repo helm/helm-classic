@@ -46,7 +46,7 @@ func (v *Validation) ChartManifestsPath() string {
 	return filepath.Join(v.path, "manifests")
 }
 
-// Charfile returns a chart.Chartfile object formed from the Chart.yaml file.
+// Chartfile returns a chart.Chartfile object formed from the Chart.yaml file.
 func (v *Validation) Chartfile() (*chart.Chartfile, error) {
 	var y *chart.Chartfile
 	b, err := ioutil.ReadFile(v.ChartYamlPath())
@@ -152,7 +152,7 @@ func (cv *ChartValidation) walk(talker func(v *Validation) bool) {
 
 // Valid returns true if every validation passes.
 func (cv *ChartValidation) Valid() bool {
-	var valid bool = true
+	var valid = true
 
 	fmt.Printf("\nVerifying %s chart is a valid chart...\n", cv.ChartName())
 	cv.walk(func(v *Validation) bool {
