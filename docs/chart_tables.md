@@ -10,8 +10,8 @@ Helm allows for the use of additional (potentially private) repositories of char
 
 ```
 $ helm repo list
-charts* https://github.com/deis/charts
-mycharts https://github.com/dev/mycharts
+    charts*    https://github.com/helm/charts
+    mycharts    https://github.com/dev/mycharts
 ```
 Note the `*` indicates the default repository. This is configured in a `config.yaml` file in `$HELM_HOME`.
 
