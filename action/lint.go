@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/google/go-github/github"
 	"github.com/helm/helm/log"
@@ -128,6 +129,10 @@ func Lint(chartPath string) {
 		for _, m := range cv.Manifests {
 			meta, _ := m.VersionedObject.Meta()
 			if meta.Name == "" || len(meta.Name) > MaxMetadataNameLength {
+				success = false
+			}
+
+			if match, _ := regexp.MatchString(`[a-z]([-a-z0-9]*[a-z0-9])?`, meta.Name); !match {
 				success = false
 			}
 
