@@ -18,6 +18,9 @@ const (
 
 	// Project is the default Charts repository name.
 	Project = "charts"
+
+	// Maximum length of Metadata.name allowed by kubernetes
+	MaxMetadataNameLength = 24
 )
 
 // RepoService is a GitHub client instance.
@@ -124,7 +127,7 @@ func Lint(chartPath string) {
 
 		for _, m := range cv.Manifests {
 			meta, _ := m.VersionedObject.Meta()
-			if meta.Name == "" {
+			if meta.Name == "" || len(meta.Name) > MaxMetadataNameLength {
 				success = false
 			}
 
