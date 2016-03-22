@@ -1,7 +1,4 @@
-language: go
-
-env:
-  - GO15VENDOREXPERIMENT=1
+language: generic
 
 branches:
   only:
@@ -10,18 +7,16 @@ branches:
 
 cache:
   directories:
-    - $GOPATH/src/github.com/helm/helm/vendor
+  - vendor
 
-go:
-  - 1.5.1
+sudo: required
+services:
+- docker
 
 install:
-  - wget "https://github.com/Masterminds/glide/releases/download/0.8.2/glide-0.8.2-linux-amd64.tar.gz"
-  - mkdir -p $HOME/bin
-  - tar -vxz -C $HOME/bin --strip=1 -f glide-0.8.2-linux-amd64.tar.gz
-  - export PATH="$HOME/bin:$PATH" GLIDE_HOME="$HOME/.glide"
+- make bootstrap
 
-script: make bootstrap build test
+script: make build test
 
 before_deploy: make dist prep-bintray-json
 
