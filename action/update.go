@@ -52,9 +52,7 @@ func CheckLatest(version string) {
 
 	if remote.GreaterThan(current) {
 		log.Warn("A new version of Helm is available. You have %s. The latest is %v", version, ver)
-		if dl, err := release.LatestDownloadURL(); err == nil {
-			log.Info("Download version %s here: %s", ver, dl)
-		}
+		log.Info("Download version %s by running: %s", ver, "curl -s https://get.helm.sh | bash")
 	}
 
 }
