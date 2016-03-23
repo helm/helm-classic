@@ -11,6 +11,10 @@ branches:
 go:
   - 1.5.1
 
+sudo: required
+services:
+- docker
+
 install:
   - wget "https://github.com/Masterminds/glide/releases/download/0.9.1/glide-0.9.1-linux-amd64.tar.gz"
   - mkdir -p $HOME/bin
