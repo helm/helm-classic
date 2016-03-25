@@ -22,7 +22,7 @@ In this document, we focus on the `workspace` directory. We suggest some ways to
 
 ## The Cache Directory
 
-The `cache` directory is your local copy of the Helm repository. If you compare it to [github.com/helm/helm](github.com/helm/helm) they should look the same. And when you run a `helm update`, it will sync your local `cache` directory to the upstream.
+The `cache` directory is your local copy of the Helm repository. If you compare it to [github.com/helm/helm](https://github.com/helm/helm) they should look the same. And when you run a `helm update`, it will sync your local `cache` directory to the upstream.
 
 When you are developing Charts to be contributed upstream, you will interact with the `cache` directory directly. But in normal day-to-day usage, you do not need to worry about it.
 
