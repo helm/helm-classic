@@ -6,7 +6,9 @@ import:
   subpackages:
   - prettyprint
 - package: github.com/Masterminds/vcs
+  version: ^1.5.1
 - package: github.com/Masterminds/semver
+  version: ^1.1.0
 - package: k8s.io/kubernetes
   version: v1.1.1
   subpackages:
