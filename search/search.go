@@ -1,4 +1,4 @@
-/* Package search provides search features for Helm. */
+// Package search provides search features for Helm.
 package search
 
 import (
@@ -135,7 +135,7 @@ func (i *Index) SearchRegexp(re string, threshold int) ([]*Result, error) {
 // ErrNoChart indicates that a chart is not in the chart cache.
 var ErrNoChart = errors.New("no such chart")
 
-// Get the *Chartfile for a chart that was found during search.
+// Chart gets the *Chartfile for a chart that was found during search.
 //
 // This is a convenience method for retrieving a cached chart that was located
 // during search indexing.
@@ -147,7 +147,7 @@ func (i *Index) Chart(name string) (*chart.Chartfile, error) {
 	return c, nil
 }
 
-// Sort does an in-place sort of the results.
+// SortScore does an in-place sort of the results.
 //
 // Lowest scores are highest on the list. Matching scores are subsorted alphabetically.
 func SortScore(r []*Result) {

@@ -11,18 +11,18 @@ var testConfig = &config.Configfile{
 	Repos: &config.Repos{
 		Default: "charts",
 		Tables: []*config.Table{
-			&config.Table{Name: "charts", Repo: "https://github.com/helm/charts"},
+			{Name: "charts", Repo: "https://github.com/helm/charts"},
 		},
 	},
 }
 
 func TestSortScore(t *testing.T) {
 	in := []*Result{
-		&Result{Name: "bbb", Score: 0},
-		&Result{Name: "aaa", Score: 5},
-		&Result{Name: "abb", Score: 5},
-		&Result{Name: "aab", Score: 0},
-		&Result{Name: "bab", Score: 5},
+		{Name: "bbb", Score: 0},
+		{Name: "aaa", Score: 5},
+		{Name: "abb", Score: 5},
+		{Name: "aab", Score: 0},
+		{Name: "bab", Score: 5},
 	}
 	expect := []string{"aab", "bbb", "aaa", "abb", "bab"}
 	expectScore := []int{0, 0, 5, 5, 5}

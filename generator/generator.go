@@ -12,6 +12,7 @@ import (
 	"github.com/helm/helm/log"
 )
 
+// GeneratorKeyword is used to generate new charts
 const GeneratorKeyword = "helm:generate "
 
 // Walk walks a chart directory and executes generators as it finds them.
