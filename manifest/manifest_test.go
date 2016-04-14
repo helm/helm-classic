@@ -1,6 +1,7 @@
 package manifest
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -55,5 +56,15 @@ func TestParseDir(t *testing.T) {
 		if man.Name == "" {
 			t.Error("Expected name")
 		}
+	}
+
+	// now test parsing bad files in a chart!
+	testchart = "../testdata/charts/malformed"
+	manifests, err = ParseDir(testchart)
+	if err == nil {
+		t.Errorf("Failed to raise an error when parsing dir %s", testchart)
+	}
+	if !strings.Contains(err.Error(), "malformed.yaml") {
+		t.Errorf("Failed to identify which manifest failed to be parsed. Got %s", err)
 	}
 }

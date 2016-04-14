@@ -66,13 +66,13 @@ func Parse(filename string) ([]*Manifest, error) {
 
 	docs, err := codec.YAML.Decode(d).All()
 	if err != nil {
-		return ms, fmt.Errorf("%s %s", filename, err)
+		return ms, fmt.Errorf("%s: %s", filename, err)
 	}
 
 	for _, doc := range docs {
 		ref, err := doc.Meta()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%s: %s", filename, err)
 		}
 
 		m := &Manifest{Version: ref.APIVersion, Kind: ref.Kind, Name: ref.Name, VersionedObject: doc, Source: filename}
