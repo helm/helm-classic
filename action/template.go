@@ -15,6 +15,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var err error
+
 //GenerateTemplate evaluates a template and writes it to an io.Writer
 func GenerateTemplate(out io.Writer, in io.Reader, vals interface{}) {
 	tpl, err := ioutil.ReadAll(in)
@@ -23,13 +25,17 @@ func GenerateTemplate(out io.Writer, in io.Reader, vals interface{}) {
 	}
 
 	if err := renderTemplate(out, string(tpl), vals); err != nil {
-		log.Die("Failed: %s", err)
+		log.Die("Template rendering failed: %s", err)
 	}
 }
 
 // Template renders a template to an output file.
-func Template(out, in, data string) {
+func Template(out, in, data string, force bool) error {
 	var dest io.Writer
+	_, err = os.Stat(out)
+	if !force && err == nil {
+		return fmt.Errorf("File %s already exists. To overwrite it, please re-run this command with the --force/-f flag.", out)
+	}
 	if out != "" {
 		f, err := os.Create(out)
 		if err != nil {
@@ -60,6 +66,7 @@ func Template(out, in, data string) {
 	}
 
 	GenerateTemplate(dest, inReader, vals)
+	return nil
 }
 
 // openValues opens a values file and tries to parse it with the right parser.
@@ -104,7 +111,7 @@ func renderTemplate(out io.Writer, tpl string, vals interface{}) error {
 
 	log.Debug("Vals: %#v", vals)
 
-	if err := t.ExecuteTemplate(out, "helmTpl", vals); err != nil {
+	if err = t.ExecuteTemplate(out, "helmTpl", vals); err != nil {
 		return err
 	}
 	return nil

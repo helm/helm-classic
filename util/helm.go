@@ -107,3 +107,12 @@ func CopyDir(src, dst string) error {
 	filepath.Walk(src, walker)
 	return failure
 }
+
+//CopyFile copies file from src to dst
+func CopyFile(src string, dst string) error {
+	data, err := ioutil.ReadFile(src)
+	if err == nil {
+		err = ioutil.WriteFile(dst, data, 0644)
+	}
+	return err
+}
