@@ -1,10 +1,10 @@
-hash: 849a5a2ade38616cb42d968ca3fbdf9b82c4d6f936c90de24bad74bce22c8c1a
-updated: 2016-02-25T09:38:03.403612173-05:00
+hash: ca470e3495e875ff100e6e886ee686e835d2862c2090a1a55e9d3b5005ca6650
+updated: 2016-04-11T11:21:50.997021805-04:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c
 - name: code.google.com/p/goprotobuf
-  version: 127091107ff5f822298f1faa7487ffcf578adcf6
+  version: dda510ac0fd43b39770f22ac6260eb91d377bce3
   repo: https://github.com/golang/protobuf
 - name: github.com/aokoli/goutils
   version: 9c37978a95bd5c709a15883b6242714ea6709e64
@@ -13,7 +13,9 @@ imports:
   subpackages:
   - quantile
 - name: github.com/BurntSushi/toml
-  version: 312db06c6c6dbfa9899e58564bacfaa584f18ab7
+  version: bbd5bb678321a0d6e58f1099321dfa73391c1b6f
+- name: github.com/cloudfoundry-incubator/candiedyaml
+  version: 5cef21e2e4f0fd147973b558d4db7395176bcd95
 - name: github.com/codegangsta/cli
   version: f445c894402839580d30de47551cedc152dad814
 - name: github.com/davecgh/go-spew
@@ -21,7 +23,7 @@ imports:
   subpackages:
   - spew
 - name: github.com/deis/pkg
-  version: 20cd6d3875d29b186b47d7466dcc1672db01619c
+  version: 7f41ea6de942139d5de67f4d4cb2cccced991f6f
   subpackages:
   - prettyprint
 - name: github.com/docker/docker
@@ -42,7 +44,7 @@ imports:
   - cgroups
   - system
 - name: github.com/ghodss/yaml
-  version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
+  version: 1a6f069841556a7bcaff4a397ca6e8328d266c2f
 - name: github.com/golang/glog
   version: 44145f04b68cf362d9c4df2182967c2275eaefed
 - name: github.com/golang/protobuf
@@ -54,7 +56,7 @@ imports:
   subpackages:
   - github
 - name: github.com/google/go-querystring
-  version: 6bb77fe6f42b85397288d4f6f67ac72f8f400ee7
+  version: 9235644dd9e52eeae6fa48efd539fdc351a0af53
   subpackages:
   - query
 - name: github.com/google/gofuzz
@@ -62,11 +64,11 @@ imports:
 - name: github.com/juju/ratelimit
   version: 772f5c38e468398c4511514f4f6aa9a4185bc0a0
 - name: github.com/Masterminds/semver
-  version: c4f7ef0702f269161a60489ccbbc9f1241ad1265
+  version: 808ed7761c233af2de3f9729a041d68c62527f3a
 - name: github.com/Masterminds/sprig
-  version: fd057ca403105755181f84645696d705a58852dd
+  version: 679bb747f11c6ffc3373965988fea8877c40b47b
 - name: github.com/Masterminds/vcs
-  version: 9c0db6583837118d5df7c2ae38ab1c194e434b35
+  version: b22ee1673cdd03ef47bb0b422736a7f17ff0648c
 - name: github.com/matttproud/golang_protobuf_extensions
   version: fc2b8d3a73c4867e51861bbdd5ae3c1f0869dd6a
   subpackages:
@@ -91,10 +93,10 @@ imports:
 - name: github.com/spf13/pflag
   version: 8e7dc108ab3a1ab6ce6d922bbaff5657b88e8e49
 - name: github.com/steveeJ/gexpect
-  version: 0b5620b695de57d5fcea082b9a062157ac60ed73
+  version: ca42424d18c76d0d51a4cccd830d11878e9e5c17
   repo: https://github.com/coreos/gexpect
 - name: golang.org/x/crypto
-  version: 1f22c0103821b9390939b6776727195525381532
+  version: 3fbbcd23f1cb824e69491a5930cfeff09b12f4d2
   subpackages:
   - ssh/terminal
   - nacl/box
@@ -110,7 +112,7 @@ imports:
   - html
   - websocket
 - name: gopkg.in/yaml.v2
-  version: f7716cbe52baa25d2e9b0d0da546fcf909fc16b4
+  version: a83829b6f1293c91addabc89d0571c246397bbf4
 - name: k8s.io/kubernetes
   version: 92635e23dfafb2ddc828c8ac6c03c7a7205a84d8
   subpackages:
