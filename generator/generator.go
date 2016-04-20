@@ -22,7 +22,7 @@ const GeneratorKeyword = "helm:generate "
 // Walking will error out whenever a generator cannot be completely executed.
 // This includes cases such as not finding the generator referenced, and
 // cases where the generator itself exits with a non-zero exit code.
-func Walk(dir string, exclude []string) (int, error) {
+func Walk(dir string, exclude []string, force bool) (int, error) {
 
 	excludes := make(map[string]bool, len(exclude))
 	for i := 0; i < len(exclude); i++ {
@@ -88,7 +88,7 @@ func Walk(dir string, exclude []string) (int, error) {
 				}
 			}()
 		}
-		err = execute(line)
+		err = execute(line, force)
 		if err != nil {
 			return fmt.Errorf("failed to execute %s (%s): %s", line, path, err)
 		}
@@ -98,13 +98,17 @@ func Walk(dir string, exclude []string) (int, error) {
 	return count, err
 }
 
-func execute(command string) error {
+func execute(command string, force bool) error {
 	args := strings.Fields(command)
 	if len(args) == 0 {
 		return errors.New("empty command")
 	}
 	name := args[0]
-	args = args[1:]
+	if args[0] == "helm" && (args[1] == "template" || args[1] == "tpl") && force {
+		args = append([]string{args[1], "-f"}, args[2:]...)
+	} else {
+		args = args[1:]
+	}
 
 	cmd := exec.Command(name, args...)
 	cmd.Stdout = os.Stdout

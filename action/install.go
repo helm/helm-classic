@@ -66,7 +66,7 @@ func Install(chartName, home, namespace string, force bool, generate bool, exclu
 
 	// Run the generator if -g is set.
 	if generate {
-		Generate(chartName, home, exclude)
+		Generate(chartName, home, exclude, force)
 	}
 
 	CheckKubePrereqs()

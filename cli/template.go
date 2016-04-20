@@ -3,6 +3,7 @@ package cli
 import (
 	"github.com/codegangsta/cli"
 	"github.com/helm/helm/action"
+	"github.com/helm/helm/log"
 )
 
 const tplDescription = `Execute a template inside of a chart.
@@ -48,12 +49,20 @@ var tplCmd = cli.Command{
 			Name:  "values,d",
 			Usage: "A file containing values to substitute into the template. TOML (.toml), JSON (.json), and YAML (.yaml, .yml) are supported.",
 		},
+		cli.BoolFlag{
+			Name:  "force,f",
+			Usage: "Forces to overwrite an exiting file",
+		},
 	},
 	Action: func(c *cli.Context) {
 		minArgs(c, 1, "template")
 
 		a := c.Args()
+		force := c.Bool("force")
 		filename := a[0]
-		action.Template(c.String("out"), filename, c.String("values"))
+		err := action.Template(c.String("out"), filename, c.String("values"), force)
+		if err != nil {
+			log.Die(err.Error())
+		}
 	},
 }

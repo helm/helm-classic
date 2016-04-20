@@ -73,13 +73,17 @@ var generateCmd = cli.Command{
 			Name:  "exclude,x",
 			Usage: "Files or directories to exclude from this run, relative to the chart.",
 		},
+		cli.BoolFlag{
+			Name:  "force,f",
+			Usage: "Force an overwrite if files already exist when generating manifests.",
+		},
 	},
 	Action: func(c *cli.Context) {
 		home := home(c)
 		minArgs(c, 1, "generate")
-
+		force := c.Bool("force")
 		a := c.Args()
 		chart := a[0]
-		action.Generate(chart, home, c.StringSlice("exclude"))
+		action.Generate(chart, home, c.StringSlice("exclude"), force)
 	},
 }

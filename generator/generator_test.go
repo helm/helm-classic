@@ -71,7 +71,7 @@ func TestReadGenerator(t *testing.T) {
 
 func TestWalk(t *testing.T) {
 	dir := "../testdata/generator"
-	count, err := Walk(dir)
+	count, err := Walk(dir, []string{}, false)
 	if err != nil {
 		t.Fatalf("Failed to walk: %s", err)
 	}
