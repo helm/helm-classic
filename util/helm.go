@@ -91,6 +91,7 @@ func CopyDir(src, dst string) error {
 			log.Warn("Skipping file copy %s: %s", fname, err)
 			return nil
 		}
+		out.Chmod(fi.Mode())
 		if _, err = io.Copy(out, in); err != nil {
 			log.Warn("Copy from %s to %s failed: %s", fname, df, err)
 		}
