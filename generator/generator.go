@@ -70,7 +70,7 @@ func Walk(dir string, exclude []string, force bool) (int, error) {
 		os.Setenv("HELM_GENERATE_DIR", dir)
 		line = os.ExpandEnv(line)
 		os.Setenv("HELM_GENERATE_COMMAND_EXPANDED", line)
-		log.Debug("File: %s, Command: %s", path, line)
+		log.Debug("File: %s", path)
 		count++
 
 		// Execute the command in the file's directory to make relative
@@ -104,12 +104,13 @@ func execute(command string, force bool) error {
 		return errors.New("empty command")
 	}
 	name := args[0]
-	if args[0] == "helm" && (args[1] == "template" || args[1] == "tpl") && force {
-		args = append([]string{args[1], "-f"}, args[2:]...)
-	} else {
-		args = args[1:]
+	args = args[1:]
+	if name == "helm" && (strings.Contains(command, " template ") || strings.Contains(command, " tpl ")) && force {
+		// insert --force right before the final position
+		args = append(args[:len(args)-2], []string{"--force", args[len(args)-1]}...)
 	}
 
+	log.Debug("Command: %s %s", name, strings.Trim(fmt.Sprint(args), "[]"))
 	cmd := exec.Command(name, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
