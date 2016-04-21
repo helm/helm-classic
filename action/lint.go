@@ -20,7 +20,7 @@ const (
 	// Project is the default Charts repository name.
 	Project = "charts"
 
-	// Maximum length of Metadata.name allowed by kubernetes
+	// MaxMetadataNameLength is the longest Metadata.name allowed by kubernetes.
 	MaxMetadataNameLength = 24
 )
 
