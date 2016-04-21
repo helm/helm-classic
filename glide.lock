@@ -1,5 +1,5 @@
-hash: ca470e3495e875ff100e6e886ee686e835d2862c2090a1a55e9d3b5005ca6650
-updated: 2016-04-11T11:21:50.997021805-04:00
+hash: 54848c15ec687202a4a144233bad37eec7cf06476df5cbe46b2c54724f4b32ec
+updated: 2016-04-20T10:26:47.634590058-06:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c
@@ -17,7 +17,7 @@ imports:
 - name: github.com/cloudfoundry-incubator/candiedyaml
   version: 5cef21e2e4f0fd147973b558d4db7395176bcd95
 - name: github.com/codegangsta/cli
-  version: f445c894402839580d30de47551cedc152dad814
+  version: 71f57d300dd6a780ac1856c005c4b518cfd498ec
 - name: github.com/davecgh/go-spew
   version: 3e6e67c4dcea3ac2f25fd4731abc0e1deaf36216
   subpackages:
@@ -68,7 +68,7 @@ imports:
 - name: github.com/Masterminds/sprig
   version: 679bb747f11c6ffc3373965988fea8877c40b47b
 - name: github.com/Masterminds/vcs
-  version: b22ee1673cdd03ef47bb0b422736a7f17ff0648c
+  version: fa85cceafacd29c84a8aa6e68967bb9f1754e5e3
 - name: github.com/matttproud/golang_protobuf_extensions
   version: fc2b8d3a73c4867e51861bbdd5ae3c1f0869dd6a
   subpackages:
@@ -96,7 +96,7 @@ imports:
   version: ca42424d18c76d0d51a4cccd830d11878e9e5c17
   repo: https://github.com/coreos/gexpect
 - name: golang.org/x/crypto
-  version: 3fbbcd23f1cb824e69491a5930cfeff09b12f4d2
+  version: 3305186468e57f6c7535c9e97cb0bde4b2b65908
   subpackages:
   - ssh/terminal
   - nacl/box

@@ -1,7 +1,7 @@
 package: github.com/helm/helm
 import:
 - package: github.com/codegangsta/cli
-  version: f445c894402839580d30de47551cedc152dad814
+  version: 71f57d300dd6a780ac1856c005c4b518cfd498ec
 - package: github.com/deis/pkg
   subpackages:
   - prettyprint
