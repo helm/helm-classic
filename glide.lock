@@ -1,10 +1,10 @@
-hash: 54848c15ec687202a4a144233bad37eec7cf06476df5cbe46b2c54724f4b32ec
-updated: 2016-04-20T10:26:47.634590058-06:00
+hash: 3e5fafe60be210a1ef82b197ccc8e8465e644decb3d051fececa4a6890288759
+updated: 2016-04-21T11:02:18.91931022-07:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c
 - name: code.google.com/p/goprotobuf
-  version: dda510ac0fd43b39770f22ac6260eb91d377bce3
+  version: bf531ff1a004f24ee53329dfd5ce0b41bfdc17df
   repo: https://github.com/golang/protobuf
 - name: github.com/aokoli/goutils
   version: 9c37978a95bd5c709a15883b6242714ea6709e64
@@ -66,7 +66,7 @@ imports:
 - name: github.com/Masterminds/semver
   version: 808ed7761c233af2de3f9729a041d68c62527f3a
 - name: github.com/Masterminds/sprig
-  version: 679bb747f11c6ffc3373965988fea8877c40b47b
+  version: e6494bc7e81206ba6db404d2fd96500ffc453407
 - name: github.com/Masterminds/vcs
   version: fa85cceafacd29c84a8aa6e68967bb9f1754e5e3
 - name: github.com/matttproud/golang_protobuf_extensions
@@ -96,7 +96,7 @@ imports:
   version: ca42424d18c76d0d51a4cccd830d11878e9e5c17
   repo: https://github.com/coreos/gexpect
 - name: golang.org/x/crypto
-  version: 3305186468e57f6c7535c9e97cb0bde4b2b65908
+  version: 7b428712abe956d0e9e1e9a01e163fb6c7171438
   subpackages:
   - ssh/terminal
   - nacl/box
