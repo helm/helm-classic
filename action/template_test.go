@@ -27,6 +27,7 @@ func TestTemplate(t *testing.T) {
 	}
 
 	// force false
+	os.Setenv("HELM_FORCE_FLAG", "false")
 	if err = Template(tpl, val, "", false); err == nil {
 		t.Errorf("Expected error but got nil")
 	}
