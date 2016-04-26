@@ -33,7 +33,7 @@ func GenerateTemplate(out io.Writer, in io.Reader, vals interface{}) {
 func Template(out, in, data string, force bool) error {
 	var dest io.Writer
 	_, err = os.Stat(out)
-	if !force && err == nil {
+	if !(force || os.Getenv("HELM_FORCE_FLAG") == "true") && err == nil {
 		return fmt.Errorf("File %s already exists. To overwrite it, please re-run this command with the --force/-f flag.", out)
 	}
 	if out != "" {

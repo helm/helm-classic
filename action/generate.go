@@ -3,6 +3,7 @@ package action
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/helm/helm/generator"
 	"github.com/helm/helm/log"
@@ -21,6 +22,7 @@ func Generate(chart, homedir string, exclude []string, force bool) {
 
 	os.Setenv("HELM_HOME", homedir)
 	os.Setenv("HELM_DEFAULT_REPO", mustConfig(homedir).Repos.Default)
+	os.Setenv("HELM_FORCE_FLAG", strconv.FormatBool(force))
 
 	count, err := generator.Walk(chartPath, exclude, force)
 	if err != nil {
