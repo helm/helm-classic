@@ -13,14 +13,6 @@ The first time 'helm update' is run, the necessary directory structures are
 created and then the Git repository is pulled in full.
 
 Subsequent calls to 'helm update' will simply synchronize the local cache
-with the remote.This will synchronize the local repository with the upstream GitHub project.
-The local cached copy is stored in '~/.helm/cache' or (if specified)
-'$HELM_HOME/cache'.
-
-The first time 'helm update' is run, the necessary directory structures are
-created and then the Git repository is pulled in full.
-
-Subsequent calls to 'helm update' will simply synchronize the local cache
 with the remote.`
 
 // updateCmd represents the CLI command for fetching the latest version of all charts from Github.
