@@ -17,19 +17,26 @@ ifndef VERSION
   VERSION := git-$(shell git rev-parse --short HEAD)
 endif
 
+# dockerized development environment variables
+REPO_PATH := github.com/helm/helm
+DEV_ENV_IMAGE := quay.io/deis/go-dev:0.9.0
+DEV_ENV_WORK_DIR := /go/src/${REPO_PATH}
+DEV_ENV_PREFIX := docker run --rm -e GO15VENDOREXPERIMENT=1 -v ${CURDIR}:${DEV_ENV_WORK_DIR} -w ${DEV_ENV_WORK_DIR}
+DEV_ENV_CMD := ${DEV_ENV_PREFIX} ${DEV_ENV_IMAGE}
+
+
 build: $(MAIN_GO)
-	go build -o $(HELM_BIN) -ldflags "-X github.com/helm/helm/cli.version=${VERSION}" $<
+	${DEV_ENV_CMD} go build -o $(HELM_BIN) -ldflags "-X github.com/helm/helm/cli.version=${VERSION}" $<
 
 bootstrap:
-	go get -u github.com/golang/lint/golint github.com/mitchellh/gox
-	glide install
+	${DEV_ENV_CMD} glide install
 
 build-all:
-	gox -verbose \
-	-ldflags "-X github.com/helm/helm/cli.version=${VERSION}" \
-	-os="linux darwin " \
-	-arch="amd64 386" \
-	-output="$(DIST_DIR)/{{.OS}}-{{.Arch}}/{{.Dir}}" .
+	${DEV_ENV_CMD} gox -verbose \
+		-ldflags "-X github.com/helm/helm/cli.version=${VERSION}" \
+		-os="linux darwin " \
+		-arch="amd64 386" \
+		-output="$(DIST_DIR)/{{.OS}}-{{.Arch}}/{{.Dir}}" .
 
 clean:
 	rm -rf $(DIST_DIR) $(BIN_DIR)
