@@ -77,6 +77,7 @@ particularly useful ones are:
 - `b64enc <string>`: This base-64 encodes a string. Useful for secrets.
 - `randAlphaNum <int>`: This generates a random alphanumeric string of
   length INT
+- `env <string>`: Grabs the value of an environment variable. 
 
 But there are 40+ functions available. These functions are supplied by
 the built-in Go `text/template` package and the [Sprig template function
