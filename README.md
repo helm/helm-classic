@@ -1,5 +1,17 @@
 # Helm - The Kubernetes Package Manager
 
+|![](https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Warning.svg/156px-Warning.svg.png) | This `helm/helm` (Helm Classic) repository is **no longer actively developed** but will remain available until `kubernetes/helm` has stabilized.  |
+|---|---|
+
+[Helm](https://github.com/helm/helm) and [Deployment Manager](https://github.com/kubernetes/deployment-manager)
+have recently joined forces to make deploying and managing software on
+Kubernetes as simple as possible. The combined effort now lives in the Kubernetes GitHub organization at
+[kubernetes/helm](https://github.com/kubernetes/helm).
+
+For more information about the architecture of `kubernetes/helm` read the **[architecture documentation](https://github.com/kubernetes/helm/blob/master/docs/architecture.md)**.
+
+## Overview
+
 [![Build Status](https://travis-ci.org/helm/helm.svg?branch=master)](https://travis-ci.org/helm/helm) [![Go Report Card](http://goreportcard.com/badge/helm/helm)](http://goreportcard.com/report/helm/helm)
 
 [Helm](https://helm.sh) bootstraps your Kubernetes cluster with **Charts** that provide ready-to-use workloads like:
@@ -9,16 +21,6 @@
 - An HAProxy edge load balancer
 
 A Chart is a unit of Kubernetes manifests that reflect best practices as determined by the Helm community.  Helm's [architecture](docs/architecture.md) is heavily influenced by [Homebrew](https://github.com/Homebrew/homebrew).
-
-To view or contribute Charts, head over to the [charts repo](https://github.com/helm/charts).
-
-## Work in Progress
-
-![Deis Graphic](https://s3-us-west-2.amazonaws.com/get-deis/deis-graphic-small.png)
-
-Helm is changing quickly. Your feedback and participation are more than welcome, but be aware that this project is considered a work in progress.
-
-Please note that Helm is not a general-purpose tool for managing a Kubernetes cluster.  For that, we recommend using [kubectl](http://kubernetes.io/v1.0/docs/user-guide/kubectl/kubectl.html).
 
 ### Updating from Helm 0.1
 
@@ -97,23 +99,7 @@ replicationcontrollers/redis-standalone
 ---> Done
 ```
 
-## Future Plans
-
-Helm provides package manager semantics for Kubernetes workloads.  This is a novel concept.  As a result, there are a number of features that are not yet implemented and others that are not yet designed.  Your feedback is always appreciated.
-
-Some of the features we plan to tackle in the near future:
-
-- [x] Working with External (or Private) Repositories [#118](https://github.com/helm/helm/issues/118)
-- [ ] Mandatory Group Labels [#80](https://github.com/helm/helm/issues/80)
-- [x] Linting for Charts [#96](https://github.com/helm/helm/issues/96)
-- [x] End-to-End Testing of Charts [#4](https://github.com/helm/helm/issues/4)
-- [x] Dry-Run Installs [#78](https://github.com/helm/helm/issues/78)
-- [ ] Improved Dependency Resolution (based on service provider)
-- [ ] Upgrading Charts
-
-For more detailed information on the project roadmap, see the [GitHub milestones](https://github.com/helm/helm/milestones).
-
-## Contributing to the Helm CLI
+## Building the Helm CLI
 
 - Make sure you have a `kubectl` client installed and configured to speak with a running Kubernetes cluster.
 - Helm requires Go 1.5
