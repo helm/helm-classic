@@ -1,4 +1,4 @@
-package: github.com/helm/helm
+package: github.com/helm/helm-classic
 import:
 - package: github.com/codegangsta/cli
   version: 71f57d300dd6a780ac1856c005c4b518cfd498ec

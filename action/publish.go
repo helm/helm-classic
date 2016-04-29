@@ -3,8 +3,8 @@ package action
 import "os"
 
 import (
-	"github.com/helm/helm/log"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/log"
+	helm "github.com/helm/helm-classic/util"
 )
 
 // Publish a chart from the workspace to the cache directory

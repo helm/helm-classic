@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/helm/helm/action"
+	"github.com/helm/helm-classic/action"
 )
 
 const listDescription = `This prints all of the packages that are currently installed in

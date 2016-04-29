@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/codegangsta/cli"
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/log"
 )
 
 // home runs the --home flag through os.ExpandEnv.

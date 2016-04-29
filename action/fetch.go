@@ -4,10 +4,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/helm/helm/chart"
-	"github.com/helm/helm/dependency"
-	"github.com/helm/helm/log"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/chart"
+	"github.com/helm/helm-classic/dependency"
+	"github.com/helm/helm-classic/log"
+	helm "github.com/helm/helm-classic/util"
 )
 
 // Fetch gets a chart from the source repo and copies to the workdir.

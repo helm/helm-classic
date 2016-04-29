@@ -1,7 +1,7 @@
 package action
 
 import (
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/log"
 )
 
 // ListRepos lists the repositories.

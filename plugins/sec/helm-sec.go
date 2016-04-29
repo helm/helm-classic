@@ -11,7 +11,7 @@ import (
 
 	"github.com/aokoli/goutils"
 	"github.com/codegangsta/cli"
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/log"
 	"github.com/pborman/uuid"
 	"golang.org/x/crypto/nacl/box"
 )

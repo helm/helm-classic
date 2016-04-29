@@ -3,9 +3,9 @@ package action
 import (
 	"path/filepath"
 
-	"github.com/helm/helm/config"
-	"github.com/helm/helm/log"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/config"
+	"github.com/helm/helm-classic/log"
+	helm "github.com/helm/helm-classic/util"
 )
 
 const (

@@ -7,10 +7,10 @@ import (
 	"regexp"
 
 	"github.com/google/go-github/github"
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/manifest"
-	"github.com/helm/helm/util"
-	"github.com/helm/helm/validation"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/manifest"
+	"github.com/helm/helm-classic/util"
+	"github.com/helm/helm-classic/validation"
 )
 
 const (

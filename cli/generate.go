@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/helm/helm/action"
+	"github.com/helm/helm-classic/action"
 )
 
 var generateDesc = `Read a chart and generate manifests based on generator tools.

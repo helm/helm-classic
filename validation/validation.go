@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/helm/helm/chart"
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/manifest"
+	"github.com/helm/helm-classic/chart"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/manifest"
 	"gopkg.in/yaml.v2"
 )
 

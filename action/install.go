@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"os"
 
-	"github.com/helm/helm/chart"
-	"github.com/helm/helm/codec"
-	"github.com/helm/helm/dependency"
-	"github.com/helm/helm/kubectl"
-	"github.com/helm/helm/log"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/chart"
+	"github.com/helm/helm-classic/codec"
+	"github.com/helm/helm-classic/dependency"
+	"github.com/helm/helm-classic/kubectl"
+	"github.com/helm/helm-classic/log"
+	helm "github.com/helm/helm-classic/util"
 )
 
 // InstallOrder defines the order in which manifests should be installed, by Kind.

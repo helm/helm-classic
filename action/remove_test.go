@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/helm/helm/test"
+	"github.com/helm/helm-classic/test"
 )
 
 var (

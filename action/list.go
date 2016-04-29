@@ -3,9 +3,9 @@ package action
 import (
 	"path/filepath"
 
-	"github.com/helm/helm/chart"
-	"github.com/helm/helm/log"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/chart"
+	"github.com/helm/helm-classic/log"
+	helm "github.com/helm/helm-classic/util"
 )
 
 // List lists all of the local charts.

@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/helm/helm/manifest"
+	"github.com/helm/helm-classic/manifest"
 )
 
 // Chart represents a complete chart.

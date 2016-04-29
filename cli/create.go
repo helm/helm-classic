@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/helm/helm/action"
+	"github.com/helm/helm-classic/action"
 )
 
 const createDescription = `This will scaffold a new chart named 'chart-name' in your

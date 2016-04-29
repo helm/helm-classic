@@ -3,8 +3,8 @@ package action
 import (
 	"os/exec"
 
-	"github.com/helm/helm/log"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/log"
+	helm "github.com/helm/helm-classic/util"
 )
 
 // Doctor helps you see what's wrong with your helm setup

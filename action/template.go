@@ -11,7 +11,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/Masterminds/sprig"
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/log"
 	"gopkg.in/yaml.v2"
 )
 

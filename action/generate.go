@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/helm/helm/generator"
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/util"
+	"github.com/helm/helm-classic/generator"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/util"
 )
 
 // Generate runs generators on the entire chart.

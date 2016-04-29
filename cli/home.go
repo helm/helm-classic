@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/log"
 )
 
 var homeCmd = cli.Command{

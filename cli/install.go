@@ -2,8 +2,8 @@ package cli
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/helm/helm/action"
-	"github.com/helm/helm/kubectl"
+	"github.com/helm/helm-classic/action"
+	"github.com/helm/helm-classic/kubectl"
 )
 
 const installDescription = `If the given 'chart-name' is present in your workspace, it

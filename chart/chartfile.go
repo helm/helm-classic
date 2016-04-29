@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver"
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/log"
 	"gopkg.in/yaml.v2"
 )
 

@@ -6,11 +6,11 @@ import (
 
 	"golang.org/x/crypto/ssh/terminal"
 
-	"github.com/helm/helm/chart"
-	"github.com/helm/helm/kubectl"
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/manifest"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/chart"
+	"github.com/helm/helm-classic/kubectl"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/manifest"
+	helm "github.com/helm/helm-classic/util"
 )
 
 // Uninstall removes a chart from Kubernetes.

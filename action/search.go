@@ -1,9 +1,9 @@
 package action
 
 import (
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/search"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/search"
+	helm "github.com/helm/helm-classic/util"
 )
 
 // Search looks for packages with 'term' in their name.

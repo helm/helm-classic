@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/codegangsta/cli"
-	"github.com/helm/helm/action"
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/action"
+	"github.com/helm/helm-classic/log"
 )
 
 // version is the version of the app.

@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/Masterminds/vcs"
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/log"
 	"golang.org/x/crypto/ssh/terminal"
 	"gopkg.in/yaml.v2"
 )

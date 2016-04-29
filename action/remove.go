@@ -6,9 +6,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/manifest"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/manifest"
+	helm "github.com/helm/helm-classic/util"
 )
 
 // kubeGetter wraps the kubectl command, override in tests

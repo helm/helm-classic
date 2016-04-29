@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/helm/helm/config"
+	"github.com/helm/helm-classic/config"
 )
 
 var testConfig = &config.Configfile{

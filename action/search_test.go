@@ -3,7 +3,7 @@ package action
 import (
 	"testing"
 
-	"github.com/helm/helm/test"
+	"github.com/helm/helm-classic/test"
 )
 
 func TestSearch(t *testing.T) {

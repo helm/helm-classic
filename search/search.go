@@ -8,9 +8,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/helm/helm/chart"
-	"github.com/helm/helm/config"
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/chart"
+	"github.com/helm/helm-classic/config"
+	"github.com/helm/helm-classic/log"
 )
 
 // Result is a search result.
