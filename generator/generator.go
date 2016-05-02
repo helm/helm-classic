@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/log"
 )
 
 // GeneratorKeyword is used to generate new charts

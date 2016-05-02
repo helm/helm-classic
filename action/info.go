@@ -3,9 +3,9 @@ package action
 import (
 	"text/template"
 
-	"github.com/helm/helm/chart"
-	"github.com/helm/helm/log"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/chart"
+	"github.com/helm/helm-classic/log"
+	helm "github.com/helm/helm-classic/util"
 )
 
 const defaultInfoFormat = `Name: {{.Name}}

@@ -4,8 +4,8 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/helm/helm/test"
-	"github.com/helm/helm/util"
+	"github.com/helm/helm-classic/test"
+	"github.com/helm/helm-classic/util"
 )
 
 func TestGenerate(t *testing.T) {

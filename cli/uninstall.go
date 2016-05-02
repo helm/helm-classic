@@ -2,8 +2,8 @@ package cli
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/helm/helm/action"
-	"github.com/helm/helm/kubectl"
+	"github.com/helm/helm-classic/action"
+	"github.com/helm/helm-classic/kubectl"
 )
 
 const uninstallDescription = `For each supplied 'chart-name', this will connect to Kubernetes

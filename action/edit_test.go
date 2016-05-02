@@ -5,7 +5,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/helm/helm/test"
+	"github.com/helm/helm-classic/test"
 )
 
 func TestEdit(t *testing.T) {

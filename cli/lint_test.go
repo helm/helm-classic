@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/helm/helm/action"
-	"github.com/helm/helm/test"
-	"github.com/helm/helm/util"
+	"github.com/helm/helm-classic/action"
+	"github.com/helm/helm-classic/test"
+	"github.com/helm/helm-classic/util"
 )
 
 func TestLintAllNone(t *testing.T) {

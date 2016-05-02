@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/helm/helm/log"
-	helm "github.com/helm/helm/util"
+	"github.com/helm/helm-classic/log"
+	helm "github.com/helm/helm-classic/util"
 )
 
 // PrintREADME prints the README file (if it exists) to the console.

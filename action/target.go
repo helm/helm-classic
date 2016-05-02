@@ -1,8 +1,8 @@
 package action
 
 import (
-	"github.com/helm/helm/kubectl"
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/kubectl"
+	"github.com/helm/helm-classic/log"
 )
 
 // Target displays information about the cluster

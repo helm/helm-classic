@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/log"
 )
 
 // Configfile is the file containing helm's YAML configuration data.

@@ -5,8 +5,8 @@ import (
 
 	"github.com/Masterminds/semver"
 
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/release"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/release"
 )
 
 // Update fetches the remote repo into the home directory.

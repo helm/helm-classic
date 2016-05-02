@@ -3,8 +3,8 @@ package action
 import (
 	"testing"
 
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/test"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/test"
 )
 
 func TestListRepos(t *testing.T) {

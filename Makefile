@@ -1,6 +1,6 @@
 export GO15VENDOREXPERIMENT=1
 
-REPO_PATH := github.com/helm/helm
+REPO_PATH := github.com/helm/helm-classic
 
 # The following variables describe the containerized development environment
 # and other build options
@@ -52,7 +52,7 @@ build-all: check-docker
 	-ldflags ${LDFLAGS} \
 	-os="linux darwin " \
 	-arch="amd64 386" \
-	-output="${DIST_DIR}/{{.OS}}-{{.Arch}}/{{.Dir}}" .
+	-output="${DIST_DIR}/{{.OS}}-{{.Arch}}/helm" .
 
 clean:
 	rm -rf ${DIST_DIR} ${BIN_DIR}
@@ -84,7 +84,7 @@ test-style:
 	${DEV_ENV_CMD} gofmt -e -l -s *.go ${GO_PACKAGES}
 	@${DEV_ENV_CMD} bash -c 'gofmt -e -l -s *.go ${GO_PACKAGES} | read; if [ $$? == 0 ]; then echo "gofmt check failed."; exit 1; fi'
 	@${DEV_ENV_CMD} bash -c 'for i in . ${GO_PACKAGES}; do golint $$i; done'
-	@${DEV_ENV_CMD} bash -c 'for i in . ${GO_PACKAGES}; do go vet github.com/helm/helm/$$i; done'
+	@${DEV_ENV_CMD} bash -c 'for i in . ${GO_PACKAGES}; do go vet ${REPO_PATH}/$$i; done'
 
 .PHONY: check-docker \
 				dev \

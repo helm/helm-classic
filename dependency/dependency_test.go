@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/helm/helm/chart"
+	"github.com/helm/helm-classic/chart"
 )
 
 var testInstalldir = "../testdata/charts"

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/test"
-	"github.com/helm/helm/util"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/test"
+	"github.com/helm/helm-classic/util"
 )
 
 func TestEnsureRepo(t *testing.T) {

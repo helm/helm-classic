@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/helm/helm/action"
+	"github.com/helm/helm-classic/action"
 )
 
 const updateDescription = `This will synchronize the local repository with the upstream GitHub project.

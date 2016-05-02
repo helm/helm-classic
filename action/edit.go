@@ -4,8 +4,8 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/util"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/util"
 )
 
 // Edit charts using the shell-defined $EDITOR

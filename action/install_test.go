@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/helm/helm/kubectl"
-	"github.com/helm/helm/test"
+	"github.com/helm/helm-classic/kubectl"
+	"github.com/helm/helm-classic/test"
 )
 
 func TestInstall(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/helm/helm/test"
+	"github.com/helm/helm-classic/test"
 )
 
 func TestPluginName(t *testing.T) {

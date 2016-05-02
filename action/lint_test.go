@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/helm/helm/test"
-	"github.com/helm/helm/util"
+	"github.com/helm/helm-classic/test"
+	"github.com/helm/helm-classic/util"
 
 	"gopkg.in/yaml.v2"
 )

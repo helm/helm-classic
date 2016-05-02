@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/util"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/util"
 )
 
 const tmpConfigfile = `repos:
@@ -21,7 +21,7 @@ const tmpConfigfile = `repos:
 `
 
 // HelmRoot - dir root of the project
-var HelmRoot = filepath.Join(os.Getenv("GOPATH"), "src/github.com/helm/helm/")
+var HelmRoot = filepath.Join(os.Getenv("GOPATH"), "src/github.com/helm/helm-classic/")
 
 // CreateTmpHome create a temporary directory for $HELM_HOME
 func CreateTmpHome() string {

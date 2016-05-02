@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/google/go-github/github"
-	"github.com/helm/helm/log"
-	"github.com/helm/helm/release"
-	"github.com/helm/helm/test"
+	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/release"
+	"github.com/helm/helm-classic/test"
 )
 
 func TestCheckLatest(t *testing.T) {

@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/helm/helm/chart"
-	"github.com/helm/helm/log"
+	"github.com/helm/helm-classic/chart"
+	"github.com/helm/helm-classic/log"
 )
 
 // Resolve takes a chart and a location and checks whether the chart's dependencies are satisfied.
