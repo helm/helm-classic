@@ -1,4 +1,4 @@
-# Helm, Version 1
+# Helm Classic Architecture
 
 **TL;DR:** Homebrew for Kubernetes, with packages called "Charts"
 
@@ -30,33 +30,33 @@ In this document, we refer to a Kubernetes package as a Chart. The package forma
 
 Right now, the Kubernetes community largely hand-crafts their manifest files. There is no accepted distribution schema, and the only commonly referenced set of files are the ones in the core Kubernetes GitHub repository, which are examples.
 
-The Helm project will provide a GitHub repository to store and collaborate on Charts.  Users will fetch information about available packages from this archive.  Charts in the archive will be usable as-is, but will also serve as a basis for customization.
+The Helm Classic project will provide a GitHub repository to store and collaborate on Charts.  Users will fetch information about available packages from this archive.  Charts in the archive will be usable as-is, but will also serve as a basis for customization.
 
 ## The Workflows
 
-This section describes a few different workflows for Helm users.
+This section describes a few different workflows for Helm Classic users.
 
 ### User Workflow (Simple)
 
 Use case: User is looking for a redis cluster. User wants it immediately installed on Kubernetes.
 
 ```
-$ helm update
----> Cloning into '$HOME/.helm/cache/charts'...
+$ helmc update
+---> Cloning into '$HOME/.helmc/cache/charts'...
 ---> Updating cache from https://github.com/helm/charts
 ---> Done
-$ helm search redis
+$ helmc search redis
 ---> 	redis-cluster (redis-cluster 0.0.5) - Highly available Redis cluster with multiple sentinels and standbys.
 ---> 	redis-standalone (redis-standalone 0.0.1) - Standalone Redis Master
-$ helm info redis-cluster
+$ helmc info redis-cluster
 Name: redis-cluster
 Home: http://github.com/deis/redis-cluster
 Version: 0.0.5
 Description: Highly available Redis cluster with multiple sentinels and standbys.
 Details: This package provides a highly available Redis cluster with multiple sentinels and standbys. Note the `redis-master` pod is used for bootstrapping only and can be deleted once the cluster is up and running.
-$ helm install redis-cluster
+$ helmc install redis-cluster
 ---> No chart named "redis-cluster" in your workspace. Fetching now.
----> Fetched chart into workspace $HOME/.helm/workspace/charts/redis-cluster
+---> Fetched chart into workspace $HOME/.helmc/workspace/charts/redis-cluster
 ---> Running `kubectl create -f` ...
 services/redis-sentinel
 pods/redis-master
@@ -70,22 +70,22 @@ replicationcontrollers/redis-sentinel
 Use Case: User wants to get an NGINX chart, modify it, and then install the modified version into a running Kubernetes cluster.
 
 ```
-$ helm update
+$ helmc update
 ---> Updating cache from https://github.com/helm/charts
 ---> Done
-$ helm fetch redis-standalone redis
----> Fetched chart into workspace $HOME/.helm/workspace/charts/redis
+$ helmc fetch redis-standalone redis
+---> Fetched chart into workspace $HOME/.helmc/workspace/charts/redis
 ---> Done
-$ helm edit redis
-$ helm install redis
+$ helmc edit redis
+$ helmc install redis
 ---> Running `kubectl create -f` ...
 replicationcontrollers/redis-standalone
 ---> Done
 ```
 
-## Helm Repository Design
+## Helm Classic Repository Design
 
-This section describes the design of the Helm package repository.
+This section describes the design of the Helm Classic package repository.
 
 The goals for designing an archive backend are as follows:
 
@@ -118,7 +118,7 @@ Contributing packages to the archive is done by submitting GitHub Pull Requests.
 
 ## A Command Line Client
 
-The command line client is the primary way that users interact with the Helm repository. The client is used for getting and installing packages.
+The `helmc` command line client is the primary way that users interact with the Helm repository. The client is used for getting and installing packages.
 
 The command line will support (at least) the following commands:
 
@@ -144,21 +144,21 @@ The client will locally track the following three things:
 The tree looks something like this:
 
 ```
-- $HELM_HOME
+- $HELMC_HOME
       |
-      |- cache/       # Where `helm update` data goes
+      |- cache/       # Where `helmc update` data goes
       |
-      |- workspace/     # Working directory, where `helm fetch` copies to
+      |- workspace/     # Working directory, where `helmc fetch` copies to
       |
       |- config.yaml  # configuration info
 ```
 
-The default location for `$HELM_HOME` will be `$HOME/.helm`. This reflects the fact that package management by this method is scoped to the developer, not to the system. However, we will make this flexible because we have the following target use cases in mind:
+The default location for `$HELMC_HOME` will be `$HOME/.helmc`. This reflects the fact that package management by this method is scoped to the developer, not to the system. However, we will make this flexible because we have the following target use cases in mind:
 
-- Individual Helm developer/user
+- Individual Helm Classic developer/user
 - CI/CD system
 - Workspace shared by `git` repo among several developers
-- Dockerized Helm that runs in a container
+- Dockerized Helm Classic that runs in a container
 
 ### Client Config
 
@@ -168,7 +168,7 @@ Clients will track minimal configuration about remote hosts, local state, and po
 
 The initial web interface will focus exclusively on education:
 
-- Introduction to Helm
+- Introduction to Helm Classic
 - Instructions for installing
 - Instructions for package submission
 
@@ -226,17 +226,17 @@ details:
 
 #### Dependency Resolution
 
-If dependencies are declared, `helm` will...
+If dependencies are declared, `helmc` will...
 
 - Check to see if the named dependency is locally present
 - If it is, check to see if the version is within the supplied parameters
 
-If either check fails, `helm` will _emit a warning_, but will not prevent the installation. Under normal operation, it will prompt to continue. If the `--force` flag is set, it will simply continue.
+If either check fails, `helmc` will _emit a warning_, but will not prevent the installation. Under normal operation, it will prompt to continue. If the `--force` flag is set, it will simply continue.
 
 Example:
 
 ```
-$ helm install ponycorn
+$ helmc install ponycorn
 !!-> WARNING: Dependency nginx (1.9 < x <= 1.10) does not seem to be satisfied.
 !!-> This package may not function correctly.
 Continue? yes

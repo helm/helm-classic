@@ -1,4 +1,4 @@
-# Helm Sec: Work On Secrets
+# Helm Classic Sec: Work On Secrets
 
 The `helm-sec` plugin provides a tool for working with Kubernetes
 secrets.
@@ -11,7 +11,7 @@ It can:
 
 ## Examples
 
-The simplest invocation of `helm sec` generates a secret file and sends
+The simplest invocation of `helmc sec` generates a secret file and sends
 it to stdout:
 
 ```
@@ -33,10 +33,10 @@ You can send the output to a file by specifying the file name with the
 $ helm-sec -f secret.yaml name value
 ```
 
-And `helm sec` can generate passwords or tokens for you:
+And `helmc sec` can generate passwords or tokens for you:
 
 ```
-$ helm sec --password mysecret
+$ helmc sec --password mysecret
 ---> Password: jb@OTr}k|dG<jc,m
 kind: Secret
 apiVersion: v1
@@ -50,7 +50,7 @@ Use the `--length,-l` flag to specify how long of a password or token
 you'd like. You can also use `--alphanum` and `--alpha` to generate
 alphanumeric or alphabetic phrases (no special characters).
 
-`helm sec` can also generate keypairs. To generate a NaCl Box pair, use
+`helmc sec` can also generate keypairs. To generate a NaCl Box pair, use
 the `--box` flag:
 
 ```

@@ -9,7 +9,7 @@ With the first option, service consumers must constantly track the service provi
 
 With the second option, consumers defines the services they require with label selectors.  Once pods are launched that fulfill the label selectors, the consumer can begin accessing the service.  This facilitates looser coupling between service consumers and providers.
 
-While the first option is more common in traditional orchestration systems, the second is a more natural fit for Kubernetes.  As a result, #2 is how we model services in Helm.  See the documentation on [using labels](using_labels.md) for more details.
+While the first option is more common in traditional orchestration systems, the second is a more natural fit for Kubernetes.  As a result, #2 is how we model services in Helm Classic.  See the documentation on [using labels](using_labels.md) for more details.
 
 ## Example: Ponycorn, a Redis-backed Application
 

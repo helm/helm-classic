@@ -1,24 +1,32 @@
 # How to Contribute
 
-We love getting Pull Requests (PRs). To make sure we keep code quality
+|![](https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Warning.svg/156px-Warning.svg.png) | Helm Classic (the `helm/helm` repository) is **no longer actively developed** but will remain available until `kubernetes/helm` has stabilized.
+|---|---|
+
+Helm and [Deployment Manager](https://github.com/kubernetes/deployment-manager)
+have recently joined forces to make deploying and managing software on
+Kubernetes as simple as possible. The combined effort now lives in the Kubernetes GitHub organization at
+[kubernetes/helm](https://github.com/kubernetes/helm).
+
+We love getting Pull Requests (PRs) _for bug fixes only_. To make sure we keep code quality
 and consistency high, we do have some process in place. In a nutshell:
 
 - Code should follow Go coding standards and pass `go lint` and `go
   vet`. (These tools are automatically run on every pull request.)
-- PRs should contain a single feature or fix, and follow the conventions
+- PRs should contain a single ~~feature or~~ fix, and follow the conventions
   linked below.
 - Contributors must agree to the DCO
 - Every patch must be signed off by two core contributors (and this is
   made easier when the community at large weighs in on PRs, too).
 
-Helm follows the contribution guidelines established by the Deis
+Helm Classic follows the contribution guidelines established by the Deis
 project. Please take a look at them.
 
 - [Deis Contribution Guidelines](https://github.com/deis/deis/blob/master/CONTRIBUTING.md)
 - [Details on commit messages](http://docs.deis.io/en/latest/contributing/standards/#commit-style-guide)
 
 Again, thanks for taking the time to contribute. We know the process
-isn't trivial, and we really appreciate your helping ensure that Helm
+isn't trivial, and we really appreciate your helping ensure that Helm Classic
 develops into a high quality tool.
 
 ## Interpreting the Labels in GitHub
