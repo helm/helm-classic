@@ -24,6 +24,10 @@ func Plugin(homedir, cmd string, args []string) {
 	if abs, err := filepath.Abs(homedir); err == nil {
 		homedir = abs
 	}
+
+	// Although helmc itself may use the new HELMC_HOME environment variable to optionally define its
+	// home directory, to maintain compatibility with plugins created for the ORIGINAL helm, we
+	// continue to support expansion of these "legacy" environment variables, including HELM_HOME.
 	os.Setenv("HELM_HOME", homedir)
 	os.Setenv("HELM_COMMAND", args[0])
 	os.Setenv("HELM_DEFAULT_REPO", mustConfig(homedir).Repos.Default)

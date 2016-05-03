@@ -20,6 +20,9 @@ func Generate(chart, homedir string, exclude []string, force bool) {
 	}
 	chartPath := util.WorkspaceChartDirectory(homedir, chart)
 
+	// Although helmc itself may use the new HELMC_HOME environment variable to optionally define its
+	// home directory, to maintain compatibility with charts created for the ORIGINAL helm, we
+	// continue to support expansion of these "legacy" environment variables, including HELM_HOME.
 	os.Setenv("HELM_HOME", homedir)
 	os.Setenv("HELM_DEFAULT_REPO", mustConfig(homedir).Repos.Default)
 	os.Setenv("HELM_FORCE_FLAG", strconv.FormatBool(force))
