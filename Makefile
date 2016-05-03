@@ -29,9 +29,7 @@ check-docker:
 # Allow developers to step into the containerized development environment
 dev: check-docker
 	${DEV_ENV_CMD_INT} bash
-	ifndef GOPATH
-	$(error No GOPATH set)
-	endif
+
 # Containerized dependency resolution
 bootstrap: check-docker
 	${DEV_ENV_CMD} glide install
