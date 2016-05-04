@@ -7,8 +7,8 @@ REPO_PATH := github.com/helm/helm-classic
 BIN_DIR := bin
 DIST_DIR := _dist
 GO_PACKAGES := action chart config dependency log manifest release plugins/sec plugins/example codec
-MAIN_GO := helm.go
-HELM_BIN := ${BIN_DIR}/helm
+MAIN_GO := helmc.go
+HELM_BIN := ${BIN_DIR}/helmc
 
 VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null)+$(shell git rev-parse --short HEAD)
 
@@ -52,7 +52,7 @@ build-all: check-docker
 	-ldflags ${LDFLAGS} \
 	-os="linux darwin " \
 	-arch="amd64 386" \
-	-output="${DIST_DIR}/{{.OS}}-{{.Arch}}/helm" .
+	-output="${DIST_DIR}/{{.OS}}-{{.Arch}}/helmc" .
 
 clean:
 	rm -rf ${DIST_DIR} ${BIN_DIR}
@@ -62,7 +62,7 @@ dist: build-all
 
 install:
 	install -d ${DESTDIR}/usr/local/bin/
-	install -m 755 ${HELM_BIN} ${DESTDIR}/usr/local/bin/helm
+	install -m 755 ${HELM_BIN} ${DESTDIR}/usr/local/bin/helmc
 
 prep-bintray-json:
 # TRAVIS_TAG is set to the tag name if the build is a tag
