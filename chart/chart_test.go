@@ -28,6 +28,9 @@ func TestLoad(t *testing.T) {
 	if len(c.Kind["ReplicationController"]) == 0 {
 		t.Error("No RCs found")
 	}
+	if len(c.Kind["Deployment"]) == 0 {
+		t.Error("No Deployments found")
+	}
 	if len(c.Kind["Namespace"]) == 0 {
 		t.Errorf("No namespaces found")
 	}
