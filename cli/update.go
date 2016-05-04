@@ -6,8 +6,8 @@ import (
 )
 
 const updateDescription = `This will synchronize the local repository with the upstream GitHub project.
-The local cached copy is stored in '~/.helm/cache' or (if specified)
-'$HELM_HOME/cache'.
+The local cached copy is stored in '~/.helmc/cache' or (if specified)
+'$HELMC_HOME/cache'.
 
 The first time 'helm update' is run, the necessary directory structures are
 created and then the Git repository is pulled in full.

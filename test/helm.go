@@ -23,9 +23,9 @@ const tmpConfigfile = `repos:
 // HelmRoot - dir root of the project
 var HelmRoot = filepath.Join(os.Getenv("GOPATH"), "src/github.com/helm/helm-classic/")
 
-// CreateTmpHome create a temporary directory for $HELM_HOME
+// CreateTmpHome create a temporary directory for $HELMC_HOME
 func CreateTmpHome() string {
-	tmpHome, _ := ioutil.TempDir("", "helm_home")
+	tmpHome, _ := ioutil.TempDir("", "helmc_home")
 	defer os.Remove(tmpHome)
 	return tmpHome
 }

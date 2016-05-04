@@ -32,8 +32,8 @@ include:
 For more information on Helm, go to http://helm.sh.
 
 ENVIRONMENT:
-$HELM_HOME:     Set an alternative location for Helm files. By default, these
-				are stored in ~/.helm
+$HELMC_HOME:     Set an alternative location for Helm files. By default, these
+				are stored in ~/.helmc
 
 `
 
@@ -54,9 +54,9 @@ func Cli() *cli.App {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "home",
-			Value:  "$HOME/.helm",
+			Value:  "$HOME/.helmc",
 			Usage:  "The location of your Helm files",
-			EnvVar: "HELM_HOME",
+			EnvVar: "HELMC_HOME",
 		},
 		cli.BoolFlag{
 			Name:  "debug",

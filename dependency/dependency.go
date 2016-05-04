@@ -15,7 +15,7 @@ import (
 // Resolve takes a chart and a location and checks whether the chart's dependencies are satisfied.
 //
 // The `installdir` is the location where installed charts are located. Typically
-// this is in $HELM_HOME/workspace/charts.
+// this is in $HELMC_HOME/workspace/charts.
 //
 // This returns a list of unsatisfied dependencies (NOT an error condition).
 //

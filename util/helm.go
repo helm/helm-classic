@@ -21,7 +21,7 @@ const DefaultConfigfile = `repos:
 workspace:
 `
 
-// EnsureHome ensures that a HELM_HOME exists.
+// EnsureHome ensures that a HELMC_HOME exists.
 func EnsureHome(home string) {
 
 	must := []string{home, CacheDirectory(home), filepath.Join(home, workspacePath)}
