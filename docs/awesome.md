@@ -1,10 +1,10 @@
-# The Helm Guide to Writing Awesome Charts
+# The Helm Classic Guide to Writing Awesome Charts
 
-A Helm Chart provides a recipe for installing and running a containerized application inside of Kubernetes. This guide explains how to write an outstanding Chart.
+A Helm Classic Chart provides a recipe for installing and running a containerized application inside of Kubernetes. This guide explains how to write an outstanding Chart.
 
 ## Creating a New Chart
 
-You can create a new chart using the `helm create` command. This will put the chart in your workspace, which is the perfect place for trying it out. You may choose to use the `helm edit` command to edit your chart, or you may be more comfortable editing directly with your favorite editor.
+You can create a new chart using the `helmc create` command. This will put the chart in your workspace, which is the perfect place for trying it out. You may choose to use the `helmc edit` command to edit your chart, or you may be more comfortable editing directly with your favorite editor.
 
 ## A Brief Anatomy of a Chart
 
@@ -24,7 +24,7 @@ If your chart displays some more advanced features, or creates a cluster of serv
 
 Please take a look at the existing charts before naming your own.
 
-_A Note on example charts:_ As Helm was getting started, we created a few example charts, whose purpose was to illustrate how to write a chart. We are trying to only add new _example_ charts when they illustrate something new and helpful for chart developers.
+_A Note on example charts:_ As Helm Classic was getting started, we created a few example charts, whose purpose was to illustrate how to write a chart. We are trying to only add new _example_ charts when they illustrate something new and helpful for chart developers.
 
 ## The Chart.yaml File
 
@@ -63,19 +63,19 @@ Except for `dependencies`, all fields are required.
 
 ### Dependency Resolution
 
-When a chart fetched or installed, Helm will perform dependency
+When a chart is fetched or installed, Helm Classic will perform dependency
 resolution and alert the user if the chart dependencies are not
 satisfied.
 
-When just a `name` is provided, Helm will verify that a chart by that
+When just a `name` is provided, Helm Classic will verify that a chart by that
 name exists in the same Git repo, and that it is fetched into the
 workspace.
 
-When `name` and `repo` is provided, Helm will verify that a chart by
+When `name` and `repo` is provided, Helm Classic will verify that a chart by
 that name exists in the given repo, and is fetched into the current
 workspace.
 
-When `version` is added (in either case), Helm will additionally verify
+When `version` is added (in either case), Helm Classic will additionally verify
 that the chart in the workspace has a version within the bounds of the
 specified version. Remember that the `version` section can us version
 ranges, fuzzy versions, and [so on](https://github.com/Masterminds/semver#hyphen-range-comparisons).
@@ -100,7 +100,7 @@ In a nutshell, the README is intended as help text for your user: It gets the us
 
 ## Manifest Files
 
-All Kubernetes manifest files should be in YAML format. We know some people prefer JSON, but we've decided for a number of reasons to adopt YAML as the single format for Helm manifests.
+All Kubernetes manifest files should be in YAML format. We know some people prefer JSON, but we've decided for a number of reasons to adopt YAML as the single format for Helm Classic manifests.
 
 A good simple manifest typically includes:
 
@@ -110,7 +110,7 @@ A good simple manifest typically includes:
 
 ### Labels
 
-All Helm charts should have an `app` label and a `heritage: helm` label in their metadata sections. These provide a base-level consistency across all Helm charts. (`heritage: helm` makes it easy to search a Kubernetes cluster for all components installed via Helm.)
+All Helm Classic charts should have an `app` label and a `heritage: helm` label in their metadata sections. These provide a base-level consistency across all Helm Classic charts. (`heritage: helm` makes it easy to search a Kubernetes cluster for all components installed via Helm Classic.)
 
 We suggest using the following labels where appropriate:
 
@@ -154,23 +154,23 @@ details:
 
 ## Testing
 
-The Helm chart reviewers expect that you have tested your chart, both for compatibility with Helm, and also with Kubernetes. We run some basic tests on your charts on submission, but these perform only rudimentary checks. So please test before submitting.
+The Helm Classic chart reviewers expect that you have tested your chart, both for compatibility with Helm, and also with Kubernetes. We run some basic tests on your charts on submission, but these perform only rudimentary checks. So please test before submitting.
 
 ## Publishing a Pull Request
 
 The suggested workflow for publishing a pull request goes like this:
 
 1. From GitHub, clone the `github.com/helm/charts` repository
-2. Add your fork to Helm: `helm repo add technosophos git@github.com:technosophos/charts.git`
-3. Copy your chart from your workspace to your new charts repo (see `helm publish`)
+2. Add your fork to Helm Classic: `helm repo add technosophos git@github.com:technosophos/charts.git`
+3. Copy your chart from your workspace to your new charts repo (see `helmc publish`)
 4. Commit and push to your charts repo
 5. Using GitHub, file a PR (Pull Request) against the `helm/charts` repository
 6. Follow along in the `helm/charts` issue queue
 
 ## Review
 
-The core Helm charts team reviews all charts to see if they comply with our chart best practices. **All charts must be reviewed and marked LGTM by two members of the Helm charts team.** Once that is done, your chart will be merged into the repository.
+The core Helm Classic charts team reviews all charts to see if they comply with our chart best practices. **All charts must be reviewed and marked LGTM by two members of the Helm Classic charts team.** Once that is done, your chart will be merged into the repository.
 
-We absolutely _love_ contributions, so don't fret about this part of the process. When we ask for additional changes, it's only because we (like you) want the Helm community to have the best experience possible.
+We absolutely _love_ contributions, so don't fret about this part of the process. When we ask for additional changes, it's only because we (like you) want the Helm Classic community to have the best experience possible.
 
 See you in the issue queue!

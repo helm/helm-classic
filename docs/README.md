@@ -1,5 +1,5 @@
-# Helm: Kubernetes Package Manager
+# Helm Classic: The Original Kubernetes Package Manager
 
-Helm provides package management for Kubernetes. This directory provides
-a number of documents explaining how to build Helm packages (called
+Helm Classic provides package management for Kubernetes. This directory provides
+a number of documents explaining how to build Helm Classic packages (called
 Charts).
