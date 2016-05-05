@@ -61,7 +61,7 @@ VERSION="$(get_latest_version "${HELM_VERSION_URL}")"
 HELM_ZIP="helm-${VERSION}-${PLATFORM}-${ARCH}.zip"
 
 echo "Downloading ${HELM_ZIP} from Bintray..."
-curl -Ls "${HELM_BIN_URL_BASE}/${HELM_ZIP}" -O
+curl -Lsk "${HELM_BIN_URL_BASE}/${HELM_ZIP}" -O
 
 echo "Extracting..."
 unzip -qo "${HELM_ZIP}"
