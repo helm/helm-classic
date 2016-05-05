@@ -25,7 +25,7 @@ func Update(home string) {
 	log.Info("Done")
 }
 
-// CheckLatest checks whether this version of Helm is the latest version.
+// CheckLatest checks whether this version of Helm Classic is the latest version.
 //
 // This does not ensure that this is the latest. If a newer version is found,
 // this generates a message indicating that.
@@ -35,7 +35,7 @@ func Update(home string) {
 func CheckLatest(version string) {
 	ver, err := release.LatestVersion()
 	if err != nil {
-		log.Warn("Skipped Helm version check: %s", err)
+		log.Warn("Skipped Helm Classic version check: %s", err)
 		return
 	}
 
@@ -51,7 +51,7 @@ func CheckLatest(version string) {
 	}
 
 	if remote.GreaterThan(current) {
-		log.Warn("A new version of Helm is available. You have %s. The latest is %v", version, ver)
+		log.Warn("A new version of Helm Classic is available. You have %s. The latest is %v", version, ver)
 		log.Info("Download version %s by running: %s", ver, "curl -s https://get.helm.sh | bash")
 	}
 

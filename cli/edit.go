@@ -6,7 +6,7 @@ import (
 )
 
 const editDescription = `Existing charts in the workspace can be edited using this command.
-'helm edit' will open all of the chart files in a single editor (as specified
+'helmc edit' will open all of the chart files in a single editor (as specified
 by the $EDITOR environment variable).`
 
 var editCmd = cli.Command{

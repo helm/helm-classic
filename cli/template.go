@@ -9,19 +9,19 @@ import (
 const tplDescription = `Execute a template inside of a chart.
 
 This command is not intended to be run directly (though it can be). Instead, it
-is a helper for the generate command. Run 'helm help generate' for more.
+is a helper for the generate command. Run 'helmc help generate' for more.
 
-'helm template' provides a default implementation of a templating feature for
+'helmc template' provides a default implementation of a templating feature for
 Kubernetes manifests. Other more sophisticated methods can be plugged in using
-the 'helm generate' system.
+the 'helmc generate' system.
 
-'helm template' uses Go's built-in text template system to provide template
+'helmc template' uses Go's built-in text template system to provide template
 substitution inside of a chart. In addition to the built-in template commands,
-'helm template' supports all of the template functions provided by the Sprig
+'helmc template' supports all of the template functions provided by the Sprig
 library (https://github.com/Masterminds/sprig).
 
-If a values data file is provided, 'helm template' will use that as a source
-for values. If none is specified, only default values will be used. Helm uses
+If a values data file is provided, 'helmc template' will use that as a source
+for values. If none is specified, only default values will be used. Helm Classic uses
 simple extension scanning to determine the file type of the values data file.
 
 - YAML: .yaml, .yml
@@ -34,7 +34,7 @@ file instead of STDOUT. Writing to the source template file is unsupported.
 `
 
 // tplCmd is the command to handle templating.
-// helm tpl -o dest.txt -d data.toml my_template.tpl
+// helmc tpl -o dest.txt -d data.toml my_template.tpl
 var tplCmd = cli.Command{
 	Name:      "template",
 	Aliases:   []string{"tpl"},

@@ -11,7 +11,7 @@ import (
 // Edit charts using the shell-defined $EDITOR
 //
 // - chartName being edited
-// - homeDir is the helm home directory for the user
+// - homeDir is the Helm Classic home directory for the user
 func Edit(chartName, homeDir string) {
 
 	chartDir := util.WorkspaceChartDirectory(homeDir, chartName)

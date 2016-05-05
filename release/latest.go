@@ -8,7 +8,7 @@ import (
 var Owner = "helm"
 
 // Project is the default Helm repository name.
-var Project = "helm"
+var Project = "helm-classic"
 
 // RepoService is a GitHub client instance.
 var RepoService GHRepoService
@@ -18,7 +18,7 @@ type GHRepoService interface {
 	GetLatestRelease(string, string) (*github.RepositoryRelease, *github.Response, error)
 }
 
-// Latest returns information on the latest Helm version.
+// Latest returns information on the latest Helm Classic version.
 func Latest() (*github.RepositoryRelease, error) {
 	if RepoService == nil {
 		RepoService = github.NewClient(nil).Repositories

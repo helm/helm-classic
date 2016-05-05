@@ -9,7 +9,7 @@ const fetchDescription = `Copy a chart from the Chart repository to a local work
 From this point, the copied chart may be safely modified to your needs.
 
 If an optional 'chart-name' is specified, the chart will be copied to a directory
-of that name. For example, 'helm fetch nginx www' will copy the the contents of
+of that name. For example, 'helmc fetch nginx www' will copy the the contents of
 the 'nginx' chart into a directory named 'www' in your workspace.`
 
 var fetchCmd = cli.Command{

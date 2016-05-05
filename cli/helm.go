@@ -15,21 +15,21 @@ import (
 // and should not be trusted.
 var version = "0.1.0"
 
-const globalUsage = `The Kubernetes package manager
+const globalUsage = `Helm Classic - A Kubernetes package manager
 
-To begin working with Helm, run the 'helm update' command:
+To begin working with Helm Classic, run the 'helmc update' command:
 
-$ helm update
+$ helmc update
 
 This will download all of the necessary data. Common actions from this point
 include:
 
-- helm help COMMAND: see help for a specific command
-- helm search: search for charts
-- helm fetch: make a local working copy of a chart
-- helm install: upload the chart to Kubernetes
+- helmc help COMMAND: see help for a specific command
+- helmc search: search for charts
+- helmc fetch: make a local working copy of a chart
+- helmc install: upload the chart to Kubernetes
 
-For more information on Helm, go to http://helm.sh.
+For more information on Helm Classic, go to http://helm.sh.
 
 ENVIRONMENT:
 $HELMC_HOME:     Set an alternative location for Helm files. By default, these
@@ -37,10 +37,10 @@ $HELMC_HOME:     Set an alternative location for Helm files. By default, these
 
 `
 
-// Cli is the main entrypoint for the Helm CLI.
+// Cli is the main entrypoint for the Helm Classic CLI.
 func Cli() *cli.App {
 	app := cli.NewApp()
-	app.Name = "helm"
+	app.Name = "helmc"
 	app.Usage = globalUsage
 	app.Version = version
 	app.EnableBashCompletion = true
@@ -55,7 +55,7 @@ func Cli() *cli.App {
 		cli.StringFlag{
 			Name:   "home",
 			Value:  "$HOME/.helmc",
-			Usage:  "The location of your Helm files",
+			Usage:  "The location of your Helm Classic files",
 			EnvVar: "HELMC_HOME",
 		},
 		cli.BoolFlag{

@@ -7,7 +7,7 @@ import (
 	helm "github.com/helm/helm-classic/util"
 )
 
-// Doctor helps you see what's wrong with your helm setup
+// Doctor helps you see what's wrong with your Helm Classic setup
 func Doctor(home string) {
 	log.Info("Checking things locally...")
 	CheckLocalPrereqs(home)
@@ -17,7 +17,7 @@ func Doctor(home string) {
 }
 
 // CheckAllPrereqs makes sure we have all the tools we need for overall
-// helm success
+// Helm Classic success
 func CheckAllPrereqs(home string) {
 	CheckLocalPrereqs(home)
 	CheckKubePrereqs()

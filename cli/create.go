@@ -7,7 +7,7 @@ import (
 
 const createDescription = `This will scaffold a new chart named 'chart-name' in your
 local workdir. To edit the resulting chart, you may edit the files directly or
-use the 'helm edit' command.`
+use the 'helmc edit' command.`
 
 var createCmd = cli.Command{
 	Name:        "create",

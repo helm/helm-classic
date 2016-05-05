@@ -9,10 +9,10 @@ const updateDescription = `This will synchronize the local repository with the u
 The local cached copy is stored in '~/.helmc/cache' or (if specified)
 '$HELMC_HOME/cache'.
 
-The first time 'helm update' is run, the necessary directory structures are
+The first time 'helmc update' is run, the necessary directory structures are
 created and then the Git repository is pulled in full.
 
-Subsequent calls to 'helm update' will simply synchronize the local cache
+Subsequent calls to 'helmc update' will simply synchronize the local cache
 with the remote.`
 
 // updateCmd represents the CLI command for fetching the latest version of all charts from Github.
@@ -31,7 +31,7 @@ var updateCmd = cli.Command{
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "no-version-check",
-			Usage: "Disable Helm's automatic check for newer versions of itself.",
+			Usage: "Disable Helm Classic's automatic check for newer versions of itself.",
 		},
 	},
 }

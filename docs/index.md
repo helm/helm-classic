@@ -1,4 +1,4 @@
-# Helm Classic: The Original Kubernetes Package Manager
+# Helm Classic: A Kubernetes Package Manager
 
 [Helm Classic](https://helm.sh) helps you find and use software built for Kubernetes. The Helm Classic CLI uses Charts which not only contain metadata about software packages but also Pod, ReplicationController and Service manifests for Kubernetes. With a few Helm Classic commands you can quickly and easily deploy software packages like:
 

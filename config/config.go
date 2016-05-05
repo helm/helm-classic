@@ -18,7 +18,7 @@ import (
 // ErrNotFound indicates no local repository could be found.
 var ErrNotFound = errors.New("No local repository")
 
-// Configfile is the top-level conifguration object for Helm.
+// Configfile is the top-level conifguration object for Helm Classic.
 type Configfile struct {
 	// filename may contain a reference back to the file that was read into
 	// this object.
