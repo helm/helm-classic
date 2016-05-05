@@ -110,6 +110,16 @@ func execute(command string, force bool) error {
 		args = args[1:]
 	}
 
+	// Templates will often include a helm:generate header such as the following:
+	// #helm:generate helm template ...
+	// For backwards compatibility with older charts, this needs to be supported, even though the
+	// name of Helm Classic binary has changed to "helmc". To accommodate this AND especially
+	// ensure that a Helm Classic generator doesn't inadvertently invoke the new kubernetes/helm,
+	// we detect generator commands starting with "helm" and replace them with "helmc".
+	if name == "helm" {
+		name = "helmc"
+	}
+
 	cmd := exec.Command(name, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
