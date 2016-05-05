@@ -12,7 +12,7 @@ For more information about the architecture of `kubernetes/helm` read the **[arc
 
 ## Overview
 
-[![Build Status](https://travis-ci.org/helm/helm-classic.svg?branch=master)](https://travis-ci.org/helm/helm-classic) [![Go Report Card](http://goreportcard.com/badge/helm/helm-classic)](http://goreportcard.com/report/helm/helm-classic)
+[![Build Status](https://travis-ci.org/helm/helm-classic.svg?branch=master)](https://travis-ci.org/helm/helm-classic) [![Go Report Card](https://goreportcard.com/badge/github.com/helm/helm-classic)](https://goreportcard.com/report/github.com/helm/helm-classic)
 
 [Helm Classic](https://helm.sh) bootstraps your Kubernetes cluster with **Charts** that provide ready-to-use workloads like:
 
