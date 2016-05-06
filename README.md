@@ -6,7 +6,7 @@
 Helm and [Deployment Manager](https://github.com/kubernetes/deployment-manager)
 have recently joined forces to make deploying and managing software on
 Kubernetes as simple as possible. The combined effort now lives in the Kubernetes GitHub organization at
-[kubernetes/helm](https://github.com/kubernetes/helm).
+[kubernetes/helm][k8s-helm].
 
 For more information about the architecture of `kubernetes/helm` read the **[architecture documentation](https://github.com/kubernetes/helm/blob/master/docs/architecture.md)**.
 
@@ -33,9 +33,37 @@ curl -s https://get.helm.sh | bash
 *or*:
 
 1. Grab a prebuilt binary from:
-  - the latest release: [ ![Download](https://api.bintray.com/packages/deis/helm/helm-classic/images/download.svg) ](https://bintray.com/deis/helm/helm-classic/_latestVersion#files)
-  - the CI build pipeline: [ ![Download](https://api.bintray.com/packages/deis/helm-ci/helm-classic/images/download.svg) ](https://bintray.com/deis/helm-ci/helm-classic/_latestVersion#files)
+  - the latest release: [ ![Download](https://api.bintray.com/packages/deis/helm/helm-classic/images/download.svg) ](https://bintray.com/deis/helm/helmc/_latestVersion#files)
+  - the CI build pipeline: [ ![Download](https://api.bintray.com/packages/deis/helm-ci/helm-classic/images/download.svg) ](https://bintray.com/deis/helm-ci/helmc/_latestVersion#files)
 2. Unzip the package and make sure `helmc` is available on the PATH.
+
+### Migration Notes
+
+If you are a user of the original Helm tool (versions prior to v0.7.0), take note that Helm Classic is a _re-branding_ of that tool-- new name, same great taste!
+
+__Helm Classic is fully compatible with previously existing Helm charts!__
+
+Anyone migrating to Helm Classic from an older version should complete the following steps to fully replace their existing tool with Helm Classic. Doing so will clear the path for eventual installation of the new and improved Helm ([kubernetes/helm][k8s-helm]).
+
+First, you may optionally define a custom home directory for use by Helm Classic. If opting for this, the instruction should be added to your shell's profile.
+
+```
+$ HELMC_HOME=/custom/path
+```
+
+Next, we migrate the contents from its old location to its new location (because the default location has changed).
+
+```
+$ mv $(helm home) $(helmc home)
+```
+
+Finally, remove the old version:
+
+```
+$ rm $(which helm)
+```
+
+You may now use the new binary, `helmc`, just as you previously used `helm`.  Soon, the `helm` name will be taken over by the new and improved Helm ([kubernetes/helm][k8s-helm]) and you will be able to make use of `helmc` in parallel with `helm` for as long as you have that need.
 
 ### Prerequisite
 
@@ -117,3 +145,5 @@ Copyright 2015 Engine Yard, Inc.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at <http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+[k8s-helm]: https://github.com/kubernetes/helm
