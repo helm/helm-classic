@@ -56,7 +56,7 @@ clean:
 	rm -rf ${DIST_DIR} ${BIN_DIR}
 
 dist: build-all
-	${DEV_ENV_CMD} bash -c 'cd ${DIST_DIR} && find * -type d -exec zip -jr helm-${VERSION}-{}.zip {} \;'
+	${DEV_ENV_CMD} bash -c 'cd ${DIST_DIR} && find * -type d -exec zip -jr helmc-${VERSION}-{}.zip {} \;'
 
 install:
 	install -d ${DESTDIR}/usr/local/bin/
