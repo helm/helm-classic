@@ -21,7 +21,7 @@ func TestCheckLatest(t *testing.T) {
 		CheckLatest("0.0.1")
 	})
 
-	test.ExpectContains(t, actual, "A new version of Helm")
+	test.ExpectContains(t, actual, "A new version of Helm Classic")
 }
 
 type MockGHRepoService struct {

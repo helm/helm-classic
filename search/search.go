@@ -1,4 +1,4 @@
-// Package search provides search features for Helm.
+// Package search provides search features for Helm Classic.
 package search
 
 import (

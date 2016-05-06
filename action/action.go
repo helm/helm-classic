@@ -19,7 +19,7 @@ func mustConfig(homedir string) *config.Configfile {
 	rpath := filepath.Join(homedir, helm.Configfile)
 	cfg, err := config.Load(rpath)
 	if err != nil {
-		log.Warn("Oops! Looks like we had some issues running your command! Running `helm doctor` to ensure we have all the necessary prerequisites in place...")
+		log.Warn("Oops! Looks like we had some issues running your command! Running `helmc doctor` to ensure we have all the necessary prerequisites in place...")
 		Doctor(homedir)
 		cfg, err = config.Load(rpath)
 		if err != nil {

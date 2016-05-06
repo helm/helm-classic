@@ -15,7 +15,7 @@ func TestLintAllNone(t *testing.T) {
 	test.FakeUpdate(tmpHome)
 
 	output := test.CaptureOutput(func() {
-		Cli().Run([]string{"helm", "--home", tmpHome, "lint", "--all"})
+		Cli().Run([]string{"helmc", "--home", tmpHome, "lint", "--all"})
 	})
 
 	test.ExpectContains(t, output, fmt.Sprintf("Could not find any charts in \"%s", tmpHome))
@@ -29,7 +29,7 @@ func TestLintSingle(t *testing.T) {
 	action.Create(chartName, tmpHome)
 
 	output := test.CaptureOutput(func() {
-		Cli().Run([]string{"helm", "--home", tmpHome, "lint", chartName})
+		Cli().Run([]string{"helmc", "--home", tmpHome, "lint", chartName})
 	})
 
 	test.ExpectContains(t, output, fmt.Sprintf("Chart [%s] has passed all necessary checks", chartName))
@@ -43,7 +43,7 @@ func TestLintChartByPath(t *testing.T) {
 	action.Create(chartName, home1)
 
 	output := test.CaptureOutput(func() {
-		Cli().Run([]string{"helm", "--home", home2, "lint", util.WorkspaceChartDirectory(home1, chartName)})
+		Cli().Run([]string{"helmc", "--home", home2, "lint", util.WorkspaceChartDirectory(home1, chartName)})
 	})
 
 	test.ExpectContains(t, output, fmt.Sprintf("Chart [%s] has passed all necessary checks", chartName))
@@ -61,7 +61,7 @@ func TestLintAll(t *testing.T) {
 	action.Create("goodChart", tmpHome)
 
 	output := test.CaptureOutput(func() {
-		Cli().Run([]string{"helm", "--home", tmpHome, "lint", "--all"})
+		Cli().Run([]string{"helmc", "--home", tmpHome, "lint", "--all"})
 	})
 
 	test.ExpectMatches(t, output, "A README file was not found.*"+missingReadmeChart)

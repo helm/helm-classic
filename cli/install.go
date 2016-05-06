@@ -8,10 +8,10 @@ import (
 
 const installDescription = `If the given 'chart-name' is present in your workspace, it
 will be uploaded into Kubernetes. If no chart named 'chart-name' is found in
-your workspace, Helm will look for a chart with that name, install it into the
+your workspace, Helm Classic will look for a chart with that name, install it into the
 workspace, and then immediately upload it to Kubernetes.
 
-When multiple charts are specified, Helm will attempt to install all of them,
+When multiple charts are specified, Helm Classic will attempt to install all of them,
 following the resolution process described above.
 `
 

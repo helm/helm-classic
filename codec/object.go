@@ -57,7 +57,7 @@ func (m *Object) Ref() (*v1.ObjectReference, error) {
 // YAML takes the raw data and (re-)encodes it as YAML.
 func (m *Object) YAML() ([]byte, error) {
 	// We are not assuming that the m.data is YAML, though for the current
-	// iteration of Helm that assumption probably holds. Instead, we are
+	// iteration of Helm Classic that assumption probably holds. Instead, we are
 	// relying upon the decoder to decode to a generic format, and then we
 	// re-encode it into YAML.
 	var d interface{}

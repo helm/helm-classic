@@ -9,10 +9,10 @@ import (
 	"github.com/helm/helm-classic/log"
 )
 
-// Configfile is the file containing helm's YAML configuration data.
+// Configfile is the file containing Helm Classic's YAML configuration data.
 const Configfile = "config.yaml"
 
-// DefaultConfigfile is the default Helm configuration.
+// DefaultConfigfile is the default Helm Classic configuration.
 const DefaultConfigfile = `repos:
   default: charts
   tables:
