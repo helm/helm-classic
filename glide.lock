@@ -1,10 +1,10 @@
-hash: 3e5fafe60be210a1ef82b197ccc8e8465e644decb3d051fececa4a6890288759
-updated: 2016-04-21T11:02:18.91931022-07:00
+hash: 3de9f1cef9c003dc6987f0ca222d7e76b10ca55e341de11039b2c6831d0efff1
+updated: 2016-05-05T15:53:23.682286544-06:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c
 - name: code.google.com/p/goprotobuf
-  version: bf531ff1a004f24ee53329dfd5ce0b41bfdc17df
+  version: 7cc19b78d562895b13596ddce7aafb59dd789318
   repo: https://github.com/golang/protobuf
 - name: github.com/aokoli/goutils
   version: 9c37978a95bd5c709a15883b6242714ea6709e64
@@ -13,9 +13,9 @@ imports:
   subpackages:
   - quantile
 - name: github.com/BurntSushi/toml
-  version: bbd5bb678321a0d6e58f1099321dfa73391c1b6f
+  version: f0aeabca5a127c4078abb8c8d64298b147264b55
 - name: github.com/cloudfoundry-incubator/candiedyaml
-  version: 5cef21e2e4f0fd147973b558d4db7395176bcd95
+  version: 99c3df83b51532e3615f851d8c2dbb638f5313bf
 - name: github.com/codegangsta/cli
   version: 71f57d300dd6a780ac1856c005c4b518cfd498ec
 - name: github.com/davecgh/go-spew
@@ -44,7 +44,7 @@ imports:
   - cgroups
   - system
 - name: github.com/ghodss/yaml
-  version: 1a6f069841556a7bcaff4a397ca6e8328d266c2f
+  version: e8e0db9016175449df0e9c4b6e6995a9433a395c
 - name: github.com/golang/glog
   version: 44145f04b68cf362d9c4df2182967c2275eaefed
 - name: github.com/golang/protobuf
@@ -68,7 +68,7 @@ imports:
 - name: github.com/Masterminds/sprig
   version: e6494bc7e81206ba6db404d2fd96500ffc453407
 - name: github.com/Masterminds/vcs
-  version: fa85cceafacd29c84a8aa6e68967bb9f1754e5e3
+  version: 7af28b64c5ec41b1558f5514fd938379822c237c
 - name: github.com/matttproud/golang_protobuf_extensions
   version: fc2b8d3a73c4867e51861bbdd5ae3c1f0869dd6a
   subpackages:
@@ -96,7 +96,7 @@ imports:
   version: ca42424d18c76d0d51a4cccd830d11878e9e5c17
   repo: https://github.com/coreos/gexpect
 - name: golang.org/x/crypto
-  version: 7b428712abe956d0e9e1e9a01e163fb6c7171438
+  version: 019870fc9d457ee8abd13a2e93e3f2a3b55b7119
   subpackages:
   - ssh/terminal
   - nacl/box
