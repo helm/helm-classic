@@ -35,6 +35,13 @@ func TestUninstall(t *testing.T) {
 				err: errors.New("oh snap"),
 			},
 		},
+		{
+			name:  "with a helmc annotation",
+			chart: "keep",
+			force: true,
+			expected: []string{"Running `kubectl delete` ...", "Not uninstalling",
+				"because of \"helm-keep\" annotation"},
+		},
 	}
 
 	tmpHome := test.CreateTmpHome()

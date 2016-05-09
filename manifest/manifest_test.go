@@ -1,11 +1,14 @@
 package manifest
 
 import (
+	"io/ioutil"
 	"strings"
 	"testing"
 )
 
 var testchart = "../testdata/charts/kitchensink"
+var testPlainManifest = "../testdata/service.json"
+var testKeeperManifest = "../testdata/service-keep.json"
 
 func TestFiles(t *testing.T) {
 	fs, err := Files(testchart)
@@ -66,5 +69,25 @@ func TestParseDir(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "malformed.yaml") {
 		t.Errorf("Failed to identify which manifest failed to be parsed. Got %s", err)
+	}
+}
+
+func TestIsKeeper(t *testing.T) {
+	// test that an ordinary JSON manifest doesn't look like a keeper
+	data, err := ioutil.ReadFile(testPlainManifest)
+	if err != nil {
+		t.Error(err)
+	}
+	if IsKeeper(data) {
+		t.Errorf("Expected false for %s", testPlainManifest)
+	}
+
+	// test that a keeper JSON manifest is detected
+	data, err = ioutil.ReadFile(testKeeperManifest)
+	if err != nil {
+		t.Error(err)
+	}
+	if !IsKeeper(data) {
+		t.Errorf("Expected true for %s", testKeeperManifest)
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/helm/helm-classic/dependency"
 	"github.com/helm/helm-classic/kubectl"
 	"github.com/helm/helm-classic/log"
+	"github.com/helm/helm-classic/manifest"
 	helm "github.com/helm/helm-classic/util"
 )
 
@@ -98,8 +99,14 @@ func uploadManifests(c *chart.Chart, namespace string, client kubectl.Runner) er
 			if data, err = o.JSON(); err != nil {
 				return err
 			}
+
+			var action = client.Create
+			// If it's a keeper manifest, do "kubectl apply" instead of "create."
+			if manifest.IsKeeper(data) {
+				action = client.Apply
+			}
 			log.Debug("File: %s", string(data))
-			out, err := client.Create(data, namespace)
+			out, err := action(data, namespace)
 			log.Msg(string(out))
 			if err != nil {
 				return err

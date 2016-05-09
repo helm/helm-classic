@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/helm/helm-classic/codec"
 	"github.com/helm/helm-classic/log"
@@ -123,4 +124,11 @@ func ParseDir(chartDir string) ([]*Manifest, error) {
 	}
 
 	return files, filepath.Walk(dir, walker)
+}
+
+// IsKeeper returns true if a manifest has a "helm-keep": "true" annotation.
+func IsKeeper(data []byte) bool {
+	// Look for ("helm-keep": "true") up to 10 lines after ("annotations:").
+	var keep = regexp.MustCompile(`\"annotations\":\s+\{(\n.*){0,10}\"helm-keep\":\s+\"true\"`)
+	return keep.Match(data)
 }

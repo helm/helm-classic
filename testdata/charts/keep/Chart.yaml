@@ -1,0 +1,10 @@
+name: keep
+home: https://github.com/helm/helm-classic
+version: 0.0.1
+description: Namespace manifest with keeper annotation.
+maintainers:
+- Deis Team <engineering@deis.com>
+details: |-
+  This package provides a Kubernetes namespace manifest with a "helm-keep" annotation that marks
+  it for special install and uninstall handling.
+  Helm Classic v0.8.0 or later is required to use this chart.
