@@ -33,8 +33,8 @@ curl -s https://get.helm.sh | bash
 *or*:
 
 1. Grab a prebuilt binary from:
-  - the latest release: [ ![Download](https://api.bintray.com/packages/deis/helm/helm-classic/images/download.svg) ](https://bintray.com/deis/helm/helmc/_latestVersion#files)
-  - the CI build pipeline: [ ![Download](https://api.bintray.com/packages/deis/helm-ci/helm-classic/images/download.svg) ](https://bintray.com/deis/helm-ci/helmc/_latestVersion#files)
+  - the latest release: [ ![Download](https://api.bintray.com/packages/deis/helm/helmc/images/download.svg) ](https://bintray.com/deis/helm/helmc/_latestVersion#files)
+  - the CI build pipeline: [ ![Download](https://api.bintray.com/packages/deis/helm-ci/helmc/images/download.svg) ](https://bintray.com/deis/helm-ci/helmc/_latestVersion#files)
 2. Unzip the package and make sure `helmc` is available on the PATH.
 
 ### Migration Notes
