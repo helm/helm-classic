@@ -7,6 +7,8 @@ var Path = "kubectl"
 type Runner interface {
 	// ClusterInfo returns Kubernetes cluster info
 	ClusterInfo() ([]byte, error)
+	// Apply updates or uploads a chart to Kubernetes
+	Apply([]byte, string) ([]byte, error)
 	// Create uploads a chart to Kubernetes
 	Create([]byte, string) ([]byte, error)
 	// Delete removes a chart from Kubernetes.
