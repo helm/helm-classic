@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: keep
+  labels:
+    name: keep
+  annotations:
+    helm-keep: "true"

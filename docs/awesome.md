@@ -108,6 +108,31 @@ A good simple manifest typically includes:
 - A service definition for each backend service this chart relies upon (`foo-db-svc.yaml`)
 - A secrets file for each secret the RC uses (`foo-password-sec.yaml`)
 
+### Keeper Manifests
+
+To support upgrading between versions of a chart, Helm Classic allows individual manifests to be "keepers." These manifests get special treatment:
+
+- `helmc uninstall` skips them while printing a warning
+- `helmc install` applies changes rather than always creating a new manifest
+
+Marking a manifest as a keeper is accomplished by adding a `helm-keep: "true"` annotation:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: deis-router
+  namespace: deis
+  labels:
+    heritage: deis
+  annotations:
+    helm-keep: "true"
+```
+
+This mechanism allows essential pieces of infrastructure to remain in place while other components are uninstalled and reinstalled. For example, a chart might mark its `Namespace` and any externally visible `Service` manifests with `helm-keep`, to ensure that DNS entries aren't invalidated by destroying the `LoadBalancer` or `NodePort` ingress.
+
+The `helm-keep` annotation is respected by Helm Classic version 0.8.0 and later.
+
 ### Labels
 
 All Helm Classic charts should have an `app` label and a `heritage: helm` label in their metadata sections. These provide a base-level consistency across all Helm Classic charts. (`heritage: helm` makes it easy to search a Kubernetes cluster for all components installed via Helm Classic.)

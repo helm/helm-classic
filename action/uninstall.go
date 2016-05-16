@@ -127,6 +127,14 @@ func uninstallKind(kind []*manifest.Manifest, ns, ktype string, dry bool, client
 		if dry {
 			log.Msg("%s/%s", ktype, o.Name)
 		} else {
+			// If it's a keeper manifest, skip uninstall.
+			if data, err := o.VersionedObject.JSON(); err == nil {
+				if manifest.IsKeeper(data) {
+					log.Warn("Not uninstalling %s %s because of \"helm-keep\" annotation.\n"+
+						"---> Use kubectl to uninstall keeper manifests.\n", ktype, o.Name)
+					continue
+				}
+			}
 			out, err := client.Delete(o.Name, ktype, ns)
 			if err != nil {
 				log.Warn("Could not delete %s %s (Skipping): %s", ktype, o.Name, err)

@@ -9,6 +9,10 @@ func (r TestRunner) ClusterInfo() ([]byte, error) {
 	return r.out, r.err
 }
 
+func (r TestRunner) Apply(stdin []byte, ns string) ([]byte, error) {
+	return r.out, r.err
+}
+
 func (r TestRunner) Create(stdin []byte, ns string) ([]byte, error) {
 	return r.out, r.err
 }
