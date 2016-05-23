@@ -1,10 +1,10 @@
-hash: 3de9f1cef9c003dc6987f0ca222d7e76b10ca55e341de11039b2c6831d0efff1
-updated: 2016-05-05T15:53:23.682286544-06:00
+hash: 2839ac00b6126dd58c0b93de42a4386b9c6ab1a3157481900c3556abf6195f76
+updated: 2016-05-23T16:56:31.611828548-06:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c
 - name: code.google.com/p/goprotobuf
-  version: 7cc19b78d562895b13596ddce7aafb59dd789318
+  version: e51d002c610dbe8c136679a67a6ded5df4d49b5c
   repo: https://github.com/golang/protobuf
 - name: github.com/aokoli/goutils
   version: 9c37978a95bd5c709a15883b6242714ea6709e64
@@ -96,7 +96,7 @@ imports:
   version: ca42424d18c76d0d51a4cccd830d11878e9e5c17
   repo: https://github.com/coreos/gexpect
 - name: golang.org/x/crypto
-  version: 019870fc9d457ee8abd13a2e93e3f2a3b55b7119
+  version: 5bcd134fee4dd1475da17714aac19c0aa0142e2f
   subpackages:
   - ssh/terminal
   - nacl/box
@@ -105,6 +105,8 @@ imports:
   - salsa20/salsa
   - ssh
   - poly1305
+  - ed25519
+  - ed25519/internal/edwards25519
 - name: golang.org/x/net
   version: c2528b2dd8352441850638a8bb678c2ad056fd3e
   subpackages:
@@ -145,4 +147,6 @@ imports:
   repo: https://github.com/go-check/check
 - name: speter.net/go/exp/math/dec/inf
   version: 42ca6cd68aa922bc3f32f1e056e61b65945d9ad7
+  repo: https://github.com/belua/inf
+  vcs: git
 devImports: []
