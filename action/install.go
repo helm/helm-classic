@@ -1,11 +1,9 @@
 package action
 
 import (
-	"bytes"
 	"os"
 
 	"github.com/helm/helm-classic/chart"
-	"github.com/helm/helm-classic/codec"
 	"github.com/helm/helm-classic/dependency"
 	"github.com/helm/helm-classic/kubectl"
 	"github.com/helm/helm-classic/log"
@@ -118,7 +116,11 @@ func uploadManifests(c *chart.Chart, namespace string, client kubectl.Runner) er
 	for _, k := range c.UnknownKinds(InstallOrder) {
 		for _, o := range c.Kind[k] {
 			o.VersionedObject.AddAnnotations(map[string]string{chart.AnnFile: o.Source})
-			out, err := marshalAndCreate(o.VersionedObject, namespace, client)
+			data, err := o.VersionedObject.JSON()
+			if err != nil {
+				return err
+			}
+			out, err := client.Create(data, namespace)
 			log.Msg(string(out))
 			if err != nil {
 				return err
@@ -127,16 +129,6 @@ func uploadManifests(c *chart.Chart, namespace string, client kubectl.Runner) er
 	}
 
 	return nil
-}
-
-func marshalAndCreate(o interface{}, ns string, client kubectl.Runner) ([]byte, error) {
-	var b bytes.Buffer
-	if err := codec.JSON.Encode(&b).One(o); err != nil {
-		return nil, err
-	}
-	data := b.Bytes()
-	log.Debug("File: %s", string(data))
-	return client.Create(data, ns)
 }
 
 // Check by chart directory name whether a chart is fetched into the workspace.
