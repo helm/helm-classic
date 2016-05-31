@@ -1,0 +1,17 @@
+#helm:generate helm tpl -d values.toml -o manifests/drone-configmap.yaml $HELM_GENERATE_FILE
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2016-03-30T21:14:38Z
+  name: drone
+  namespace: default
+data:
+  caddy.conf: |-
+    tls replace@me.com
+    drone.testing.com {
+        proxy / drone:80 {
+          proxy_header X-Forwarded-Proto {scheme}
+          proxy_header X-Forwarded-For {host}
+          proxy_header Host {host}
+        }
+    }

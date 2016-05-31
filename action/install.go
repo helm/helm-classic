@@ -15,14 +15,14 @@ import (
 //
 // Anything not on the list will be installed after the last listed item, in
 // an indeterminate order.
-var InstallOrder = []string{"Namespace", "Secret", "PersistentVolume", "ServiceAccount", "Service", "Pod", "ReplicationController", "Deployment", "DaemonSet", "Ingress", "Job"}
+var InstallOrder = []string{"Namespace", "Secret", "ConfigMap", "PersistentVolume", "ServiceAccount", "Service", "Pod", "ReplicationController", "Deployment", "DaemonSet", "Ingress", "Job"}
 
 // UninstallOrder defines the order in which manifests are uninstalled.
 //
 // Unknown manifest types (those not explicitly referenced in this list) will
 // be uninstalled before any of these, since we know that none of the core
 // types depend on non-core types.
-var UninstallOrder = []string{"Service", "Pod", "ReplicationController", "Deployment", "DaemonSet", "Secret", "PersistentVolume", "ServiceAccount", "Ingress", "Job", "Namespace"}
+var UninstallOrder = []string{"Service", "Pod", "ReplicationController", "Deployment", "DaemonSet", "ConfigMap", "Secret", "PersistentVolume", "ServiceAccount", "Ingress", "Job", "Namespace"}
 
 // Install loads a chart into Kubernetes.
 //
