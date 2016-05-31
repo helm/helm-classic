@@ -10,7 +10,7 @@ import:
 - package: github.com/Masterminds/semver
   version: ^1.1.0
 - package: k8s.io/kubernetes
-  version: v1.1.1
+  version: v1.2.4
   subpackages:
   - pkg
 - package: speter.net/go/exp/math/dec/inf
