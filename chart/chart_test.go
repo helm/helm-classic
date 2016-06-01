@@ -1,14 +1,13 @@
 package chart
 
-import (
-	"testing"
-)
+import "testing"
 
 const testfile = "../testdata/test-Chart.yaml"
 const testchart = "../testdata/charts/kitchensink"
 
 func TestLoad(t *testing.T) {
 	c, err := Load(testchart)
+
 	if err != nil {
 		t.Errorf("Failed to load chart: %s", err)
 	}
@@ -28,19 +27,25 @@ func TestLoad(t *testing.T) {
 	if len(c.Kind["ReplicationController"]) == 0 {
 		t.Error("No RCs found")
 	}
+
 	if len(c.Kind["Deployment"]) == 0 {
 		t.Error("No Deployments found")
 	}
+
 	if len(c.Kind["Namespace"]) == 0 {
-		t.Errorf("No namespaces found")
+		t.Error("No Namespaces found")
 	}
 
 	if len(c.Kind["Secret"]) == 0 {
 		t.Error("Is it secret? Is it safe? NO!")
 	}
 
+	if len(c.Kind["ConfigMap"]) == 0 {
+		t.Error("No ConfigMaps found.")
+	}
+
 	if len(c.Kind["PersistentVolume"]) == 0 {
-		t.Errorf("No volumes.")
+		t.Error("No volumes.")
 	}
 
 	if len(c.Kind["Service"]) == 0 {

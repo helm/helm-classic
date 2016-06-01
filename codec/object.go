@@ -222,6 +222,12 @@ func (m *Object) Ingress() (*v1beta1.Ingress, error) {
 	return o, m.Object(o)
 }
 
+// ConfigMap decodes a manifest into a ConfigMap.
+func (m *Object) ConfigMap() (*v1.ConfigMap, error) {
+	o := new(v1.ConfigMap)
+	return o, m.Object(o)
+}
+
 // Deployment decodes a manifest into a Deployment.
 func (m *Object) Deployment() (*v1beta1.Deployment, error) {
 	o := new(v1beta1.Deployment)
