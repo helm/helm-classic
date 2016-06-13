@@ -62,16 +62,6 @@ install:
 	install -d ${DESTDIR}/usr/local/bin/
 	install -m 755 ${HELM_BIN} ${DESTDIR}/usr/local/bin/helmc
 
-prep-bintray-json:
-# TRAVIS_TAG is set to the tag name if the build is a tag
-ifdef TRAVIS_TAG
-	${DEV_ENV_CMD} jq '.version.name |= "${VERSION}"' _scripts/ci/bintray-template.json | \
-		jq '.package.repo |= "helm"' > _scripts/ci/bintray-ci.json
-else
-	${DEV_ENV_CMD} jq '.version.name |= "${VERSION}"' _scripts/ci/bintray-template.json \
-		> _scripts/ci/bintray-ci.json
-endif
-
 quicktest:
 	${DEV_ENV_CMD} bash -c '${PATH_WITH_HELM} go test -short ./ $(addprefix ./,${GO_PACKAGES})'
 
