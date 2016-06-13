@@ -50,7 +50,7 @@ build-all: check-docker
 	-ldflags ${LDFLAGS} \
 	-os="linux darwin " \
 	-arch="amd64 386" \
-	-output="${DIST_DIR}/helmc-latest-g{{.OS}}-{{.Arch}}" .
+	-output="${DIST_DIR}/helmc-latest-{{.OS}}-{{.Arch}}" .
 ifdef TRAVIS_TAG
 	${DEV_ENV_CMD} gox -verbose ${LDFLAGS} -os="linux darwin" -arch="amd64 386" -output="${DIST_DIR}/${TRAVIS_TAG}/helmc-${TRAVIS_TAG}-{{.OS}}-{{.Arch}}" .
 else
