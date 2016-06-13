@@ -52,9 +52,9 @@ build-all: check-docker
 	-arch="amd64 386" \
 	-output="${DIST_DIR}/helmc-latest-{{.OS}}-{{.Arch}}" .
 ifdef TRAVIS_TAG
-	${DEV_ENV_CMD} gox -verbose ${LDFLAGS} -os="linux darwin" -arch="amd64 386" -output="${DIST_DIR}/${TRAVIS_TAG}/helmc-${TRAVIS_TAG}-{{.OS}}-{{.Arch}}" .
+	${DEV_ENV_CMD} gox -verbose -ldflags ${LDFLAGS} -os="linux darwin" -arch="amd64 386" -output="${DIST_DIR}/${TRAVIS_TAG}/helmc-${TRAVIS_TAG}-{{.OS}}-{{.Arch}}" .
 else
-	${DEV_ENV_CMD} gox -verbose ${LDFLAGS} -os="linux darwin" -arch="amd64 386" -output="${DIST_DIR}/${VERSION}/helmc-${VERSION}-{{.OS}}-{{.Arch}}" .
+	${DEV_ENV_CMD} gox -verbose -ldflags ${LDFLAGS} -os="linux darwin" -arch="amd64 386" -output="${DIST_DIR}/${VERSION}/helmc-${VERSION}-{{.OS}}-{{.Arch}}" .
 endif
 
 clean:
