@@ -1,7 +1,7 @@
-# Helm Classic - A Kubernetes Package Manager
-
-|![](https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Warning.svg/156px-Warning.svg.png) | Helm Classic (the `helm/helm` repository) is **no longer actively developed** but will remain available until `kubernetes/helm` has stabilized.
+|![](https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Warning.svg/156px-Warning.svg.png) | Helm Classic v1 is no longer supported. See [kubernetes/helm][k8s-helm] instead to get [Kubernetes Helm][k8s-helm].
 |---|---|
+
+# Helm Classic - A Kubernetes Package Manager
 
 Helm and [Deployment Manager](https://github.com/kubernetes/deployment-manager)
 have recently joined forces to make deploying and managing software on
